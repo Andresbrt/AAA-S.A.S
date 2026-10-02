@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-caribbean-dark: #002D5A;
+  --color-caribbean-blue: #005B9F;
+  --color-caribbean-light: #E0F2FE;
+  --color-sand-light: #F9F8F6;
+  --color-gold-accent: #D4AF37;
+}
+
+@layer base {
+  :root {
+    --background: #F9F8F6;
+    --foreground: #1A1A1A;
+  }
+  
+  html, body {
+    @apply bg-[var(--background)] text-[var(--foreground)] antialiased scroll-smooth;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Glassmorphism base */
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,45,90,0.1)] rounded-2xl;
+  }
+  
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,45,90,0.1)] rounded-2xl hover:shadow-[0_12px_40px_0_rgba(0,45,90,0.15)] transition-all duration-300;
+  }
+
+  /* Botones Premium */
+  .btn-primary-glow {
+    @apply relative overflow-hidden bg-[var(--color-caribbean-dark)] text-white px-6 py-3 rounded-xl font-medium tracking-wide transition-all duration-300 shadow-[0_4px_20px_rgba(0,45,90,0.4)] hover:shadow-[0_8px_25px_rgba(0,45,90,0.6)] hover:-translate-y-1;
+  }
+  
+  .btn-primary-glow::after {
+    content: '';
+    @apply absolute inset-0 bg-white/20 translate-y-full transition-transform duration-300 ease-in-out;
+  }
+  
+  .btn-primary-glow:hover::after {
+    @apply translate-y-0;
+  }
+
+  .btn-outline-gold {
+    @apply border border-[var(--color-gold-accent)] text-[var(--color-gold-accent)] hover:bg-[var(--color-gold-accent)] hover:text-white px-6 py-3 rounded-xl font-medium tracking-wide transition-all duration-300;
+  }
+
+  /* Textos y Encabezados */
+  .heading-luxury {
+    @apply text-4xl md:text-5xl lg:text-6xl font-light text-[var(--color-caribbean-dark)] tracking-tight leading-tight;
+  }
+  
+  .text-accent {
+    @apply text-[var(--color-gold-accent)] font-medium;
+  }
+
+  /* Secciones */
+  .site-header {
+    @apply fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent;
+  }
+  
+  .site-header.scrolled {
+    @apply bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm py-2;
+  }
+  
+  .hero-section {
+    @apply relative min-h-[90vh] flex items-center justify-center overflow-hidden;
+  }
+}
