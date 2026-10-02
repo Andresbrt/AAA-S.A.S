@@ -1,0 +1,43 @@
+# render.yaml — Render Blueprint
+services:
+  - type: web
+    name: inmobiliaria-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: starter
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inmobiliaria-db
+          property: connectionURI
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://your-app.vercel.app
+      - key: ADMIN_EMAIL
+        value: admin@aaasas.com
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: ADMIN_NAME
+        value: Super Admin
+      - key: STORAGE_PROVIDER
+        value: s3
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+    healthCheckPath: /actuator/health
+
+databases:
+  - name: inmobiliaria-db
+    plan: starter
+    databaseName: aaasas_inmobiliaria
+    region: oregon

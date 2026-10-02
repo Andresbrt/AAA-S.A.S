@@ -1,0 +1,34 @@
+# ═══════════════════════════════════════════════════════════════
+# LOCAL PROFILE
+# ═══════════════════════════════════════════════════════════════
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aaasas_inmobiliaria
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+
+  jpa:
+    show-sql: true
+
+  mail:
+    host: localhost
+    port: 1025
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  
+  elasticsearch:
+    uris: http://localhost:9200
+
+
+logging:
+  level:
+    com.aaasas.inmobiliaria: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

@@ -1,0 +1,32 @@
+# ═══════════════════════════════════════════════════════════════
+# TEST PROFILE
+# ═══════════════════════════════════════════════════════════════
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine:///test_db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    show-sql: false
+
+  flyway:
+    enabled: true
+
+  mail:
+    host: localhost
+    port: 1025
+
+app:
+  jwt:
+    secret: test-secret-key-for-unit-tests-must-be-at-least-256-bits-long-for-hmac-sha
+    access-token-expiration-ms: 900000
+    refresh-token-expiration-ms: 604800000
+
+  admin:
+    email: admin@test.com
+    password: TestPassword123!
+    name: Test Admin
+
+logging:
+  level:
+    com.aaasas.inmobiliaria: WARN
