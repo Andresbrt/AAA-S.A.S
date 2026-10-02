@@ -3,9 +3,9 @@
 # ═══════════════════════════════════════════════════════════════
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/aaasas_inmobiliaria
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:5432/postgres?prepareThreshold=0}
+    username: ${DATABASE_USERNAME:postgres.xvderakdvfvmnuczamla}
+    password: ${DATABASE_PASSWORD:***REMOVED***}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
@@ -18,13 +18,7 @@ spring:
     host: localhost
     port: 1025
 
-  data:
-    redis:
-      host: localhost
-      port: 6379
-  
-  elasticsearch:
-    uris: http://localhost:9200
+
 
 
 logging:

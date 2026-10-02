@@ -107,7 +107,7 @@ export default function FAQSection() {
         
         <div className="text-center mt-12">
           <p className="text-sm text-gray-500 mb-4">¿Tienes una duda particular que no está listada?</p>
-          <a href="#contacto" className="text-[var(--color-caribbean-blue)] font-bold hover:underline">
+          <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-[var(--color-caribbean-blue)] font-bold hover:underline">
             Hablar con un Asesor Jurídico &rarr;
           </a>
         </div>

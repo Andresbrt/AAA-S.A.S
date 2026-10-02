@@ -97,10 +97,10 @@ export default function AdminDashboard() {
               <div key={lead.id} className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100">
                 <div className="flex items-center space-x-4">
                   <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
-                    {lead.name?.charAt(0).toUpperCase()}
+                    {lead.fullName?.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{lead.name}</p>
+                    <p className="text-sm font-bold text-slate-900">{lead.fullName}</p>
                     <p className="text-xs text-slate-500">{lead.email} - {lead.phone}</p>
                     {lead.projectName && <p className="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full inline-block mt-1">{lead.projectName}</p>}
                   </div>

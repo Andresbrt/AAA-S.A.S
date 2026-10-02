@@ -46,7 +46,7 @@ export default function PublicFooter({ company }: { company: any }) {
 
         <div className="border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/50 text-sm">
-            &copy; {new Date().getFullYear()} GRUPO AAA S.A.S. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} GRUPO AAA S.A.S. (NIT: 901599132). Todos los derechos reservados.
           </p>
           <Link href="/portal-asesores" className="text-white/30 hover:text-white/70 text-xs transition-colors">
             Portal Asesores / CRM

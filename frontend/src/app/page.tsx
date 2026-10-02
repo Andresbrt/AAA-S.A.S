@@ -68,9 +68,9 @@ export default function HomePage() {
               <Link href="#proyectos" className="bg-[var(--color-gold-accent)] text-white hover:bg-[#B89B2F] font-bold text-sm px-8 py-4 rounded-full transition shadow-[0_0_20px_rgba(212,175,55,0.4)]">
                 VER PORTAFOLIO
               </Link>
-              <Link href="#contacto" className="bg-white/10 backdrop-blur-md text-white border border-white/50 hover:bg-white hover:text-[var(--color-caribbean-dark)] font-bold text-sm px-8 py-4 rounded-full transition">
+              <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="bg-white/10 backdrop-blur-md text-white border border-white/50 hover:bg-white hover:text-[var(--color-caribbean-dark)] font-bold text-sm px-8 py-4 rounded-full transition">
                 ASESORÍA PERSONAL
-              </Link>
+              </a>
             </div>
           </motion.div>
         </section>

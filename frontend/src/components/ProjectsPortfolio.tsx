@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { PiSparkleLight, PiMapPinLight, PiCubeLight } from 'react-icons/pi';
 
 export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
   // If no projects from backend, use a mockup to match the requested design
@@ -71,11 +72,11 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
             >
               {/* Header Tags */}
               <div className="flex justify-between items-center px-6 py-4 border-b border-white/40 text-xs font-medium text-gray-700 bg-white/40 backdrop-blur-md">
-                <span className="flex items-center gap-2 text-[var(--color-caribbean-dark)] font-bold tracking-wider uppercase">
-                  <span className="text-[var(--color-gold-accent)]">✦</span> {project.tag || 'Proyecto Insignia'}
+                <span className="flex items-center gap-1.5 text-[var(--color-caribbean-dark)] font-bold tracking-wider uppercase">
+                  <PiSparkleLight className="text-[var(--color-gold-accent)]" size={16} /> {project.tag || 'Proyecto Insignia'}
                 </span>
-                <span className="flex items-center gap-1 opacity-70">
-                  📍 {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'Córdoba, Colombia')}
+                <span className="flex items-center gap-1.5 opacity-70">
+                  <PiMapPinLight size={16} /> {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'Córdoba, Colombia')}
                 </span>
               </div>
               
@@ -90,8 +91,8 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 {project.id === 1 && (
-                  <div className="absolute bottom-4 right-4 bg-white/90 text-[var(--color-caribbean-dark)] text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md border border-white">
-                    ✨ Experiencia 3D Activa
+                  <div className="absolute bottom-4 right-4 bg-white/90 text-[var(--color-caribbean-dark)] text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md border border-white flex items-center gap-2">
+                    <PiCubeLight size={16} /> Experiencia 3D Activa
                   </div>
                 )}
               </div>

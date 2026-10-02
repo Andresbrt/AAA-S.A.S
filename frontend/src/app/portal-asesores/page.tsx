@@ -24,7 +24,7 @@ export default function LoginPage() {
     setErrorMsg("");
     try {
       const data = await login(email, password);
-      localStorage.setItem("admin_token", data.token);
+      localStorage.setItem("admin_token", data.accessToken || data.token);
       window.location.href = "/admin";
     } catch (err) {
       setErrorMsg("Credenciales incorrectas. Verifica tu correo y contraseña.");

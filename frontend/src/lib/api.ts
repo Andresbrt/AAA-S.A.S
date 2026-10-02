@@ -22,6 +22,35 @@ export async function getFeaturedProjects() {
   }
 }
 
+export async function getProjectBySlug(slug: string) {
+  try {
+    const res = await fetch(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 300 } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (error) {
+    console.error(`Error fetching project ${slug}:`, error);
+    return null;
+  }
+}
+
+export async function createLead(data: any) {
+  try {
+    const res = await fetch(`${API_URL}/public/leads`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Error al enviar el formulario');
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('Error creating lead:', error);
+    throw error;
+  }
+}
+
 // ---------------- ADMIN API ----------------
 
 export async function login(email: string, password: string) {
@@ -80,4 +109,30 @@ export async function getAdminProjects(token: string) {
     console.error('Error fetching projects:', error);
     return null;
   }
+}
+
+export async function createProject(token: string, data: any) {
+  const res = await fetch(`${API_URL}/admin/projects`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Error al crear el proyecto');
+  return res.json();
+}
+
+export async function updateProject(token: string, id: string, data: any) {
+  const res = await fetch(`${API_URL}/admin/projects/${id}`, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Error al actualizar el proyecto');
+  return res.json();
 }

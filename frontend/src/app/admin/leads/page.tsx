@@ -82,10 +82,10 @@ export default function AdminLeadsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
-                          {lead.name?.charAt(0).toUpperCase()}
+                          {lead.fullName?.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">{lead.name}</p>
+                          <p className="font-bold text-slate-900">{lead.fullName}</p>
                           <p className="text-xs text-slate-500 flex items-center mt-0.5">
                             <Calendar className="w-3 h-3 mr-1" />
                             {new Date(lead.createdAt).toLocaleDateString()}

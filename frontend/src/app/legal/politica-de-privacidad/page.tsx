@@ -23,7 +23,7 @@ export default function PoliticaPrivacidadPage() {
               <h2 className="text-2xl font-semibold text-[var(--color-caribbean-dark)] mb-4">1. Introducción</h2>
               <p>
                 Dando cumplimiento a la <strong>Ley 1581 de 2012</strong> y al Decreto Reglamentario 1377 de 2013 de la República de Colombia, 
-                <strong> GRUPO AAA S.A.S.</strong>, en adelante &quot;La Empresa&quot;, establece la presente Política de Tratamiento de Datos Personales. 
+                <strong> GRUPO AAA S.A.S. (NIT: 901599132)</strong>, en adelante &quot;La Empresa&quot;, establece la presente Política de Tratamiento de Datos Personales. 
                 El objetivo es garantizar el derecho fundamental constitucional al Hábeas Data que tienen todas las personas que nos han suministrado 
                 sus datos personales a través de nuestros canales presenciales y digitales (sitio web, formularios de leads, redes sociales).
               </p>
@@ -73,7 +73,7 @@ export default function PoliticaPrivacidadPage() {
                 Para ejercer sus derechos de actualización, rectificación o supresión de datos, los titulares podrán comunicarse con nosotros a través de:
               </p>
               <div className="bg-[var(--color-caribbean-blue)]/5 p-6 rounded-xl mt-4 border border-[var(--color-caribbean-blue)]/20">
-                <p className="mb-2"><strong>Razón Social:</strong> GRUPO AAA S.A.S.</p>
+                <p className="mb-2"><strong>Razón Social:</strong> GRUPO AAA S.A.S. (NIT: 901599132)</p>
                 <p className="mb-2"><strong>Correo Electrónico:</strong> habeasdata@grupoaaa.com</p>
               </div>
             </section>

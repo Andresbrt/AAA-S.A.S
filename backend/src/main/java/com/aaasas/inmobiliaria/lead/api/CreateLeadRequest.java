@@ -4,7 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.AssertTrue;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateLeadRequest(
     @NotBlank(message = "El nombre es obligatorio") String fullName,
     @NotBlank(message = "El email es obligatorio") @Email(message = "Formato de email inválido") String email,

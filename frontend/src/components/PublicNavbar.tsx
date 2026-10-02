@@ -39,9 +39,9 @@ export default function PublicNavbar() {
           </Link>
         </nav>
 
-        <Link href="/#contacto" className={scrolled ? 'btn-primary-glow' : 'btn-outline-gold !text-white !border-white hover:!bg-white hover:!text-[var(--color-caribbean-dark)]'}>
+        <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className={scrolled ? 'btn-primary-glow' : 'btn-outline-gold !text-white !border-white hover:!bg-white hover:!text-[var(--color-caribbean-dark)]'}>
           Asesor VIP
-        </Link>
+        </a>
       </div>
     </header>
   );

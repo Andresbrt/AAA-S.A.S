@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
+import { apiClient } from '@/services/apiClient';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -11,10 +12,11 @@ export default function ContactForm() {
     phone: '',
     message: '',
     dataConsent: false,
-    honeypot: '' // Anti-spam
+    honeypot: '' // Anti-spam fallback
   });
 
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -32,13 +34,18 @@ export default function ContactForm() {
       alert("Debes aceptar la política de tratamiento de datos.");
       return;
     }
+
+    if (!turnstileToken) {
+      alert("Por favor, verifica que no eres un robot antes de enviar el formulario.");
+      return;
+    }
     
     setStatus('loading');
     
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
-      await axios.post(`${API_URL}/public/leads`, {
+      await apiClient.post('/public/leads', {
         ...formData,
+        turnstileToken, // Enviamos el token al backend para su validación final
         origin: 'WEBSITE_CONTACT_FORM'
       });
       
@@ -51,6 +58,7 @@ export default function ContactForm() {
         dataConsent: false,
         honeypot: ''
       });
+      setTurnstileToken('');
     } catch (error) {
       console.error(error);
       setStatus('error');
@@ -58,7 +66,7 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glass-panel p-8 md:p-10 max-w-2xl mx-auto w-full">
+    <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-md p-8 md:p-10 max-w-2xl mx-auto w-full rounded-[2rem] shadow-[0_20px_50px_rgba(0,45,90,0.1)] border border-gray-100">
       {status === 'success' && (
         <div className="bg-green-50/80 border border-green-200 text-green-800 p-4 rounded-xl mb-6 text-center">
           <p className="font-medium">¡Gracias por contactarnos!</p>
@@ -86,7 +94,7 @@ export default function ContactForm() {
             required
             value={formData.fullName}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white/50 backdrop-blur-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
             placeholder="Ej. Juan Pérez"
           />
         </div>
@@ -98,7 +106,7 @@ export default function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white/50 backdrop-blur-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
             placeholder="Ej. +57 300 000 0000"
           />
         </div>
@@ -113,7 +121,7 @@ export default function ContactForm() {
           required
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white/50 backdrop-blur-sm transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
           placeholder="tucorreo@ejemplo.com"
         />
       </div>
@@ -126,7 +134,7 @@ export default function ContactForm() {
           rows={4}
           value={formData.message}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white/50 backdrop-blur-sm transition-all resize-none"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all resize-none"
           placeholder="Escribe tu mensaje aquí..."
         ></textarea>
       </div>
@@ -157,15 +165,29 @@ export default function ContactForm() {
         </label>
       </div>
 
+      {/* Cloudflare Turnstile CAPTCHA */}
+      <div className="mb-8 flex justify-center">
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+          onSuccess={(token) => setTurnstileToken(token)}
+          onError={() => setTurnstileToken('')}
+          onExpire={() => setTurnstileToken('')}
+          options={{
+            theme: 'light',
+            language: 'es'
+          }}
+        />
+      </div>
+
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="w-full btn-primary-glow flex justify-center items-center py-4 text-lg"
+        className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#008CBA] hover:from-[var(--color-caribbean-dark)] hover:to-[var(--color-caribbean-blue)] text-white shadow-lg shadow-[#008CBA]/30 hover:shadow-xl hover:shadow-[#008CBA]/40 transition-all duration-300 rounded-xl font-bold flex justify-center items-center py-4 text-lg hover:-translate-y-1"
       >
         {status === 'loading' ? (
           <span className="flex items-center gap-2">
             <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            Enviando...
+            Procesando...
           </span>
         ) : (
           'Solicitar Asesoría'

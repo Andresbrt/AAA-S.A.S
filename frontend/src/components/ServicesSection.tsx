@@ -2,31 +2,33 @@
 import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
 
+import { PiMapTrifoldLight, PiScalesLight, PiHouseLineLight, PiChartLineUpLight } from 'react-icons/pi';
+
 export default function ServicesSection() {
   const services = [
     {
       title: 'Estructuración & urbanismo',
       description: 'Selección y desarrollo de tierras con estudios topográficos, red vial afirmada, tendido eléctrico certificado y redes de agua potable garantizadas.',
       badge: '✓ Obras garantizadas',
-      icon: '🏛️'
+      icon: <PiMapTrifoldLight size={28} className="text-blue-600" />
     },
     {
       title: 'Seguridad Jurídica',
       description: 'Bufete jurídico interno propio. Gestionamos desenglobes, saneamiento catastral, paz y salvos y escrituración pública individual inmediata ante notaría.',
       badge: '✓ 100% blindado',
-      icon: '⚖️'
+      icon: <PiScalesLight size={28} className="text-blue-600" />
     },
     {
       title: 'Construcción Bioclimática',
       description: 'Arquitectura adaptada a la brisa marina caribeña. Ofrecemos modelos de casas campestres llave en mano en madera teca y concreto a la vista.',
       badge: '✓ Llave en mano',
-      icon: '📐'
+      icon: <PiHouseLineLight size={28} className="text-blue-600" />
     },
     {
       title: 'Gerencia Inmobiliaria',
       description: 'Asesoramos a inversionistas y fondos familiares en la selección de activos con la mayor tasa interna de retorno (TIR) y plusvalía en el litoral cordobés.',
       badge: '✓ +22% anual',
-      icon: '📈'
+      icon: <PiChartLineUpLight size={28} className="text-blue-600" />
     }
   ];
 

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MessageCircle, FileText } from 'lucide-react';
+import { PiWhatsappLogoLight, PiFileTextLight } from 'react-icons/pi';
 
 export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?: string }) {
   // Datos simulados (En producción, esto vendría del Backend: LotRepository)
@@ -123,12 +123,11 @@ export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?:
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-8 md:mb-12">
-          <span className="w-full text-center md:w-auto text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider mb-2 md:mb-0">Filtros:</span>
-          <button onClick={() => setFilter('Todos los Lotes')} className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${filter === 'Todos los Lotes' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-md' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}>Ver Todo</button>
-          <button onClick={() => setFilter('Frente a Playa')} className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${filter === 'Frente a Playa' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-md' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}>🌊 Frente a Playa</button>
-          <button onClick={() => setFilter('Junto al Club')} className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${filter === 'Junto al Club' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-md' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}>🏊‍♂️ Club Social</button>
-          <button onClick={() => setFilter('Lotes XL')} className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${filter === 'Lotes XL' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-md' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800'}`}>🌴 Lotes XL</button>
+        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 mb-10 md:mb-14">
+          <span className="w-full text-center md:w-auto text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-0">Filtrar por:</span>
+          <button onClick={() => setFilter('Todos los Lotes')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Todos los Lotes' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(0,45,90,0.2)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Todos</button>
+          <button onClick={() => setFilter('Frente a Playa')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Frente a Playa' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(0,45,90,0.2)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Frente a Playa</button>
+          <button onClick={() => setFilter('Lotes XL')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Lotes XL' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(0,45,90,0.2)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Lotes XL</button>
         </div>
 
         {/* Main Interface */}
@@ -143,33 +142,38 @@ export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?:
             </div>
 
             {/* Dynamic Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto max-h-[550px] pr-2 pb-4 custom-scrollbar">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-y-auto max-h-[600px] pr-2 pb-4 custom-scrollbar">
               {filteredLots.map((lot) => (
                 <button 
                   key={lot.id} 
                   onClick={() => lot.status === 'DISPONIBLE' && setSelectedLot(lot)}
-                  className={`relative p-4 rounded-2xl border text-center transition-all duration-300 bg-white flex flex-col items-center justify-center min-h-[140px] shadow-sm
-                    ${selectedLot.id === lot.id ? 'border-[var(--color-caribbean-blue)] bg-blue-50/50 shadow-[0_0_15px_rgba(0,163,224,0.2)] scale-[1.02] z-10' : 'border-gray-200'}
-                    ${lot.status === 'VENDIDO' ? 'opacity-50 cursor-not-allowed bg-gray-100' : 'hover:border-[var(--color-caribbean-blue)] cursor-pointer hover:shadow-md'}
+                  className={`relative p-5 rounded-2xl border transition-all duration-500 flex flex-col items-center justify-center min-h-[160px]
+                    ${selectedLot.id === lot.id 
+                      ? 'border-[var(--color-gold-accent)] bg-white shadow-[0_10px_30px_rgba(212,175,55,0.15)] scale-[1.02] z-10' 
+                      : 'border-gray-200/60 bg-white/40 hover:bg-white'}
+                    ${lot.status === 'VENDIDO' 
+                      ? 'opacity-40 cursor-not-allowed filter grayscale bg-gray-50 border-gray-100' 
+                      : 'hover:border-[var(--color-caribbean-blue)]/50 cursor-pointer hover:shadow-lg'}
                   `}
                 >
-                  <p className={`text-[10px] sm:text-[11px] font-bold mb-2 uppercase tracking-widest ${lot.status === 'VENDIDO' ? 'text-gray-400' : 'text-blue-500'}`}>{lot.type}</p>
-                  <p className="font-bold text-[var(--color-caribbean-dark)] text-base sm:text-xl font-serif tracking-widest mb-1">LOTE {lot.number}</p>
-                  <p className="text-gray-400 text-xs sm:text-sm mb-3 font-light">{lot.area} m²</p>
+                  <p className={`text-[9px] sm:text-[10px] font-bold mb-3 uppercase tracking-widest ${lot.status === 'VENDIDO' ? 'text-gray-400' : 'text-[var(--color-caribbean-blue)]'}`}>{lot.type}</p>
+                  <p className="font-bold text-[var(--color-caribbean-dark)] text-lg sm:text-2xl font-serif mb-1">Lote {lot.number}</p>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-4 font-light tracking-wide">{lot.area} m²</p>
+                  
                   {lot.status === 'DISPONIBLE' ? (
                     <>
-                      <p className="font-bold text-[var(--color-caribbean-dark)] mb-2 text-xs sm:text-sm tracking-wider">{formatPrice(lot.price)}</p>
-                      <span className="flex items-center justify-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-emerald-600 tracking-widest uppercase bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> 
+                      <p className="font-bold text-[var(--color-caribbean-dark)] mb-3 text-sm tracking-wider">{formatPrice(lot.price)}</p>
+                      <span className="flex items-center justify-center gap-1.5 text-[8px] sm:text-[9px] font-bold text-emerald-700 tracking-[0.2em] uppercase bg-emerald-50/80 px-3 py-1.5 rounded-full border border-emerald-100/50">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> 
                         DISPONIBLE
                       </span>
                     </>
                   ) : (
                     <>
-                      <p className="font-bold text-gray-400 mb-2 text-xs sm:text-sm line-through">VENDIDO</p>
-                      <span className="flex items-center justify-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-gray-500 tracking-widest uppercase bg-gray-100 px-2 py-1 rounded-full border border-gray-200">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div> 
-                        NO DISPONIBLE
+                      <p className="font-bold text-gray-400 mb-3 text-sm line-through tracking-wider">VENDIDO</p>
+                      <span className="flex items-center justify-center gap-1.5 text-[8px] sm:text-[9px] font-bold text-gray-500 tracking-[0.2em] uppercase bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span> 
+                        VENDIDO
                       </span>
                     </>
                   )}
@@ -237,19 +241,20 @@ export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?:
               </div>
 
               {/* Pricing Box */}
-              <div className="bg-gray-50 rounded-2xl p-7 mb-8 text-[var(--color-caribbean-dark)] shadow-sm relative overflow-hidden border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 mb-10 text-[var(--color-caribbean-dark)] shadow-[0_10px_40px_rgba(0,0,0,0.03)] relative overflow-hidden border border-[var(--color-gold-accent)]/20">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-gold-accent)]/5 rounded-full blur-2xl"></div>
                 
-                <div className="flex justify-between items-end mb-5 pb-5 border-b border-gray-200 relative z-10">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Inversión Total</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-[var(--color-caribbean-blue)] tracking-tight">${selectedLot.price.toLocaleString()} COP</span>
+                <div className="flex flex-col mb-6 pb-6 border-b border-gray-100 relative z-10">
+                  <span className="text-[9px] text-gray-400 uppercase tracking-[0.2em] font-bold mb-2">Inversión Total</span>
+                  <span className="text-3xl sm:text-4xl font-serif text-[var(--color-caribbean-dark)] tracking-tight">${selectedLot.price.toLocaleString()} <span className="text-lg font-sans text-gray-400 font-light">COP</span></span>
                 </div>
                 <div className="flex justify-between items-center relative z-10">
                   <div>
-                    <span className="block text-[10px] text-gray-500 mb-1 tracking-widest uppercase font-bold">Cuota Inicial</span>
-                    <span className="font-bold text-[var(--color-caribbean-dark)] text-lg tracking-wide">$10.000.000 COP</span>
+                    <span className="block text-[9px] text-gray-400 mb-1 tracking-[0.2em] uppercase font-bold">Cuota Inicial Sugerida</span>
+                    <span className="font-bold text-[var(--color-caribbean-blue)] text-lg tracking-wide">$10.000.000 COP</span>
                   </div>
                   <div className="text-right">
-                    <span className="bg-white px-3 py-1.5 rounded-lg text-[10px] font-bold text-[var(--color-caribbean-dark)] border border-gray-200 tracking-widest uppercase shadow-sm">0% Interés</span>
+                    <span className="bg-[var(--color-caribbean-dark)] px-4 py-2 rounded-full text-[9px] font-bold text-white tracking-widest uppercase shadow-md">0% Interés</span>
                   </div>
                 </div>
               </div>
@@ -260,13 +265,13 @@ export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?:
                   onClick={handleWhatsApp}
                   className="w-full bg-[var(--color-caribbean-blue)] hover:bg-[#008CBA] text-white font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 md:gap-3 transition-all shadow-[0_10px_20px_rgba(0,163,224,0.2)] hover:-translate-y-0.5 tracking-wider text-xs md:text-sm uppercase"
                 >
-                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+                  <PiWhatsappLogoLight className="w-4 h-4 md:w-5 md:h-5" />
                   APARTAR LOTE AHORA
                 </button>
-                <Link href="#contacto" className="w-full bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[var(--color-caribbean-dark)] font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 md:gap-3 transition-all tracking-wider text-xs md:text-sm uppercase">
-                  <FileText className="w-4 h-4 md:w-5 md:h-5" />
-                  DESCARGAR BROCHURE PDF
-                </Link>
+                <a href="https://api.whatsapp.com/send/?phone=573122384172&text=Hola!%20Estoy%20interesado%20en%20el%20proyecto%20Corales%20del%20Viento.%20%C2%BFMe%20podr%C3%ADas%20compartir%20el%20plano%20en%20PDF%20con%20los%20precios%20y%20lotes%20disponibles?&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="w-full bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[var(--color-caribbean-dark)] font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 md:gap-3 transition-all tracking-wider text-xs md:text-sm uppercase">
+                  <PiFileTextLight className="w-4 h-4 md:w-5 md:h-5" />
+                  SOLICITAR PLANO Y PRECIOS
+                </a>
               </div>
 
             </div>

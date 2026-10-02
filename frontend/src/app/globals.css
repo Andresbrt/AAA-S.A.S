@@ -3,9 +3,10 @@
 @theme {
   --color-caribbean-dark: #002D5A;
   --color-caribbean-blue: #005B9F;
-  --color-caribbean-light: #E0F2FE;
   --color-sand-light: #F9F8F6;
   --color-gold-accent: #D4AF37;
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
+  --font-serif: var(--font-montserrat), system-ui, sans-serif;
 }
 
 @layer base {
@@ -16,14 +17,14 @@
   
   html, body {
     @apply bg-[var(--background)] text-[var(--foreground)] antialiased scroll-smooth;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-sans);
   }
 }
 
 @layer components {
   /* Glassmorphism base */
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,45,90,0.1)] rounded-2xl;
+    @apply bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,45,90,0.05)] rounded-3xl;
   }
   
   .glass-card {
