@@ -2,11 +2,26 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PiWhatsappLogoLight, PiFileTextLight } from 'react-icons/pi';
+import { PiWhatsappLogoLight, PiFileTextLight, PiMapPinLight } from 'react-icons/pi';
 
-export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?: string }) {
-  // Datos simulados (En producción, esto vendría del Backend: LotRepository)
-  const lots = [
+export default function InteractiveMasterPlan({ projectSlug, companyPhone, properties }: { projectSlug?: string, companyPhone?: string, properties?: any[] }) {
+  // Map API properties to the expected format. Use floorOrTower as the "type" category (e.g. 150m Playa)
+  // and type (LOTE/CASA) as tag if needed.
+  const apiLots = properties?.map((p, index) => ({
+    id: p.id,
+    number: p.name?.replace(/\D/g, '') || String(index + 1).padStart(2, '0'),
+    name: p.projectName || 'Proyecto',
+    area: p.privateArea || p.builtArea || 0,
+    price: p.price || 0,
+    status: p.status || 'DISPONIBLE',
+    type: p.floorOrTower || (p.type === 'LOTE' ? 'Lote' : p.type),
+    dimensions: 'Según Plano',
+    distance: p.floorOrTower || '150 - 300 metros',
+    tag: p.type === 'LOTE' ? 'Condominio Campestre' : p.type,
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+  })) || [];
+
+  const baseLots = [
   { id: 'lote-1', number: '01', name: 'Corales del Viento', area: 167.51, price: 0, status: 'VENDIDO', type: 'Vendido', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
   { id: 'lote-2', number: '02', name: 'Corales del Viento', area: 151.65, price: 0, status: 'VENDIDO', type: 'Vendido', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
   { id: 'lote-3', number: '03', name: 'Corales del Viento', area: 196.27, price: 51030200, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
@@ -73,18 +88,65 @@ export default function InteractiveMasterPlan({ companyPhone }: { companyPhone?:
   { id: 'lote-64', number: '64', name: 'Corales del Viento', area: 259.70, price: 0, status: 'VENDIDO', type: 'Vendido', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
   { id: 'lote-65', number: '65', name: 'Corales del Viento', area: 504.34, price: 0, status: 'VENDIDO', type: 'Vendido', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
   { id: 'lote-66', number: '66', name: 'Corales del Viento', area: 432.19, price: 112369400, status: 'DISPONIBLE', type: 'Reserva Natural', dimensions: 'Según Plano', distance: '150 - 300 metros', tag: 'Condominio Campestre', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop' },
-];
+  ];
+
+  let mergedLots = [];
+
+  // Si es Corales del Viento, hacemos el merge con el código base para proteger los datos históricos
+  if (projectSlug === 'corales-del-viento' || projectSlug === 'corales-del-viento-preview') {
+    mergedLots = [...baseLots];
+    apiLots.forEach(apiLot => {
+      // Buscamos si existe un lote base con el mismo número o nombre, ignorando ceros
+      const existingIndex = mergedLots.findIndex(l => {
+        const baseNum = l.number.replace(/\D/g, '');
+        const apiNum = apiLot.number.replace(/\D/g, '');
+        return parseInt(baseNum || '0') === parseInt(apiNum || '-1');
+      });
+      
+      if (existingIndex >= 0) {
+        mergedLots[existingIndex] = { ...mergedLots[existingIndex], ...apiLot };
+      } else {
+        mergedLots.push(apiLot);
+      }
+    });
+  } else {
+    // Si es un proyecto nuevo (ej. Cordillera de los Andes), solo usamos la Base de Datos real
+    mergedLots = [...apiLots];
+  }
+
+  const lots = mergedLots;
 
 
-  const [selectedLot, setSelectedLot] = useState(lots.find(l => l.status === 'DISPONIBLE') || lots[0]);
+  const [selectedLot, setSelectedLot] = useState(lots.find(l => l.status === 'DISPONIBLE') || lots[0] || null);
   const [filter, setFilter] = useState('Todos los Lotes');
+
+  // Si no hay lotes, mostramos un mensaje amigable
+  if (lots.length === 0) {
+    return (
+      <section className="py-24 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-medium mb-6">
+            <PiMapPinLight className="text-xl" />
+            <span>Master Plan</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-[var(--color-caribbean-dark)] mb-6">
+            Lotes y Disponibilidad
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto mb-12">
+            El inventario de este proyecto se está actualizando. Pronto podrás ver el master plan interactivo.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   const filteredLots = lots.filter(lot => {
     if (filter === 'Todos los Lotes') return true;
     if (filter === 'Frente a Playa') return lot.type === '150m Playa';
-    if (filter === 'Junto al Club') return lot.type === 'Junto al Club';
     if (filter === 'Lotes XL') return lot.type === 'Lotes XL' || lot.type === 'Reserva Natural';
-    return true;
+    
+    // Dynamic fallback for custom types introduced from DB
+    return lot.type?.toLowerCase().includes(filter.toLowerCase()) || lot.distance?.toLowerCase().includes(filter.toLowerCase());
   }).sort((a, b) => {
     // Primero ordenar por Disponibilidad (Disponibles arriba, Vendidos abajo)
     if (a.status === 'DISPONIBLE' && b.status === 'VENDIDO') return -1;

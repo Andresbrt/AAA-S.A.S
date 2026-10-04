@@ -1,22 +1,38 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getAdminLeads } from "@/lib/api";
-import { Loader2, Search, Filter, Users, Mail, Phone, Calendar, ArrowRight } from "lucide-react";
+import { getAdminLeads, updateLeadStatus } from "@/lib/api";
+import { Loader2, Search, Filter, Users, Mail, Phone, Calendar, ArrowRight, CheckCircle } from "lucide-react";
 
 export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchLeads = () => {
     const token = localStorage.getItem("admin_token");
     if (!token) return;
-
     getAdminLeads(token)
       .then((data) => {
         if (data && data.content) setLeads(data.content);
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchLeads();
   }, []);
+
+  const handleAttend = async (id: string, currentStatus: string) => {
+    if (currentStatus !== 'NEW') return;
+    const token = localStorage.getItem("admin_token");
+    if (!token) return;
+    
+    try {
+      await updateLeadStatus(token, id, 'CONTACTED');
+      fetchLeads(); // Refresh table
+    } catch (err) {
+      alert("Error al actualizar estado");
+    }
+  };
 
   if (loading) {
     return (
@@ -124,10 +140,17 @@ export default function AdminLeadsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex items-center font-medium text-sm">
-                        Atender
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </button>
+                      {lead.status === 'NEW' ? (
+                        <button onClick={() => handleAttend(lead.id, lead.status)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex items-center font-medium text-sm">
+                          Atender
+                          <ArrowRight className="w-4 h-4 ml-1" />
+                        </button>
+                      ) : (
+                        <span className="text-emerald-600 inline-flex items-center font-medium text-sm">
+                          Atendido
+                          <CheckCircle className="w-4 h-4 ml-1" />
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

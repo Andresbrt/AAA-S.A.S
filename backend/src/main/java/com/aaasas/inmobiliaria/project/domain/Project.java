@@ -61,6 +61,9 @@ public class Project extends AuditableEntity {
     @Column(precision = 11, scale = 8)
     private BigDecimal longitude;
 
+    @Column(name = "map_url", columnDefinition = "TEXT")
+    private String mapUrl;
+
     @Column(name = "is_featured", nullable = false)
     @Builder.Default
     private boolean featured = false;
@@ -104,4 +107,11 @@ public class Project extends AuditableEntity {
     @org.hibernate.envers.NotAudited
     @Builder.Default
     private List<String> tags = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entity_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @org.hibernate.annotations.Where(clause = "entity_type = 'PROJECT'")
+    @org.hibernate.envers.NotAudited
+    @Builder.Default
+    private List<com.aaasas.inmobiliaria.media.domain.MediaFile> mediaFiles = new ArrayList<>();
 }

@@ -10,6 +10,7 @@ public record ProjectSummaryResponse(
     String status, BigDecimal minPrice, BigDecimal maxPrice,
     String cityName, String departmentName,
     boolean featured, String metaTitle,
-    LocalDate estimatedDelivery, String mainImageUrl,
+    LocalDate estimatedDelivery, String mapUrl, String mainImageUrl,
+    String bannerImageUrl, String logoUrl, List<String> galleryUrls,
     List<String> tags
 ) {}

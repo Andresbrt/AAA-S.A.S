@@ -1,18 +1,22 @@
+// Forzar HMR para limpiar caché 2
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProjectBySlug } from '@/lib/api';
+import { getProjectBySlug, getProperties } from '@/lib/api';
 import Image from 'next/image';
 import PublicFooter from '@/components/PublicFooter';
-import Navigation from '@/components/Navigation';
+import PublicNavbar from '@/components/PublicNavbar';
+import InteractiveMasterPlan from '@/components/InteractiveMasterPlan';
+import ProjectGallery from '@/components/ProjectGallery';
 import { PiMapPinLight, PiRulerLight, PiSwimmingPoolLight, PiWhatsappLogoLight } from 'react-icons/pi';
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // SEO Metadata dinámico
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const project = await getProjectBySlug(params.slug);
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: 'Proyecto No Encontrado | Grupo AAA' };
 
   return {
@@ -27,39 +31,65 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
-  const project = await getProjectBySlug(params.slug);
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();
   }
 
+  let properties = [];
+  try {
+    const propsData = await getProperties(project.id);
+    if (propsData && propsData.content) {
+      properties = propsData.content;
+    }
+  } catch (err) {
+    console.error("Error fetching properties", err);
+  }
+
   const phone = '573122384172';
   const whatsappUrl = `https://wa.me/${phone}?text=Hola!%20Estoy%20interesado%20en%20el%20proyecto%20${encodeURIComponent(project.name)}.%20¿Me%20podrían%20dar%20más%20información?`;
 
+  let finalMapUrl = project.mapUrl;
+  if (finalMapUrl && finalMapUrl.includes('<iframe') && finalMapUrl.includes('src="')) {
+    const match = finalMapUrl.match(/src="([^"]+)"/);
+    if (match) finalMapUrl = match[1];
+  }
+
   return (
     <main className="min-h-screen flex flex-col bg-[var(--background)]">
-      <Navigation />
+      <PublicNavbar variant={project.logoUrl ? 'transparent-light' : 'transparent-dark'} />
       
       {/* Hero Section */}
-      <section className="relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center">
+      <section className={`relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center ${project.logoUrl ? 'bg-[#F9F8F6]' : 'bg-black'}`}>
         <Image 
-          src={project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
+          src={project.logoUrl || project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
           alt={project.name}
           fill
-          className="object-cover"
+          className={project.logoUrl ? "object-contain p-10 md:p-24 drop-shadow-xl" : "object-cover"}
           priority
         />
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent"></div>
+        {!project.logoUrl && (
+          <>
+            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent"></div>
+          </>
+        )}
         
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
-          <span className="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-white text-xs font-bold uppercase tracking-widest mb-6 border border-white/30">
-            {project.statusName || 'PREVENTA'}
+          <span className={`inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] border-[var(--color-caribbean-dark)]/20' : 'bg-white/20 text-white border-white/30'}`}>
+            {project.status?.replace('_', ' ') || 'PREVENTA'}
           </span>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-            {project.name}
-          </h1>
-          <div className="flex items-center justify-center gap-2 text-white/90 text-lg mb-8 font-light">
+          {!project.logoUrl ? (
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight flex justify-center">
+              {project.name}
+            </h1>
+          ) : (
+            <h1 className="sr-only">{project.name}</h1>
+          )}
+          
+          <div className={`flex items-center justify-center gap-2 text-lg mb-8 font-light ${(project.slug === 'andres' || (project.name && project.name.toLowerCase().includes('corales'))) ? 'text-[var(--color-caribbean-dark)]/80 mt-[40vh]' : 'text-white/90'}`}>
             <PiMapPinLight className="w-5 h-5" />
             {project.address || 'Ubicación Premium, Colombia'}
           </div>
@@ -80,6 +110,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   <p>{project.longDescription || project.shortDescription || 'Sin descripción disponible.'}</p>
                 </div>
                 
+                {/* Carrusel de Galería Minimalista */}
+                <div className="mb-12">
+                  <ProjectGallery images={project.galleryUrls} />
+                </div>
+                
                 <h3 className="text-xl font-bold text-[var(--color-caribbean-dark)] mb-6">Amenidades Exclusivas</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {/* Mock Amenities if none exist */}
@@ -96,6 +131,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     <span className="text-sm font-bold text-gray-700">Vías Pavimentadas</span>
                   </div>
                 </div>
+
               </div>
 
               {/* Right Col: Pricing & CTA */}
@@ -122,6 +158,40 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {/* Ubicación Google Maps - Apartado Dedicado */}
+      {finalMapUrl && (
+        <section className="py-16 md:py-24 bg-white relative border-t border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-medium mb-6">
+                <PiMapPinLight className="text-xl" />
+                <span>Ubicación</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-[var(--color-caribbean-dark)] mb-6">
+                Conoce el Entorno
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+                Explora el mapa interactivo y descubre las vías de acceso, puntos de interés y la ubicación exacta de {project.name}.
+              </p>
+            </div>
+            <div className="w-full h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/5 border border-white">
+              <iframe 
+                src={finalMapUrl} 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Interactive Master Plan */}
+      <InteractiveMasterPlan projectSlug={project.slug} properties={properties} />
 
       <PublicFooter />
     </main>

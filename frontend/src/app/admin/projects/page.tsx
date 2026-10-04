@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getAdminProjects, createProject, updateProject } from "@/lib/api";
+import { getAdminProjects, createProject, updateProject, uploadMedia } from "@/lib/api";
 import { Loader2, Plus, Building2, MapPin, Edit3, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/admin/Modal";
@@ -10,9 +10,13 @@ export default function AdminProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', address: '', status: 'PREVENTA', shortDescription: '' });
+  const [formData, setFormData] = useState({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [mainImageFile, setMainImageFile] = useState<File | null>(null);
+  const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
+  const [logoImageFile, setLogoImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
 
   const fetchProjects = async (token: string) => {
     try {
@@ -43,14 +47,37 @@ export default function AdminProjectsPage() {
     if (!token) return;
     setIsSubmitting(true);
     try {
+      let projectResponse;
       if (editingId) {
-        await updateProject(token, editingId, formData);
+        projectResponse = await updateProject(token, editingId, formData);
       } else {
-        await createProject(token, formData);
+        projectResponse = await createProject(token, formData);
       }
+
+      if (projectResponse?.id) {
+        if (mainImageFile) {
+          await uploadMedia(token, mainImageFile, 'MAIN_IMAGE', 'PROJECT', projectResponse.id);
+        }
+        if (bannerImageFile) {
+          await uploadMedia(token, bannerImageFile, 'BANNER_IMAGE', 'PROJECT', projectResponse.id);
+        }
+        if (logoImageFile) {
+          await uploadMedia(token, logoImageFile, 'LOGO', 'PROJECT', projectResponse.id);
+        }
+        if (galleryFiles && galleryFiles.length > 0) {
+          for (let i = 0; i < galleryFiles.length; i++) {
+             await uploadMedia(token, galleryFiles[i], 'GALLERY_IMAGE', 'PROJECT', projectResponse.id);
+          }
+        }
+      }
+
       setIsModalOpen(false);
-      setFormData({ name: '', address: '', status: 'PREVENTA', shortDescription: '' });
+      setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
       setEditingId(null);
+      setMainImageFile(null);
+      setBannerImageFile(null);
+      setLogoImageFile(null);
+      setGalleryFiles(null);
       await fetchProjects(token);
     } catch (err) {
       alert("Error al guardar el proyecto. Revisa los datos.");
@@ -62,17 +89,28 @@ export default function AdminProjectsPage() {
   const handleEditClick = (project: any) => {
     setFormData({
       name: project.name || '',
-      address: project.locationName || '',
-      status: project.statusName || 'PREVENTA',
-      shortDescription: project.description || ''
+      address: project.address || project.locationName || '',
+      mapUrl: project.mapUrl || '',
+      status: project.status || 'EN_PLANOS',
+      shortDescription: project.description || project.shortDescription || '',
+      featured: project.featured || false,
+      published: project.published !== false // default to true if undefined
     });
     setEditingId(project.id);
+    setMainImageFile(null);
+    setBannerImageFile(null);
+    setLogoImageFile(null);
+    setGalleryFiles(null);
     setIsModalOpen(true);
   };
 
   const openCreateModal = () => {
-    setFormData({ name: '', address: '', status: 'PREVENTA', shortDescription: '' });
+    setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
     setEditingId(null);
+    setMainImageFile(null);
+    setBannerImageFile(null);
+    setLogoImageFile(null);
+    setGalleryFiles(null);
     setIsModalOpen(true);
   };
 
@@ -161,11 +199,11 @@ export default function AdminProjectsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        project.statusName === 'EN_VENTA' 
-                          ? 'bg-emerald-100 text-emerald-700' 
-                          : 'bg-amber-100 text-amber-700'
+                        project.status === 'EN_PLANOS' || project.status === 'EN_CONSTRUCCION'
+                          ? 'bg-amber-100 text-amber-700' 
+                          : 'bg-emerald-100 text-emerald-700'
                       }`}>
-                        {project.statusName === 'EN_VENTA' ? 'En Venta' : project.statusName}
+                        {project.status?.replace('_', ' ') || 'Desconocido'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -206,17 +244,76 @@ export default function AdminProjectsPage() {
               <input type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej. San Bernardo, Córdoba" />
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Google Maps Embed URL</label>
+              <input 
+                type="text" 
+                value={formData.mapUrl} 
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (val.includes('<iframe') && val.includes('src="')) {
+                    const match = val.match(/src="([^"]+)"/);
+                    if (match) val = match[1];
+                  }
+                  setFormData({...formData, mapUrl: val});
+                }} 
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                placeholder="Pega el link o el código <iframe> completo..." 
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
               <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="EN_VENTA">En Venta</option>
-                <option value="PREVENTA">Preventa</option>
-                <option value="CONSTRUIDO">Construido</option>
+                <option value="BORRADOR">Borrador</option>
+                <option value="EN_PLANOS">En Planos</option>
+                <option value="EN_CONSTRUCCION">En Construcción</option>
+                <option value="ENTREGADO">Entregado</option>
+                <option value="VENDIDO">Vendido</option>
               </select>
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Descripción Corta</label>
             <textarea value={formData.shortDescription} onChange={(e) => setFormData({...formData, shortDescription: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={3} placeholder="Breve descripción para las tarjetas..."></textarea>
+          </div>
+          <div className="flex gap-6 mt-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={formData.published} onChange={(e) => setFormData({...formData, published: e.target.checked})} className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300" />
+              <span className="text-sm font-medium text-gray-700">Público (Visible en la web)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={formData.featured} onChange={(e) => setFormData({...formData, featured: e.target.checked})} className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300" />
+              <span className="text-sm font-medium text-gray-700">Destacado (Página principal)</span>
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Foto Principal (Tarjeta)</label>
+              <input 
+                type="file" accept="image/*" onChange={(e) => setMainImageFile(e.target.files?.[0] || null)} 
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Banner (Fondo del Proyecto)</label>
+              <input 
+                type="file" accept="image/*" onChange={(e) => setBannerImageFile(e.target.files?.[0] || null)} 
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Logo del Proyecto (Opcional)</label>
+              <input 
+                type="file" accept="image/png, image/svg+xml" onChange={(e) => setLogoImageFile(e.target.files?.[0] || null)} 
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Galería (Múltiples fotos)</label>
+              <input 
+                type="file" accept="image/*" multiple onChange={(e) => setGalleryFiles(e.target.files)} 
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
             <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">

@@ -5,8 +5,8 @@
   --color-caribbean-blue: #005B9F;
   --color-sand-light: #F9F8F6;
   --color-gold-accent: #D4AF37;
-  --font-sans: var(--font-montserrat), system-ui, sans-serif;
-  --font-serif: var(--font-montserrat), system-ui, sans-serif;
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
 }
 
 @layer base {

@@ -5,6 +5,12 @@ spring:
   application:
     name: inmobiliaria-api
 
+  # ── Secretos locales ────────────────────────────────────────
+  # Carga backend/.env (ignorado por git). En producción se usan
+  # variables de entorno reales; si el archivo no existe, se omite.
+  config:
+    import: optional:file:.env[.properties]
+
   # ── Mail Configuration (SMTP) ───────────────────────────────
   mail:
     host: ${SMTP_HOST:localhost}
@@ -20,9 +26,9 @@ spring:
 
   # ── Supabase Database ───────────────────────────────────────
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:5432/postgres?prepareThreshold=0}
-    username: ${DATABASE_USERNAME:postgres.xvderakdvfvmnuczamla}
-    password: ${DATABASE_PASSWORD:***REMOVED***}
+    url: ${DATABASE_URL:}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
     driver-class-name: org.postgresql.Driver
     hikari:
       max-lifetime: 600000
@@ -110,8 +116,8 @@ management:
 # ═══════════════════════════════════════════════════════════════
 app:
   jwt:
-    secret: ${JWT_SECRET:default-dev-secret-that-must-be-changed-in-production-at-least-256-bits}
-    access-token-expiration-ms: 900000       # 15 min
+    secret: ${JWT_SECRET}
+    access-token-expiration-ms: 86400000       # 24 hours
     refresh-token-expiration-ms: 604800000   # 7 days
 
   cors:
@@ -122,14 +128,14 @@ app:
 
   # ── Supabase Storage ─────────────────────────────────────────
   supabase:
-    url: ${SUPABASE_URL:https://xvderakdvfvmnuczamla.supabase.co}
-    key: ${SUPABASE_KEY:***REMOVED***}
+    url: ${SUPABASE_URL:}
+    key: ${SUPABASE_KEY:}
     bucket: ${SUPABASE_BUCKET:media}
 
   admin:
-    email: ${ADMIN_EMAIL:andresbermu211@gmail.com}
-    password: ${ADMIN_PASSWORD:***REMOVED***}
-    name: ${ADMIN_NAME:Andres Bermudez}
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+    name: ${ADMIN_NAME:Super Admin}
 
   rate-limit:
     login:

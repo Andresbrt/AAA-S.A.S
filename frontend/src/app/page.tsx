@@ -10,8 +10,8 @@ import ServicesSection from '@/components/ServicesSection';
 import AboutUsSection from '@/components/AboutUsSection';
 import LocationSection from '@/components/LocationSection';
 import FAQSection from '@/components/FAQSection';
-import InteractiveMasterPlan from '@/components/InteractiveMasterPlan';
 import Link from 'next/link';
+import SocialPopup from '@/components/SocialPopup';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -77,9 +77,6 @@ export default function HomePage() {
 
         {/* 1. PORTAFOLIO DE PROYECTOS */}
         <ProjectsPortfolio projects={featuredProjects} />
-
-        {/* 1.5 PLANO INTERACTIVO DE LOTES */}
-        <InteractiveMasterPlan companyPhone={company?.whatsappNumber} />
 
         {/* 2. SERVICIOS INMOBILIARIOS */}
         <ServicesSection />
@@ -153,6 +150,7 @@ export default function HomePage() {
           message={company?.whatsappMessage || "Hola, me interesa conocer más sobre el Portafolio de Proyectos de Grupo AAA."}
         />
       )}
+      <SocialPopup />
     </>
   );
 }

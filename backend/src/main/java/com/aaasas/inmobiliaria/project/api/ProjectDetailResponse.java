@@ -10,10 +10,12 @@ public record ProjectDetailResponse(
     String shortDescription, String longDescription,
     String status, BigDecimal minPrice, BigDecimal maxPrice,
     LocalDate estimatedDelivery, String address,
-    BigDecimal latitude, BigDecimal longitude,
+    BigDecimal latitude, BigDecimal longitude, String mapUrl,
     boolean featured, boolean published,
     String metaTitle, String metaDescription,
     String cityName, String departmentName,
+    String mainImageUrl, String bannerImageUrl, String logoUrl, String brochureUrl,
+    List<String> galleryUrls,
     List<AmenityResponse> amenities,
     List<String> tags
 ) {}

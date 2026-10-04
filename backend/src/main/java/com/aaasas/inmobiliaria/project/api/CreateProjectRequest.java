@@ -22,10 +22,13 @@ public record CreateProjectRequest(
     @Size(max = 500) String address,
     BigDecimal latitude,
     BigDecimal longitude,
+    String mapUrl,
     UUID cityId,
     UUID neighborhoodId,
     @Size(max = 200) String metaTitle,
     @Size(max = 500) String metaDescription,
     List<UUID> amenityIds,
-    List<String> tags
+    List<String> tags,
+    Boolean featured,
+    Boolean published
 ) {}

@@ -134,9 +134,12 @@ public class ProjectService {
             .address(request.address())
             .latitude(request.latitude())
             .longitude(request.longitude())
+            .mapUrl(request.mapUrl())
             .metaTitle(request.metaTitle())
             .metaDescription(request.metaDescription())
             .tags(request.tags() != null ? new ArrayList<>(request.tags()) : new ArrayList<>())
+            .featured(request.featured() != null ? request.featured() : false)
+            .published(request.published() != null ? request.published() : true) // Set true by default to be immediately visible
             .build();
 
         if (request.cityId() != null) {
@@ -173,6 +176,8 @@ public class ProjectService {
         if (request.tags() != null) {
             project.setTags(new ArrayList<>(request.tags()));
         }
+        if (request.featured() != null) project.setFeatured(request.featured());
+        if (request.published() != null) project.setPublished(request.published());
         if (request.longDescription() != null) project.setLongDescription(request.longDescription());
         if (request.status() != null) project.setStatus(ProjectStatus.valueOf(request.status()));
         if (request.minPrice() != null) project.setMinPrice(request.minPrice());
@@ -181,6 +186,7 @@ public class ProjectService {
         if (request.address() != null) project.setAddress(request.address());
         if (request.latitude() != null) project.setLatitude(request.latitude());
         if (request.longitude() != null) project.setLongitude(request.longitude());
+        if (request.mapUrl() != null) project.setMapUrl(request.mapUrl());
         if (request.metaTitle() != null) project.setMetaTitle(request.metaTitle());
         if (request.metaDescription() != null) project.setMetaDescription(request.metaDescription());
 
@@ -234,13 +240,39 @@ public class ProjectService {
 
     // ── Mappers ───────────────────────────────────────────────
 
+    private String extractMediaUrl(Project p, com.aaasas.inmobiliaria.media.domain.MediaType type) {
+        if (p.getMediaFiles() == null) return null;
+        return p.getMediaFiles().stream()
+            .filter(m -> m.getMediaType() == type)
+            .findFirst()
+            .map(com.aaasas.inmobiliaria.media.domain.MediaFile::getUrl)
+            .orElse(null);
+    }
+
+    private String extractMainImage(Project p) {
+        String main = extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.MAIN_IMAGE);
+        return main != null ? main : extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.IMAGE);
+    }
+
+    private List<String> extractGalleryUrls(Project p) {
+        if (p.getMediaFiles() == null) return new ArrayList<>();
+        return p.getMediaFiles().stream()
+            .filter(m -> m.getMediaType() == com.aaasas.inmobiliaria.media.domain.MediaType.GALLERY_IMAGE)
+            .map(com.aaasas.inmobiliaria.media.domain.MediaFile::getUrl)
+            .toList();
+    }
+
     private ProjectSummaryResponse toSummary(Project p) {
         return new ProjectSummaryResponse(
             p.getId(), p.getName(), p.getSlug(), p.getShortDescription(),
             p.getStatus().name(), p.getMinPrice(), p.getMaxPrice(),
             p.getCity() != null ? p.getCity().getName() : null,
             p.getCity() != null && p.getCity().getDepartment() != null ? p.getCity().getDepartment().getName() : null,
-            p.isFeatured(), p.getMetaTitle(), p.getEstimatedDelivery(), null,
+            p.isFeatured(), p.getMetaTitle(), p.getEstimatedDelivery(), p.getMapUrl(),
+            extractMainImage(p),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BANNER_IMAGE),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.LOGO),
+            extractGalleryUrls(p),
             p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>()
         );
     }
@@ -255,11 +287,16 @@ public class ProjectService {
             p.getShortDescription(), p.getLongDescription(),
             p.getStatus().name(), p.getMinPrice(), p.getMaxPrice(),
             p.getEstimatedDelivery(), p.getAddress(),
-            p.getLatitude(), p.getLongitude(),
+            p.getLatitude(), p.getLongitude(), p.getMapUrl(),
             p.isFeatured(), p.isPublished(),
             p.getMetaTitle(), p.getMetaDescription(),
             p.getCity() != null ? p.getCity().getName() : null,
             p.getCity() != null && p.getCity().getDepartment() != null ? p.getCity().getDepartment().getName() : null,
+            extractMainImage(p),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BANNER_IMAGE),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.LOGO),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BROCHURE),
+            extractGalleryUrls(p),
             amenityDtos,
             p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>()
         );

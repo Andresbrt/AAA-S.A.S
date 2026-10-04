@@ -22,13 +22,13 @@ public class SupabaseStorageAdapter implements FileStoragePort {
 
     private static final Logger log = LoggerFactory.getLogger(SupabaseStorageAdapter.class);
 
-    @Value("${supabase.url:}")
+    @Value("${app.supabase.url:}")
     private String supabaseUrl;
 
-    @Value("${supabase.key:}")
+    @Value("${app.supabase.key:}")
     private String supabaseKey;
 
-    @Value("${supabase.bucket:media}")
+    @Value("${app.supabase.bucket:media}")
     private String bucket;
 
     private final RestTemplate restTemplate = new RestTemplate();

@@ -16,10 +16,13 @@ public record UpdateProjectRequest(
     String address,
     BigDecimal latitude,
     BigDecimal longitude,
+    String mapUrl,
     UUID cityId,
     UUID neighborhoodId,
     String metaTitle,
     String metaDescription,
     List<UUID> amenityIds,
-    List<String> tags
+    List<String> tags,
+    Boolean featured,
+    Boolean published
 ) {}

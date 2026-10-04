@@ -81,17 +81,19 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               </div>
               
               {/* Image */}
-              <div className="relative h-72 w-full overflow-hidden">
+              <div className={`relative h-72 w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : ''}`}>
                 <Image 
-                  src={project.image || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop"} 
+                  src={project.logoUrl || project.mainImageUrl || project.image || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop"} 
                   alt={project.name} 
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className={project.logoUrl ? "object-contain p-14 transition-transform duration-700 group-hover:scale-105" : "object-cover transition-transform duration-700 group-hover:scale-105"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {!project.logoUrl && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                )}
                 
                 {project.id === 1 && (
-                  <div className="absolute bottom-4 right-4 bg-white/90 text-[var(--color-caribbean-dark)] text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md border border-white flex items-center gap-2">
+                  <div className={`absolute bottom-4 right-4 text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 border-[var(--color-caribbean-dark)]/20 text-[var(--color-caribbean-dark)]' : 'bg-white/90 border-white text-[var(--color-caribbean-dark)]'}`}>
                     <PiCubeLight size={16} /> Experiencia 3D Activa
                   </div>
                 )}
@@ -99,10 +101,12 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               
               {/* Content */}
               <div className="p-8 flex flex-col flex-grow relative z-10 bg-white/20">
-                <h3 className="text-2xl font-bold text-[var(--color-caribbean-dark)] mb-3 font-serif">
-                  {project.name}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-8 font-light">
+                {!project.logoUrl && (
+                  <h3 className="text-2xl font-bold text-[var(--color-caribbean-dark)] mb-3 font-serif">
+                    {project.name}
+                  </h3>
+                )}
+                <p className={`text-sm leading-relaxed mb-8 font-light ${project.logoUrl ? 'text-gray-500 mt-2' : 'text-gray-600'}`}>
                   {project.description || project.shortDescription}
                 </p>
                 
@@ -124,24 +128,19 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 
                 {/* Action Buttons */}
                 <div className="mt-auto flex flex-col sm:flex-row gap-3">
-                  {project.id === 1 ? (
-                    <>
-                      <Link href="#mapa-interactivo" className="flex-1 text-center btn-primary-glow shadow-none text-sm">
-                        <span className="relative z-10">VER MASTER PLAN 3D</span>
-                      </Link>
-                      <Link href="#mapa-interactivo" className="flex-1 text-center btn-outline-gold text-sm">
-                        <span className="relative z-10">LOTES DISPONIBLES</span>
-                      </Link>
-                    </>
-                  ) : (
-                    <Link href="#contacto" className="w-full text-center btn-primary-glow shadow-none text-sm">
-                      <span className="relative z-10">REGISTRAR INTERÉS EN PREVENTA</span>
-                    </Link>
-                  )}
+                  <Link href={`/proyectos/${project.slug}`} className="w-full text-center btn-primary-glow shadow-none text-sm">
+                    <span className="relative z-10">Ver Detalles del Proyecto</span>
+                  </Link>
                 </div>
               </div>
             </motion.div>
           ))}
+        </div>
+        
+        <div className="mt-16 text-center">
+          <Link href="/proyectos" className="inline-block btn-outline-gold px-10 py-4">
+            Ver Portafolio Completo
+          </Link>
         </div>
       </div>
     </section>

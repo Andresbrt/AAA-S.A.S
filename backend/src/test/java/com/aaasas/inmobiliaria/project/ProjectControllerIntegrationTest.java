@@ -60,8 +60,8 @@ class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
         CreateProjectRequest request = new CreateProjectRequest(
             "Proyecto Test", "Descripción corta", "Descripción larga",
             "BORRADOR", new BigDecimal("200000000"), new BigDecimal("500000000"),
-            null, "Calle 100 #45-67", null, null, null, null,
-            "Proyecto Test | AAA S.A.S.", "Descripción SEO del proyecto test", List.of(), List.of()
+            null, "Calle 100 #45-67", null, null, null, null, null,
+            "Proyecto Test | AAA S.A.S.", "Descripción SEO del proyecto test", List.of(), List.of(), false, true
         );
 
         mockMvc.perform(post("/api/v1/admin/projects")
