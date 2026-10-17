@@ -1,7 +1,3 @@
-# ═══════════════════════════════════════════════════════════════
-# Multi-stage Dockerfile for inmobiliaria-api
-# ═══════════════════════════════════════════════════════════════
-
 # Stage 1: Build
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
@@ -15,17 +11,15 @@ RUN chmod +x mvnw
 COPY src/ src/
 RUN ./mvnw clean package -DskipTests -B
 
-# Stage 2: Runtime
-FROM eclipse-temurin:21-jre-alpine AS runtime
+# Stage 2: Runtime (usando Ubuntu JRE con glibc completo para resolver DNS de AWS/Supabase)
+FROM eclipse-temurin:21-jre-noble AS runtime
 
-# Security: run as non-root user
-RUN addgroup -g 1001 appgroup && adduser -u 1001 -G appgroup -D appuser
+RUN useradd -u 1001 -m appuser
 
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# JVM options optimized for containers
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true"
 
 USER appuser
 EXPOSE 8080
