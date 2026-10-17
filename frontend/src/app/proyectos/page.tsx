@@ -76,7 +76,7 @@ export default async function ProyectosPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
               {projects.map((project: any) => (
-                <Link href={`/proyectos/${project.slug}`} key={project.id} className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(0,45,90,0.1)] transition-all duration-500 hover:-translate-y-3 border border-gray-100">
+                <Link href={`/proyectos/${project.slug}`} key={project.id} className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(55,111,135,0.15)] transition-all duration-500 hover:-translate-y-3 border border-gray-100">
                   <div className={`relative h-[300px] w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : ''}`}>
                     <Image 
                       src={project.logoUrl || project.mainImageUrl || project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 

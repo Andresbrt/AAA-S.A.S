@@ -86,7 +86,7 @@ export default function AboutUsSection({ company }: { company: any }) {
             viewport={{ once: true, margin: "-100px" }}
             className="relative"
           >
-            <div className="relative h-[500px] w-full rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,45,90,0.2)] group" title="Fotografía arquitectónica de un condominio campestre de Grupo AAA">
+            <div className="relative h-[500px] w-full rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(55,111,135,0.2)] group" title="Fotografía arquitectónica de un condominio campestre de Grupo AAA">
               <Image 
                 src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop" 
                 alt="Condominio campestre moderno desarrollado por Grupo AAA en el Caribe Colombiano"
@@ -94,7 +94,7 @@ export default function AboutUsSection({ company }: { company: any }) {
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-1000"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#002D5A] via-[#002D5A]/40 to-transparent opacity-80 mix-blend-multiply"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#376F87] via-[#376F87]/40 to-transparent opacity-80 mix-blend-multiply"></div>
             </div>
             
             {/* Floating Quote Card */}

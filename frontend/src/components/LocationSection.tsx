@@ -76,7 +76,7 @@ export default function LocationSection() {
               </div>
               <p className="text-xs font-bold text-[var(--color-caribbean-dark)] mb-1 mt-2 text-center">Condominio Corales del Viento</p>
               <p className="text-[10px] text-gray-500 mb-2 text-center">A 150m de la orilla del mar Caribe<br/>San Bernardo del Viento, Córdoba</p>
-              <button className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#008CBA] text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 shadow-md hover:shadow-lg transition-all">
+              <button className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 shadow-md hover:shadow-lg transition-all">
                 📍 Ver Proyecto
               </button>
             </motion.div>
@@ -102,7 +102,7 @@ export default function LocationSection() {
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
             variants={scaleUp}
-            className="w-full lg:w-2/5 bg-white rounded-3xl shadow-[0_15px_50px_rgba(0,45,90,0.08)] p-6 sm:p-8 lg:p-10 border-t-4 border-t-[var(--color-caribbean-blue)] border-x border-b border-gray-100 relative -mt-10 lg:mt-0 lg:-ml-20 z-20"
+            className="w-full lg:w-2/5 bg-white rounded-3xl shadow-[0_15px_50px_rgba(55,111,135,0.08)] p-6 sm:p-8 lg:p-10 border-t-4 border-t-[var(--color-caribbean-blue)] border-x border-b border-gray-100 relative -mt-10 lg:mt-0 lg:-ml-20 z-20"
           >
             <p className="text-[var(--color-caribbean-blue)] uppercase tracking-widest text-[10px] font-bold mb-2">GEORREFERENCIACIÓN EXACTA</p>
             <h3 className="text-lg md:text-xl font-bold text-[var(--color-caribbean-dark)] mb-2">Condominio Corales del Viento</h3>

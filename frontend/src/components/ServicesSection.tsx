@@ -84,7 +84,7 @@ export default function ServicesSection() {
               key={idx} 
               title={`Servicio: ${service.title}`}
               aria-label={`Información sobre ${service.title}`}
-              className="group bg-white/80 backdrop-blur-lg rounded-2xl p-6 lg:p-8 shadow-[0_4px_25px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:shadow-[0_15px_45px_rgba(0,45,90,0.1)] transition-all duration-300 hover:-translate-y-2 relative overflow-hidden"
+              className="group bg-white/80 backdrop-blur-lg rounded-2xl p-6 lg:p-8 shadow-[0_4px_25px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col h-full hover:shadow-[0_15px_45px_rgba(55,111,135,0.15)] transition-all duration-300 hover:-translate-y-2 relative overflow-hidden"
             >
               {/* Hover Glow Effect */}
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[var(--color-gold-accent)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

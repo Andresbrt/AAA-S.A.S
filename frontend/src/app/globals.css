@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-caribbean-dark: #002D5A;
-  --color-caribbean-blue: #005B9F;
+  --color-caribbean-dark: #376F87;
+  --color-caribbean-blue: #4E8EA9;
+  --color-caribbean-celeste: #68A7C2;
   --color-sand-light: #F9F8F6;
   --color-gold-accent: #D4AF37;
   --font-sans: var(--font-outfit), system-ui, sans-serif;
@@ -24,16 +25,16 @@
 @layer components {
   /* Glassmorphism base */
   .glass-panel {
-    @apply bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,45,90,0.05)] rounded-3xl;
+    @apply bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(55,111,135,0.06)] rounded-3xl;
   }
   
   .glass-card {
-    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(0,45,90,0.1)] rounded-2xl hover:shadow-[0_12px_40px_0_rgba(0,45,90,0.15)] transition-all duration-300;
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_0_rgba(55,111,135,0.1)] rounded-2xl hover:shadow-[0_12px_40px_0_rgba(55,111,135,0.16)] transition-all duration-300;
   }
 
   /* Botones Premium */
   .btn-primary-glow {
-    @apply relative overflow-hidden bg-[var(--color-caribbean-dark)] text-white px-6 py-3 rounded-xl font-medium tracking-wide transition-all duration-300 shadow-[0_4px_20px_rgba(0,45,90,0.4)] hover:shadow-[0_8px_25px_rgba(0,45,90,0.6)] hover:-translate-y-1;
+    @apply relative overflow-hidden bg-[var(--color-caribbean-dark)] text-white px-6 py-3 rounded-xl font-medium tracking-wide transition-all duration-300 shadow-[0_4px_20px_rgba(55,111,135,0.35)] hover:shadow-[0_8px_25px_rgba(55,111,135,0.55)] hover:-translate-y-1;
   }
   
   .btn-primary-glow::after {

@@ -117,7 +117,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* Main Content */}
       <section className="py-16 md:py-24 px-6 relative z-20 -mt-20">
         <div className="container mx-auto max-w-6xl">
-          <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(0,45,90,0.05)] rounded-[2.5rem] p-8 md:p-14">
+          <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(55,111,135,0.08)] rounded-[2.5rem] p-8 md:p-14">
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
               
@@ -173,7 +173,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   </div>
                   
                   <div className="space-y-4">
-                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-[var(--color-caribbean-blue)] hover:bg-[#008CBA] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_10px_20px_rgba(0,163,224,0.2)] hover:-translate-y-1 tracking-wider text-sm uppercase">
+                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-[var(--color-caribbean-dark)] hover:bg-[#2b596d] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_10px_20px_rgba(55,111,135,0.25)] hover:-translate-y-1 tracking-wider text-sm uppercase">
                       <PiWhatsappLogoLight className="w-5 h-5" />
                       Contactar a Ventas
                     </a>

@@ -66,7 +66,7 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-md p-8 md:p-10 max-w-2xl mx-auto w-full rounded-[2rem] shadow-[0_20px_50px_rgba(0,45,90,0.1)] border border-gray-100">
+    <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-md p-8 md:p-10 max-w-2xl mx-auto w-full rounded-[2rem] shadow-[0_20px_50px_rgba(55,111,135,0.1)] border border-gray-100">
       {status === 'success' && (
         <div className="bg-green-50/80 border border-green-200 text-green-800 p-4 rounded-xl mb-6 text-center">
           <p className="font-medium">¡Gracias por contactarnos!</p>
@@ -182,7 +182,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#008CBA] hover:from-[var(--color-caribbean-dark)] hover:to-[var(--color-caribbean-blue)] text-white shadow-lg shadow-[#008CBA]/30 hover:shadow-xl hover:shadow-[#008CBA]/40 transition-all duration-300 rounded-xl font-bold flex justify-center items-center py-4 text-lg hover:-translate-y-1"
+        className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] hover:from-[#2B586C] hover:to-[var(--color-caribbean-blue)] text-white shadow-lg shadow-[#376F87]/30 hover:shadow-xl hover:shadow-[#376F87]/40 transition-all duration-300 rounded-xl font-bold flex justify-center items-center py-4 text-lg hover:-translate-y-1"
       >
         {status === 'loading' ? (
           <span className="flex items-center gap-2">
