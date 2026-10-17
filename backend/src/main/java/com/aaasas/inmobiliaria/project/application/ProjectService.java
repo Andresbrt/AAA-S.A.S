@@ -11,11 +11,13 @@ import com.aaasas.inmobiliaria.project.infrastructure.AmenityRepository;
 import com.aaasas.inmobiliaria.project.infrastructure.ProjectRepository;
 import com.aaasas.inmobiliaria.project.infrastructure.ProjectSearchRepository;
 import com.aaasas.inmobiliaria.project.infrastructure.ProjectSpecifications;
+import com.aaasas.inmobiliaria.shared.exception.BusinessException;
 import com.aaasas.inmobiliaria.shared.exception.DuplicateResourceException;
 import com.aaasas.inmobiliaria.shared.exception.ResourceNotFoundException;
 import com.aaasas.inmobiliaria.shared.pagination.PageResponse;
 import com.aaasas.inmobiliaria.shared.util.SlugUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -114,6 +116,30 @@ public class ProjectService {
         return PageResponse.of(projectPage, content);
     }
 
+    @Transactional(readOnly = true)
+    public ProjectDetailResponse findById(UUID id) {
+        Project project = projectRepository.findByIdAndDeletedAtIsNull(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", id));
+        return toDetail(project);
+    }
+
+    private ProjectStatus parseProjectStatus(String statusStr) {
+        if (statusStr == null || statusStr.isBlank()) {
+            return ProjectStatus.BORRADOR;
+        }
+        String normalized = statusStr.trim().toUpperCase();
+        if ("EN_VENTA".equals(normalized) || "VENTA".equals(normalized)) {
+            return ProjectStatus.EN_PLANOS;
+        }
+        try {
+            return ProjectStatus.valueOf(normalized);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Estado de proyecto inválido: '" + statusStr + "'. Estados permitidos: BORRADOR, EN_PLANOS, EN_CONSTRUCCION, ENTREGADO, VENDIDO"
+            );
+        }
+    }
+
     @Transactional
     @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
     public ProjectDetailResponse create(CreateProjectRequest request) {
@@ -127,7 +153,7 @@ public class ProjectService {
             .slug(slug)
             .shortDescription(request.shortDescription())
             .longDescription(request.longDescription())
-            .status(request.status() != null ? ProjectStatus.valueOf(request.status()) : ProjectStatus.BORRADOR)
+            .status(parseProjectStatus(request.status()))
             .minPrice(request.minPrice())
             .maxPrice(request.maxPrice())
             .estimatedDelivery(request.estimatedDelivery())
@@ -179,7 +205,7 @@ public class ProjectService {
         if (request.featured() != null) project.setFeatured(request.featured());
         if (request.published() != null) project.setPublished(request.published());
         if (request.longDescription() != null) project.setLongDescription(request.longDescription());
-        if (request.status() != null) project.setStatus(ProjectStatus.valueOf(request.status()));
+        if (request.status() != null) project.setStatus(parseProjectStatus(request.status()));
         if (request.minPrice() != null) project.setMinPrice(request.minPrice());
         if (request.maxPrice() != null) project.setMaxPrice(request.maxPrice());
         if (request.estimatedDelivery() != null) project.setEstimatedDelivery(request.estimatedDelivery());

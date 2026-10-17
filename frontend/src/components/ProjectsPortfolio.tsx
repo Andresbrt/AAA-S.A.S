@@ -81,19 +81,35 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               </div>
               
               {/* Image */}
-              <div className={`relative h-72 w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : ''}`}>
+              <div className="relative h-72 w-full overflow-hidden">
+                {/* Background Image */}
                 <Image 
-                  src={project.logoUrl || project.mainImageUrl || project.image || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop"} 
+                  src={project.mainImageUrl || project.image || project.bannerImageUrl || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop"} 
                   alt={project.name} 
                   fill
-                  className={project.logoUrl ? "object-contain p-14 transition-transform duration-700 group-hover:scale-105" : "object-cover transition-transform duration-700 group-hover:scale-105"}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                {!project.logoUrl && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Dark overlay to make logo pop if present, or just text pop */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-black/20 to-transparent transition-opacity duration-500" />
+                
+                {/* Logo Overlay */}
+                {project.logoUrl && (
+                  <div className="absolute inset-0 flex items-center justify-center p-12">
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={project.logoUrl}
+                        alt={`Logo ${project.name}`}
+                        fill
+                        className="object-contain drop-shadow-2xl"
+                      />
+                    </div>
+                  </div>
                 )}
                 
                 {project.id === 1 && (
-                  <div className={`absolute bottom-4 right-4 text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 border-[var(--color-caribbean-dark)]/20 text-[var(--color-caribbean-dark)]' : 'bg-white/90 border-white text-[var(--color-caribbean-dark)]'}`}>
+                  <div className="absolute bottom-4 right-4 text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 bg-white/90 border-white text-[var(--color-caribbean-dark)]">
                     <PiCubeLight size={16} /> Experiencia 3D Activa
                   </div>
                 )}

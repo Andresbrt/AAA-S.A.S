@@ -1,7 +1,7 @@
 // Forzar HMR para limpiar caché 2
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProjectBySlug, getProperties } from '@/lib/api';
+import { getProjectBySlug, getProperties, getCompanyInfo } from '@/lib/api';
 import Image from 'next/image';
 import PublicFooter from '@/components/PublicFooter';
 import PublicNavbar from '@/components/PublicNavbar';
@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
+  const company = await getCompanyInfo();
 
   if (!project) {
     notFound();
@@ -62,35 +63,52 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <PublicNavbar variant={project.logoUrl ? 'transparent-light' : 'transparent-dark'} />
       
       {/* Hero Section */}
-      <section className={`relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center ${project.logoUrl ? 'bg-[#F9F8F6]' : 'bg-black'}`}>
+      <section className="relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center bg-black">
+        {/* Background Image */}
         <Image 
-          src={project.logoUrl || project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
+          src={project.bannerImageUrl || project.mainImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
           alt={project.name}
           fill
-          className={project.logoUrl ? "object-contain p-10 md:p-24 drop-shadow-xl" : "object-cover"}
+          sizes="100vw"
+          className="object-cover"
           priority
         />
-        {!project.logoUrl && (
-          <>
-            <div className="absolute inset-0 bg-black/40"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent"></div>
-          </>
+        
+        {/* Gradient overlays for text/logo readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-black/20 to-transparent"></div>
+        
+        {/* Logo Overlay (if exists) */}
+        {project.logoUrl && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4">
+            <div className="relative w-64 h-64 md:w-96 md:h-96">
+              <Image 
+                src={project.logoUrl}
+                alt={`Logo ${project.name}`}
+                fill
+                className="object-contain drop-shadow-2xl"
+              />
+            </div>
+          </div>
         )}
         
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
-          <span className={`inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] border-[var(--color-caribbean-dark)]/20' : 'bg-white/20 text-white border-white/30'}`}>
+        <div className={`relative z-10 text-center px-4 max-w-4xl mx-auto ${project.logoUrl ? 'mt-[25vh] md:mt-[30vh]' : 'mt-20'}`}>
+          <span className="inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-6 border bg-white/10 text-white border-white/20 shadow-xl">
             {project.status?.replace('_', ' ') || 'PREVENTA'}
           </span>
+          
           {!project.logoUrl ? (
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight flex justify-center">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 drop-shadow-2xl tracking-wide">
               {project.name}
             </h1>
           ) : (
-            <h1 className="sr-only">{project.name}</h1>
+            <h1 className="text-sm md:text-base font-light text-white/80 uppercase tracking-[0.4em] mt-8 mb-6 drop-shadow-md">
+              {project.name}
+            </h1>
           )}
           
-          <div className={`flex items-center justify-center gap-2 text-lg mb-8 font-light ${(project.slug === 'andres' || (project.name && project.name.toLowerCase().includes('corales'))) ? 'text-[var(--color-caribbean-dark)]/80 mt-[40vh]' : 'text-white/90'}`}>
-            <PiMapPinLight className="w-5 h-5" />
+          <div className="flex items-center justify-center gap-3 text-sm md:text-lg mb-8 font-light text-white/90 tracking-wide drop-shadow-md">
+            <PiMapPinLight className="w-5 h-5 text-[var(--color-gold-accent)]" />
             {project.address || 'Ubicación Premium, Colombia'}
           </div>
         </div>
@@ -117,19 +135,31 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 
                 <h3 className="text-xl font-bold text-[var(--color-caribbean-dark)] mb-6">Amenidades Exclusivas</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  {/* Mock Amenities if none exist */}
-                  <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                    <PiSwimmingPoolLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                    <span className="text-sm font-bold text-gray-700">Club Social</span>
-                  </div>
-                  <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                    <PiRulerLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                    <span className="text-sm font-bold text-gray-700">Lotes XL</span>
-                  </div>
-                  <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                    <PiMapPinLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                    <span className="text-sm font-bold text-gray-700">Vías Pavimentadas</span>
-                  </div>
+                  {project.tags && project.tags.length > 0 ? (
+                    project.tags.map((tag: string, index: number) => (
+                      <div key={index} className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 text-[var(--color-caribbean-blue)] flex items-center justify-center mb-3">
+                          <span className="text-xl font-light">✨</span>
+                        </div>
+                        <span className="text-sm font-bold text-gray-700">{tag}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
+                        <PiSwimmingPoolLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
+                        <span className="text-sm font-bold text-gray-700">Club Social</span>
+                      </div>
+                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
+                        <PiRulerLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
+                        <span className="text-sm font-bold text-gray-700">Lotes XL</span>
+                      </div>
+                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
+                        <PiMapPinLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
+                        <span className="text-sm font-bold text-gray-700">Vías Pavimentadas</span>
+                      </div>
+                    </>
+                  )}
                 </div>
 
               </div>
@@ -193,7 +223,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* Interactive Master Plan */}
       <InteractiveMasterPlan projectSlug={project.slug} properties={properties} />
 
-      <PublicFooter />
+      <PublicFooter company={company} />
     </main>
   );
 }

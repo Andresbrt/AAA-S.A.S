@@ -9,9 +9,11 @@ import com.aaasas.inmobiliaria.property.domain.Property;
 import com.aaasas.inmobiliaria.property.domain.PropertyStatus;
 import com.aaasas.inmobiliaria.property.domain.PropertyType;
 import com.aaasas.inmobiliaria.property.infrastructure.PropertyRepository;
+import com.aaasas.inmobiliaria.shared.exception.BusinessException;
 import com.aaasas.inmobiliaria.shared.exception.ResourceNotFoundException;
 import com.aaasas.inmobiliaria.shared.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +47,32 @@ public class PropertyService {
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));
     }
 
+    private PropertyStatus parsePropertyStatus(String statusStr) {
+        if (statusStr == null || statusStr.isBlank()) {
+            return PropertyStatus.DISPONIBLE;
+        }
+        try {
+            return PropertyStatus.valueOf(statusStr.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Estado de inmueble inválido: '" + statusStr + "'. Estados permitidos: DISPONIBLE, SEPARADO, VENDIDO"
+            );
+        }
+    }
+
+    private PropertyType parsePropertyType(String typeStr) {
+        if (typeStr == null || typeStr.isBlank()) {
+            return PropertyType.LOTE;
+        }
+        try {
+            return PropertyType.valueOf(typeStr.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Tipo de inmueble inválido: '" + typeStr + "'."
+            );
+        }
+    }
+
     @Transactional
     @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
     public PropertyResponse create(CreatePropertyRequest req) {
@@ -54,7 +82,7 @@ public class PropertyService {
         Property property = Property.builder()
             .project(project)
             .name(req.name())
-            .type(PropertyType.valueOf(req.type()))
+            .type(parsePropertyType(req.type()))
             .builtArea(req.builtArea())
             .privateArea(req.privateArea())
             .bedrooms(req.bedrooms())
@@ -62,7 +90,7 @@ public class PropertyService {
             .parkingSpots(req.parkingSpots())
             .stratum(req.stratum())
             .price(req.price())
-            .status(req.status() != null ? PropertyStatus.valueOf(req.status()) : PropertyStatus.DISPONIBLE)
+            .status(parsePropertyStatus(req.status()))
             .floorOrTower(req.floorOrTower())
             .build();
 
@@ -76,7 +104,7 @@ public class PropertyService {
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));
 
         if (req.name() != null) property.setName(req.name());
-        if (req.type() != null) property.setType(PropertyType.valueOf(req.type()));
+        if (req.type() != null) property.setType(parsePropertyType(req.type()));
         if (req.builtArea() != null) property.setBuiltArea(req.builtArea());
         if (req.privateArea() != null) property.setPrivateArea(req.privateArea());
         if (req.bedrooms() != null) property.setBedrooms(req.bedrooms());
@@ -84,7 +112,7 @@ public class PropertyService {
         if (req.parkingSpots() != null) property.setParkingSpots(req.parkingSpots());
         if (req.stratum() != null) property.setStratum(req.stratum());
         if (req.price() != null) property.setPrice(req.price());
-        if (req.status() != null) property.setStatus(PropertyStatus.valueOf(req.status()));
+        if (req.status() != null) property.setStatus(parsePropertyStatus(req.status()));
         if (req.floorOrTower() != null) property.setFloorOrTower(req.floorOrTower());
 
         return toResponse(propertyRepository.save(property));
@@ -95,7 +123,7 @@ public class PropertyService {
     public void updateStatus(UUID id, String status) {
         Property property = propertyRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));
-        property.setStatus(PropertyStatus.valueOf(status));
+        property.setStatus(parsePropertyStatus(status));
         propertyRepository.save(property);
     }
 

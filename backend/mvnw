@@ -32,8 +32,18 @@
 set -euf
 [ "${MVNW_VERBOSE-}" != debug ] || set -x
 
+# Auto-detect OpenJDK 21 on macOS if JAVA_HOME is not set or not valid
+if [ -z "${JAVA_HOME-}" ] || [ ! -d "${JAVA_HOME}" ]; then
+  if [ -d "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home" ]; then
+    JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+    export JAVA_HOME
+    PATH="$JAVA_HOME/bin:$PATH"
+    export PATH
+  fi
+fi
+
 # OS specific support.
-native_path() { printf %s\\n "$1"; }
+native_path() { printf %s\n "$1"; }
 case "$(uname)" in
 CYGWIN* | MINGW*)
   [ -z "${JAVA_HOME-}" ] || JAVA_HOME="$(cygpath --unix "$JAVA_HOME")"
@@ -43,6 +53,14 @@ esac
 
 # set JAVACMD and JAVACCMD
 set_java_home() {
+  # Auto-detect OpenJDK 21 on macOS if JAVA_HOME is not explicitly set to Java 21
+  if [ -z "${JAVA_HOME-}" ] || [ "${JAVA_HOME}" = *openjdk/26* ]; then
+    if [ -d "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home" ]; then
+      JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+      export JAVA_HOME
+    fi
+  fi
+
   # For Cygwin and MinGW, ensure paths are in Unix format before anything is touched
   if [ -n "${JAVA_HOME-}" ]; then
     if [ -x "$JAVA_HOME/jre/sh/java" ]; then

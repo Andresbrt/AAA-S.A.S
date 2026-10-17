@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Mail, Lock, ShieldCheck, ArrowRight, Loader2, Map } from "lucide-react";
 
-import { login } from "@/lib/api";
+import { login, verifyMfa } from "@/lib/api";
 
 export default function LoginPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -24,25 +24,34 @@ export default function LoginPage() {
     setErrorMsg("");
     try {
       const data = await login(email, password);
-      localStorage.setItem("admin_token", data.accessToken || data.token);
-      window.location.href = "/admin";
-    } catch (err) {
-      setErrorMsg("Credenciales incorrectas. Verifica tu correo y contraseña.");
+      if (data.mfaRequired) {
+        setTempToken(data.mfaToken);
+        setStep(2);
+      } else {
+        localStorage.setItem("admin_token", data.accessToken || data.token);
+        window.location.href = "/admin";
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Credenciales incorrectas. Verifica tu correo y contraseña.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleMfaSubmit = (e: React.FormEvent) => {
+  const handleMfaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMsg("");
-    // TODO: Validate real MFA code with backend. For now, accept any and save token.
-    setTimeout(() => {
-      localStorage.setItem("admin_token", tempToken);
-      setIsLoading(false);
+    try {
+      const code = mfaCode.join("");
+      const data = await verifyMfa(tempToken, code);
+      localStorage.setItem("admin_token", data.accessToken || data.token);
       window.location.href = "/admin";
-    }, 1000);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Código MFA incorrecto.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleMfaChange = (index: number, value: string) => {

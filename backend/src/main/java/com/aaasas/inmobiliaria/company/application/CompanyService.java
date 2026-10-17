@@ -30,6 +30,9 @@ public class CompanyService {
         CompanyInfoResponse companyDto = new CompanyInfoResponse(
             info.getId(), info.getName(), info.getAboutUs(), info.getMission(), info.getVision(),
             info.getContactEmail(), info.getContactPhone(), info.getContactAddress(), info.getLogoUrl(),
+            info.getWhatsappNumber(), info.getWhatsappMessage(),
+            info.getInstagramUrl(), info.getFacebookUrl(), info.getYoutubeUrl(),
+            info.getHeroVideoUrl(), info.getHeroTitle(), info.getHeroSubtitle(),
             info.getMetaTitle(), info.getMetaDescription(), info.getMetaKeywords()
         );
 
@@ -54,6 +57,16 @@ public class CompanyService {
         if (request.contactEmail() != null) info.setContactEmail(request.contactEmail());
         if (request.contactPhone() != null) info.setContactPhone(request.contactPhone());
         if (request.contactAddress() != null) info.setContactAddress(request.contactAddress());
+        
+        if (request.whatsappNumber() != null) info.setWhatsappNumber(request.whatsappNumber());
+        if (request.whatsappMessage() != null) info.setWhatsappMessage(request.whatsappMessage());
+        if (request.instagramUrl() != null) info.setInstagramUrl(request.instagramUrl());
+        if (request.facebookUrl() != null) info.setFacebookUrl(request.facebookUrl());
+        if (request.youtubeUrl() != null) info.setYoutubeUrl(request.youtubeUrl());
+        if (request.heroVideoUrl() != null) info.setHeroVideoUrl(request.heroVideoUrl());
+        if (request.heroTitle() != null) info.setHeroTitle(request.heroTitle());
+        if (request.heroSubtitle() != null) info.setHeroSubtitle(request.heroSubtitle());
+
         if (request.metaTitle() != null) info.setMetaTitle(request.metaTitle());
         if (request.metaDescription() != null) info.setMetaDescription(request.metaDescription());
         if (request.metaKeywords() != null) info.setMetaKeywords(request.metaKeywords());
@@ -62,6 +75,9 @@ public class CompanyService {
         return new CompanyInfoResponse(saved.getId(), saved.getName(), saved.getAboutUs(),
             saved.getMission(), saved.getVision(), saved.getContactEmail(),
             saved.getContactPhone(), saved.getContactAddress(), saved.getLogoUrl(),
+            saved.getWhatsappNumber(), saved.getWhatsappMessage(),
+            saved.getInstagramUrl(), saved.getFacebookUrl(), saved.getYoutubeUrl(),
+            saved.getHeroVideoUrl(), saved.getHeroTitle(), saved.getHeroSubtitle(),
             saved.getMetaTitle(), saved.getMetaDescription(), saved.getMetaKeywords());
     }
 }

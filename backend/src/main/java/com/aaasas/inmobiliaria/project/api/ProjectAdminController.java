@@ -31,6 +31,12 @@ public class ProjectAdminController {
         return ResponseEntity.ok(projectService.findAllAdmin(page, size));
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener proyecto por ID (admin)")
+    public ResponseEntity<ProjectDetailResponse> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(projectService.findById(id));
+    }
+
     @PostMapping
     @Operation(summary = "Crear proyecto")
     public ResponseEntity<ProjectDetailResponse> create(@Valid @RequestBody CreateProjectRequest request) {

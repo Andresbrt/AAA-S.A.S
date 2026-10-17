@@ -1,5 +1,51 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
+export interface ProjectRequest {
+  name: string;
+  shortDescription?: string;
+  longDescription?: string;
+  status?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  estimatedDelivery?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  mapUrl?: string;
+  cityId?: string;
+  neighborhoodId?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  amenityIds?: string[];
+  tags?: string[];
+  featured?: boolean;
+  published?: boolean;
+}
+
+export interface PropertyRequest {
+  projectId: string;
+  name?: string;
+  type: string;
+  builtArea?: number | null;
+  privateArea?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  parkingSpots?: number | null;
+  stratum?: number | null;
+  price?: number | null;
+  status?: string;
+  floorOrTower?: string;
+}
+
+export interface LeadRequest {
+  projectId?: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  message?: string;
+  source?: string;
+}
+
 export async function getCompanyInfo() {
   try {
     const res = await fetch(`${API_URL}/public/company`, { next: { revalidate: 3600 } });
@@ -44,7 +90,7 @@ export async function getProjectBySlug(slug: string) {
   }
 }
 
-export async function createLead(data: any) {
+export async function createLead(data: LeadRequest) {
   try {
     const res = await fetch(`${API_URL}/public/leads`, {
       method: 'POST',
@@ -74,6 +120,16 @@ export async function login(email: string, password: string) {
   return res.json();
 }
 
+export async function verifyMfa(mfaToken: string, code: string) {
+  const res = await fetch(`${API_URL}/auth/mfa/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mfaToken, code }),
+  });
+  if (!res.ok) throw new Error('Código MFA inválido o expirado');
+  return res.json();
+}
+
 // Interceptor para redireccionar en caso de token expirado (401)
 async function handleResponse(res: Response, errorMessage: string) {
   if (res.status === 401) {
@@ -88,6 +144,7 @@ async function handleResponse(res: Response, errorMessage: string) {
     try {
       const errorData = await res.json();
       if (errorData.message) msg = errorData.message;
+      else if (errorData.detail) msg = errorData.detail;
     } catch (e) {}
     throw new Error(msg);
   }
@@ -108,6 +165,18 @@ export async function getDashboardStats(token: string) {
     console.error('Error fetching dashboard stats:', error);
     return null;
   }
+}
+
+export async function updateCompanySettings(token: string, id: string, data: any) {
+  const res = await fetch(`${API_URL}/admin/company/${id}`, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse(res, 'Error al actualizar los ajustes de la empresa');
 }
 
 export async function getAdminLeads(token: string) {
@@ -150,7 +219,7 @@ export async function getAdminProjects(token: string) {
   }
 }
 
-export async function createProject(token: string, data: any) {
+export async function createProject(token: string, data: ProjectRequest) {
   const res = await fetch(`${API_URL}/admin/projects`, {
     method: 'POST',
     headers: { 
@@ -162,7 +231,7 @@ export async function createProject(token: string, data: any) {
   return handleResponse(res, 'Error al crear el proyecto');
 }
 
-export async function updateProject(token: string, id: string, data: any) {
+export async function updateProject(token: string, id: string, data: Partial<ProjectRequest>) {
   const res = await fetch(`${API_URL}/admin/projects/${id}`, {
     method: 'PUT',
     headers: { 
@@ -172,6 +241,16 @@ export async function updateProject(token: string, id: string, data: any) {
     body: JSON.stringify(data),
   });
   return handleResponse(res, 'Error al actualizar el proyecto');
+}
+
+export async function deleteProject(token: string, id: string) {
+  const res = await fetch(`${API_URL}/admin/projects/${id}`, {
+    method: 'DELETE',
+    headers: { 
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error('Error al eliminar el proyecto');
 }
 
 export async function uploadMedia(token: string, file: File, mediaType: string, entityType: string, entityId: string) {
@@ -191,6 +270,35 @@ export async function uploadMedia(token: string, file: File, mediaType: string, 
   return handleResponse(res, 'Error al subir el archivo');
 }
 
+export interface MediaFile {
+  id: string;
+  url: string;
+  originalName: string;
+  contentType: string;
+  fileSize: number;
+  mediaType: string;
+  displayOrder: number;
+  altText?: string;
+  entityType: string;
+  entityId: string;
+}
+
+export async function getMedia(token: string, entityType: string, entityId: string): Promise<MediaFile[]> {
+  const res = await fetch(`${API_URL}/admin/media?entityType=${entityType}&entityId=${entityId}`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  return handleResponse(res, 'Error al cargar los archivos');
+}
+
+export async function deleteMedia(token: string, id: string) {
+  const res = await fetch(`${API_URL}/admin/media/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Error al eliminar el archivo');
+}
+
 // ---------------- PROPERTIES API ----------------
 
 export async function getProperties(projectId: string) {
@@ -204,7 +312,7 @@ export async function getProperties(projectId: string) {
   }
 }
 
-export async function createProperty(token: string, data: any) {
+export async function createProperty(token: string, data: PropertyRequest) {
   const res = await fetch(`${API_URL}/admin/properties`, {
     method: 'POST',
     headers: { 
@@ -216,7 +324,7 @@ export async function createProperty(token: string, data: any) {
   return handleResponse(res, 'Error al crear el inmueble');
 }
 
-export async function updateProperty(token: string, id: string, data: any) {
+export async function updateProperty(token: string, id: string, data: Partial<PropertyRequest>) {
   const res = await fetch(`${API_URL}/admin/properties/${id}`, {
     method: 'PUT',
     headers: { 

@@ -28,9 +28,6 @@ export default function PublicNavbar({ variant = 'transparent-dark' }: { variant
           <Link href="/proyectos" className={`text-sm font-medium tracking-wide transition-colors hover:text-[var(--color-gold-accent)] ${(scrolled || variant === 'transparent-light' || variant === 'solid') ? 'text-gray-600' : 'text-white/90'}`}>
             Proyectos
           </Link>
-          <Link href="/#mapa-interactivo" className={`text-sm font-medium tracking-wide transition-colors hover:text-[var(--color-gold-accent)] ${(scrolled || variant === 'transparent-light' || variant === 'solid') ? 'text-gray-600' : 'text-white/90'}`}>
-            Lotes 3D
-          </Link>
           <Link href="/#servicios" className={`text-sm font-medium tracking-wide transition-colors hover:text-[var(--color-gold-accent)] ${(scrolled || variant === 'transparent-light' || variant === 'solid') ? 'text-gray-600' : 'text-white/90'}`}>
             Servicios
           </Link>

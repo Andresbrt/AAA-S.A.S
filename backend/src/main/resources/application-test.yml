@@ -22,6 +22,10 @@ app:
     access-token-expiration-ms: 900000
     refresh-token-expiration-ms: 604800000
 
+  mfa:
+    # Clave SOLO para tests (32 bytes de ceros en Base64)
+    encryption-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+
   admin:
     email: admin@test.com
     password: TestPassword123!

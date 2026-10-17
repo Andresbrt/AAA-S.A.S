@@ -110,7 +110,7 @@ public class Project extends AuditableEntity {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "entity_id", referencedColumnName = "id", insertable = false, updatable = false)
-    @org.hibernate.annotations.Where(clause = "entity_type = 'PROJECT'")
+    @org.hibernate.annotations.SQLRestriction("entity_type = 'PROJECT'")
     @org.hibernate.envers.NotAudited
     @Builder.Default
     private List<com.aaasas.inmobiliaria.media.domain.MediaFile> mediaFiles = new ArrayList<>();

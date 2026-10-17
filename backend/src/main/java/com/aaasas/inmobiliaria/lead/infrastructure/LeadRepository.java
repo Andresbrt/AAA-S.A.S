@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface LeadRepository extends JpaRepository<Lead, UUID>, JpaSpecificationExecutor<Lead> {
     Page<Lead> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    long countByStatus(com.aaasas.inmobiliaria.lead.domain.LeadStatus status);
 }

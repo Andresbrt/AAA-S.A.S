@@ -35,12 +35,25 @@ export default function ProjectGallery({ images }: { images?: string[] }) {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          <Image 
-            src={displayImages[currentIndex]} 
-            alt={`Galería ${currentIndex + 1}`}
-            fill
-            className="object-cover"
-          />
+          <div className="absolute inset-0 overflow-hidden bg-slate-900/5">
+            {/* Fondo ambiental difuminado para llenar el contenedor armónicamente */}
+            <Image 
+              src={displayImages[currentIndex]} 
+              alt=""
+              fill
+              aria-hidden="true"
+              className="object-cover blur-2xl opacity-35 scale-110"
+            />
+            {/* Imagen principal completa sin recortar ningún texto ni borde */}
+            <Image 
+              src={displayImages[currentIndex]} 
+              alt={`Galería ${currentIndex + 1}`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+              className="object-contain p-2 md:p-4 drop-shadow-md relative z-10"
+              priority={currentIndex === 0}
+            />
+          </div>
         </motion.div>
       </AnimatePresence>
 

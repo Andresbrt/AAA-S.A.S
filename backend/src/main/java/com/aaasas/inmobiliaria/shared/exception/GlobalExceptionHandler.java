@@ -77,11 +77,94 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.warn("Illegal argument exception: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, ex.getMessage() != null ? ex.getMessage() : "Argumento inválido."
+        );
+        problem.setTitle("INVALID_ARGUMENT");
+        problem.setType(URI.create("https://api.aaasas.com/errors/invalid-argument"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex) {
+        log.warn("Method argument type mismatch: {} for param {}", ex.getMessage(), ex.getName());
+        String detail = String.format("El parámetro '%s' tiene un formato inválido: '%s'.", ex.getName(), ex.getValue());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setTitle("TYPE_MISMATCH");
+        problem.setType(URI.create("https://api.aaasas.com/errors/type-mismatch"));
+        problem.setProperty("parameter", ex.getName());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ProblemDetail handleNotReadable(org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        log.warn("Message not readable: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST, "El cuerpo de la petición (JSON) es inválido o contiene tipos incompatibles."
+        );
+        problem.setTitle("MALFORMED_JSON");
+        problem.setType(URI.create("https://api.aaasas.com/errors/malformed-json"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ProblemDetail handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        log.warn("Access denied: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.FORBIDDEN, "No tiene permisos suficientes para realizar esta acción."
+        );
+        problem.setTitle("ACCESS_DENIED");
+        problem.setType(URI.create("https://api.aaasas.com/errors/access-denied"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ProblemDetail handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
+        log.warn("Bad credentials: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNAUTHORIZED, "Credenciales incorrectas."
+        );
+        problem.setTitle("UNAUTHORIZED");
+        problem.setType(URI.create("https://api.aaasas.com/errors/unauthorized"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ProblemDetail handleMethodNotSupported(org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+        log.warn("Method not supported: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.METHOD_NOT_ALLOWED, "El método HTTP utilizado no está soportado para este endpoint."
+        );
+        problem.setTitle("METHOD_NOT_ALLOWED");
+        problem.setType(URI.create("https://api.aaasas.com/errors/method-not-allowed"));
+        problem.setProperty("supported_methods", ex.getSupportedHttpMethods());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGenericException(Exception ex) {
         log.error("Unhandled exception", ex);
+        try {
+            java.nio.file.Files.writeString(
+                java.nio.file.Paths.get("error_debug.log"),
+                java.time.Instant.now().toString() + " - " + ex.getMessage() + "\n" +
+                java.util.Arrays.toString(ex.getStackTrace()) + "\n",
+                java.nio.file.StandardOpenOption.CREATE,
+                java.nio.file.StandardOpenOption.APPEND
+            );
+        } catch (Exception ignored) {}
+        
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-            HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor."
+            HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage() != null ? ex.getMessage() : "Error interno del servidor."
         );
         problem.setTitle("INTERNAL_ERROR");
         problem.setProperty("timestamp", Instant.now());

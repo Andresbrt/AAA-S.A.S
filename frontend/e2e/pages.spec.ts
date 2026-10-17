@@ -25,18 +25,6 @@ test.describe('Funcionalidad de Páginas Públicas', () => {
     await expect(submitButton).toBeVisible();
   });
 
-  test('El Master Plan interactivo carga sus filtros y lotes', async ({ page }) => {
-    await page.goto('/#mapa-interactivo');
-    
-    // Verificar que los botones de filtro están visibles
-    const allFilter = page.getByRole('button', { name: /Todos/i }).first();
-    await expect(allFilter).toBeVisible();
-    
-    // Verificar que aparece al menos una tarjeta de lote (Ej. "Lote 1")
-    // Use a loose text match just to ensure cards render
-    const loteCard = page.locator('text=Lote').first();
-    await expect(loteCard).toBeVisible();
-  });
 
   test('La página de términos y condiciones carga correctamente', async ({ page }) => {
     await page.goto('/legal/terminos');

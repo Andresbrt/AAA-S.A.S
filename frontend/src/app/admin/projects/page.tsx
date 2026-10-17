@@ -1,16 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getAdminProjects, createProject, updateProject, uploadMedia } from "@/lib/api";
+import { getAdminProjects, createProject, updateProject, uploadMedia, deleteProject } from "@/lib/api";
 import { Loader2, Plus, Building2, MapPin, Edit3, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/admin/Modal";
+import { toast } from "sonner";
+import { compressImageToWebp } from "@/lib/image-utils";
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
+  const [formData, setFormData] = useState({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', longDescription: '', minPrice: '', tags: '', featured: true, published: true });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
@@ -47,40 +49,60 @@ export default function AdminProjectsPage() {
     if (!token) return;
     setIsSubmitting(true);
     try {
-      let projectResponse;
+      let projectId = editingId;
+      const payload = {
+        ...formData,
+        minPrice: formData.minPrice ? parseFloat(formData.minPrice) : undefined,
+        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : []
+      };
+
       if (editingId) {
-        projectResponse = await updateProject(token, editingId, formData);
+        await updateProject(token, editingId, payload);
       } else {
-        projectResponse = await createProject(token, formData);
+        const projectResponse = await createProject(token, payload);
+        projectId = projectResponse.id;
+        // Si hay un error más adelante, no queremos crear duplicados si el usuario vuelve a intentar
+        if (projectId) setEditingId(projectId); 
       }
 
-      if (projectResponse?.id) {
-        if (mainImageFile) {
-          await uploadMedia(token, mainImageFile, 'MAIN_IMAGE', 'PROJECT', projectResponse.id);
-        }
-        if (bannerImageFile) {
-          await uploadMedia(token, bannerImageFile, 'BANNER_IMAGE', 'PROJECT', projectResponse.id);
-        }
-        if (logoImageFile) {
-          await uploadMedia(token, logoImageFile, 'LOGO', 'PROJECT', projectResponse.id);
-        }
-        if (galleryFiles && galleryFiles.length > 0) {
-          for (let i = 0; i < galleryFiles.length; i++) {
-             await uploadMedia(token, galleryFiles[i], 'GALLERY_IMAGE', 'PROJECT', projectResponse.id);
+      if (projectId) {
+        try {
+          if (mainImageFile) {
+            const compressedMain = await compressImageToWebp(mainImageFile);
+            await uploadMedia(token, compressedMain, 'MAIN_IMAGE', 'PROJECT', projectId);
           }
+          if (bannerImageFile) {
+            const compressedBanner = await compressImageToWebp(bannerImageFile);
+            await uploadMedia(token, compressedBanner, 'BANNER_IMAGE', 'PROJECT', projectId);
+          }
+          if (logoImageFile) {
+            const compressedLogo = await compressImageToWebp(logoImageFile);
+            await uploadMedia(token, compressedLogo, 'LOGO', 'PROJECT', projectId);
+          }
+          if (galleryFiles && galleryFiles.length > 0) {
+            for (let i = 0; i < galleryFiles.length; i++) {
+               const compressedGallery = await compressImageToWebp(galleryFiles[i]);
+               await uploadMedia(token, compressedGallery, 'GALLERY_IMAGE', 'PROJECT', projectId);
+            }
+          }
+        } catch (mediaErr: any) {
+          toast.warning(`Proyecto guardado, pero falló la imagen: ${mediaErr?.message || 'Verifica formato y tamaño.'}`, { duration: 8000 });
+          console.error("Error al subir imágenes:", mediaErr);
         }
       }
 
       setIsModalOpen(false);
-      setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
+      setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', longDescription: '', minPrice: '', tags: '', featured: true, published: true });
       setEditingId(null);
       setMainImageFile(null);
       setBannerImageFile(null);
       setLogoImageFile(null);
       setGalleryFiles(null);
       await fetchProjects(token);
+      toast.success(editingId ? "Proyecto actualizado con éxito" : "Proyecto creado con éxito");
     } catch (err) {
-      alert("Error al guardar el proyecto. Revisa los datos.");
+      toast.error("Error al guardar los datos del proyecto. Revisa la información.");
+      console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -93,6 +115,9 @@ export default function AdminProjectsPage() {
       mapUrl: project.mapUrl || '',
       status: project.status || 'EN_PLANOS',
       shortDescription: project.description || project.shortDescription || '',
+      longDescription: project.longDescription || '',
+      minPrice: project.minPrice ? String(project.minPrice) : '',
+      tags: project.tags ? project.tags.join(', ') : '',
       featured: project.featured || false,
       published: project.published !== false // default to true if undefined
     });
@@ -105,13 +130,30 @@ export default function AdminProjectsPage() {
   };
 
   const openCreateModal = () => {
-    setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', featured: true, published: true });
+    setFormData({ name: '', address: '', mapUrl: '', status: 'EN_PLANOS', shortDescription: '', longDescription: '', minPrice: '', tags: '', featured: true, published: true });
     setEditingId(null);
     setMainImageFile(null);
     setBannerImageFile(null);
     setLogoImageFile(null);
     setGalleryFiles(null);
     setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = async (projectId: string) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este proyecto y todos sus lotes asociados? Esta acción no se puede deshacer.")) {
+      return;
+    }
+    const token = localStorage.getItem("admin_token");
+    if (!token) return;
+    
+    try {
+      await deleteProject(token, projectId);
+      toast.success("Proyecto eliminado con éxito");
+      await fetchProjects(token);
+    } catch (err) {
+      toast.error("Error al eliminar el proyecto.");
+      console.error(err);
+    }
   };
 
   if (loading) {
@@ -178,8 +220,8 @@ export default function AdminProjectsPage() {
                   <tr key={project.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        {project.bannerImageUrl ? (
-                          <img src={project.bannerImageUrl} alt={project.name} className="w-12 h-12 rounded-lg object-cover bg-slate-100" />
+                        {project.mainImageUrl || project.bannerImageUrl ? (
+                          <img src={project.mainImageUrl || project.bannerImageUrl} alt={project.name} className="w-12 h-12 rounded-lg object-cover bg-slate-100" />
                         ) : (
                           <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 font-bold">
                             {project.name.charAt(0)}
@@ -214,7 +256,7 @@ export default function AdminProjectsPage() {
                         <button onClick={() => handleEditClick(project)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Editar">
                           <Edit3 className="w-4 h-4" />
                         </button>
-                        <button className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
+                        <button onClick={() => handleDeleteClick(project.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -270,10 +312,22 @@ export default function AdminProjectsPage() {
                 <option value="VENDIDO">Vendido</option>
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Inversión Desde (Precio Base COP)</label>
+              <input type="number" value={formData.minPrice} onChange={(e) => setFormData({...formData, minPrice: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej. 105000000" />
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Descripción Corta</label>
-            <textarea value={formData.shortDescription} onChange={(e) => setFormData({...formData, shortDescription: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={3} placeholder="Breve descripción para las tarjetas..."></textarea>
+            <textarea value={formData.shortDescription} onChange={(e) => setFormData({...formData, shortDescription: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={2} placeholder="Breve descripción para las tarjetas..."></textarea>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción Larga (Sobre el Proyecto)</label>
+            <textarea value={formData.longDescription} onChange={(e) => setFormData({...formData, longDescription: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={4} placeholder="Descripción detallada para la página interna del proyecto..."></textarea>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amenidades (Separadas por comas)</label>
+            <input type="text" value={formData.tags} onChange={(e) => setFormData({...formData, tags: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej. Club Social, Lotes XL, Vías Pavimentadas" />
           </div>
           <div className="flex gap-6 mt-2">
             <label className="flex items-center gap-2 cursor-pointer">

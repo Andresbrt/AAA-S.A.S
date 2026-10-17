@@ -48,7 +48,11 @@ public class SupabaseStorageAdapter implements FileStoragePort {
 
             restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             return getPublicUrl(key);
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            log.error("Supabase Storage error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new FileStorageException("Error uploading file to Supabase: " + key + ". Detail: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
+            log.error("Supabase Storage error: {}", e.getMessage(), e);
             throw new FileStorageException("Error uploading file to Supabase: " + key, e);
         }
     }
@@ -62,7 +66,8 @@ public class SupabaseStorageAdapter implements FileStoragePort {
             headers.set("apikey", supabaseKey);
             restTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(headers), String.class);
         } catch (Exception e) {
-            throw new FileStorageException("Error deleting file from Supabase: " + key, e);
+            log.warn("Error deleting file from Supabase: {} - {}", key, e.getMessage());
+            // Do not throw so that it doesn't block subsequent operations (like uploading a new file)
         }
     }
 

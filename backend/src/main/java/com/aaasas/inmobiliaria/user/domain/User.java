@@ -47,6 +47,19 @@ public class User extends AuditableEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    // ── MFA (TOTP) ───────────────────────────────────────────
+    @Column(name = "mfa_enabled", nullable = false)
+    @Builder.Default
+    private boolean mfaEnabled = false;
+
+    /** Secreto TOTP cifrado (AES-GCM). Nunca se expone en DTOs. */
+    @Column(name = "mfa_secret")
+    private String mfaSecret;
+
+    /** Último time-step TOTP aceptado, para impedir reutilizar un código. */
+    @Column(name = "mfa_last_used_step")
+    private Long mfaLastUsedStep;
+
     public boolean isAccountLocked() {
         return lockedUntil != null && lockedUntil.isAfter(LocalDateTime.now());
     }

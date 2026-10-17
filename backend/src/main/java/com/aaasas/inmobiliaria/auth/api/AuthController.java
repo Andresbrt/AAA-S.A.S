@@ -19,9 +19,15 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "Iniciar sesión", description = "Retorna access token y refresh token")
+    @Operation(summary = "Iniciar sesión", description = "Retorna tokens, o mfaRequired + mfaToken si el usuario tiene MFA")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/mfa/verify")
+    @Operation(summary = "Verificar código MFA", description = "Paso 2 del login: canjea mfaToken + código TOTP por tokens de acceso")
+    public ResponseEntity<TokenResponse> verifyMfa(@Valid @RequestBody MfaVerifyRequest request) {
+        return ResponseEntity.ok(authService.verifyMfa(request));
     }
 
     @PostMapping("/refresh")

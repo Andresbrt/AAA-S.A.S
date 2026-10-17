@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getAdminProjects, getProperties, createProperty, updateProperty, deleteProperty } from "@/lib/api";
 import { MapPin, Plus, Loader2, Edit3, Trash2 } from "lucide-react";
 import Modal from "@/components/admin/Modal";
+import { toast } from "sonner";
 
 export default function AdminPropertiesPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -92,8 +93,9 @@ export default function AdminPropertiesPage() {
     try {
       await deleteProperty(token, id);
       setProperties(properties.filter(p => p.id !== id));
+      toast.success("Inmueble eliminado con éxito");
     } catch(err) {
-      alert("Error al eliminar");
+      toast.error("Error al eliminar el inmueble");
     }
   };
 
@@ -105,8 +107,8 @@ export default function AdminPropertiesPage() {
     try {
       const payload = {
         ...formData,
-        privateArea: formData.privateArea ? parseFloat(formData.privateArea) : null,
-        price: formData.price ? parseFloat(formData.price) : null
+        privateArea: formData.privateArea ? parseFloat(formData.privateArea) : undefined,
+        price: formData.price ? parseFloat(formData.price) : undefined
       };
 
       if (editingId) {
@@ -119,8 +121,9 @@ export default function AdminPropertiesPage() {
       // Refetch
       const res = await getProperties(selectedProjectId);
       if (res && res.content) setProperties(res.content);
+      toast.success(editingId ? "Inmueble actualizado" : "Inmueble creado");
     } catch(err) {
-      alert("Error al guardar inmueble");
+      toast.error("Error al guardar inmueble. Verifica los datos.");
     } finally {
       setIsSubmitting(false);
     }

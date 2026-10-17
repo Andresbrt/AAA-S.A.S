@@ -2,8 +2,10 @@ package com.aaasas.inmobiliaria.auth.application;
 
 import com.aaasas.inmobiliaria.auth.api.ChangePasswordRequest;
 import com.aaasas.inmobiliaria.auth.api.LoginRequest;
+import com.aaasas.inmobiliaria.auth.api.MfaVerifyRequest;
 import com.aaasas.inmobiliaria.auth.api.TokenResponse;
 import com.aaasas.inmobiliaria.auth.domain.RefreshToken;
+import com.aaasas.inmobiliaria.auth.infrastructure.MfaSecretCipher;
 import com.aaasas.inmobiliaria.auth.infrastructure.RefreshTokenRepository;
 import com.aaasas.inmobiliaria.security.CustomUserDetails;
 import com.aaasas.inmobiliaria.security.jwt.JwtProperties;
@@ -24,6 +26,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +41,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
+    private final TotpService totpService;
+    private final MfaSecretCipher mfaSecretCipher;
 
-    @Transactional
+    // noRollbackFor: los intentos fallidos y el bloqueo deben persistir aunque se lance la excepción
+    @Transactional(noRollbackFor = UnauthorizedException.class)
     public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(request.email())
             .orElseThrow(() -> new UnauthorizedException("Credenciales inválidas."));
@@ -53,13 +59,13 @@ public class AuthService {
         }
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            user.incrementFailedAttempts();
-            if (user.getFailedAttempts() >= MAX_FAILED_ATTEMPTS) {
-                user.lock(LOCK_DURATION_MINUTES);
-                log.warn("Account locked for user: {}", user.getEmail());
-            }
-            userRepository.save(user);
+            registerFailedAttempt(user);
             throw new UnauthorizedException("Credenciales inválidas.");
+        }
+
+        // Paso 2 obligatorio: no se emiten tokens de acceso hasta validar el código TOTP
+        if (user.isMfaEnabled()) {
+            return TokenResponse.mfaChallenge(jwtProvider.generateMfaToken(user.getId()));
         }
 
         // Reset failed attempts on successful login
@@ -67,6 +73,50 @@ public class AuthService {
         userRepository.save(user);
 
         return generateTokens(user);
+    }
+
+    /**
+     * Paso 2 del login con MFA. Los códigos erróneos cuentan como intentos fallidos
+     * y bloquean la cuenta igual que una contraseña incorrecta.
+     */
+    @Transactional(noRollbackFor = UnauthorizedException.class)
+    public TokenResponse verifyMfa(MfaVerifyRequest request) {
+        UUID userId = jwtProvider.parseMfaToken(request.mfaToken())
+            .orElseThrow(() -> new UnauthorizedException("La sesión de verificación expiró. Inicia sesión de nuevo."));
+
+        User user = userRepository.findById(userId)
+            .filter(u -> u.getDeletedAt() == null && u.isActive())
+            .orElseThrow(() -> new UnauthorizedException("Credenciales inválidas."));
+
+        if (user.isAccountLocked()) {
+            throw new UnauthorizedException("Cuenta bloqueada temporalmente. Intente más tarde.");
+        }
+        if (!user.isMfaEnabled() || user.getMfaSecret() == null) {
+            throw new UnauthorizedException("La verificación en 2 pasos no está activa para esta cuenta.");
+        }
+
+        String secret = mfaSecretCipher.decrypt(user.getMfaSecret());
+        long step = totpService.verify(secret, request.code(), user.getMfaLastUsedStep());
+        if (step < 0) {
+            registerFailedAttempt(user);
+            throw new UnauthorizedException("Código de verificación inválido.");
+        }
+
+        user.setMfaLastUsedStep(step);
+        user.resetFailedAttempts();
+        userRepository.save(user);
+        log.info("MFA verified for user: {}", user.getEmail());
+
+        return generateTokens(user);
+    }
+
+    private void registerFailedAttempt(User user) {
+        user.incrementFailedAttempts();
+        if (user.getFailedAttempts() >= MAX_FAILED_ATTEMPTS) {
+            user.lock(LOCK_DURATION_MINUTES);
+            log.warn("Account locked for user: {}", user.getEmail());
+        }
+        userRepository.save(user);
     }
 
     @Transactional

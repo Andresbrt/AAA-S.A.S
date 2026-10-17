@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * Base test class with PostgreSQL Testcontainer.
  * All integration tests should extend this class.
  */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 public abstract class AbstractIntegrationTest {
 
     @Container

@@ -3,6 +3,7 @@ import { Playfair_Display, Outfit } from 'next/font/google';
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import { Toaster } from "sonner";
 
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
@@ -23,6 +24,7 @@ export default function RootLayout({
         {children}
         <CookieBanner />
         <FloatingWhatsApp />
+        <Toaster position="top-right" richColors closeButton theme="light" />
       </body>
     </html>
   );

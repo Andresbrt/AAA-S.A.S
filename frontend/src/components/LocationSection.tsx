@@ -58,6 +58,7 @@ export default function LocationSection() {
               alt="Mapa Satelital y vías de acceso a San Bernardo del Viento" 
               title="Geolocalización del proyecto inmobiliario"
               fill
+              sizes="(max-width: 1024px) 100vw, 60vw"
               className="object-cover opacity-80 mix-blend-luminosity group-hover:scale-105 transition-transform duration-[2000ms]"
             />
             

@@ -36,6 +36,7 @@ export default function HomePage() {
 
           <div className="absolute inset-0 z-0">
             <video
+              key={company?.heroVideoUrl || 'default-video'}
               autoPlay
               muted
               loop
@@ -43,7 +44,7 @@ export default function HomePage() {
               className="w-full h-full object-cover scale-105"
               style={{ filter: "brightness(0.8)" }}
             >
-              <source src="https://cdn.coverr.co/videos/coverr-flying-over-a-beautiful-beach-and-ocean-in-mexico-5727/1080p.mp4" type="video/mp4" />
+              <source src={company?.heroVideoUrl || "https://cdn.coverr.co/videos/coverr-flying-over-a-beautiful-beach-and-ocean-in-mexico-5727/1080p.mp4"} type="video/mp4" />
               Tu navegador no soporta videos HTML5.
             </video>
           </div>
@@ -57,12 +58,11 @@ export default function HomePage() {
             <h2 className="text-[var(--color-gold-accent)] text-xs md:text-sm lg:text-base tracking-[0.2em] md:tracking-[0.3em] uppercase mb-4 md:mb-6 font-bold drop-shadow-lg bg-black/20 inline-block px-4 md:px-6 py-2 rounded-full backdrop-blur-md border border-[var(--color-gold-accent)]/30">
               {company?.name || 'GRUPO AAA S.A.S.'}
             </h2>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-tight font-serif">
-              Vive el lujo en <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--color-gold-accent)]">Armonía Natural</span>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-tight font-serif whitespace-pre-line">
+              {company?.heroTitle || 'Vive el lujo en\nArmonía Natural'}
             </h1>
             <p className="text-white/90 text-base md:text-lg lg:text-xl font-medium mb-10 md:mb-12 max-w-2xl mx-auto drop-shadow-lg px-2">
-              Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano.
+              {company?.heroSubtitle || 'Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="#proyectos" className="bg-[var(--color-gold-accent)] text-white hover:bg-[#B89B2F] font-bold text-sm px-8 py-4 rounded-full transition shadow-[0_0_20px_rgba(212,175,55,0.4)]">

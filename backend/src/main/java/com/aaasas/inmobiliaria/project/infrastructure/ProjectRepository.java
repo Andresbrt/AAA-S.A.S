@@ -24,4 +24,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID>, JpaSpec
 
     @Query("SELECT new com.aaasas.inmobiliaria.project.api.ProjectSitemapDto(p.slug, p.updatedAt) FROM Project p WHERE p.published = true AND p.deletedAt IS NULL")
     List<ProjectSitemapDto> findAllPublishedForSitemap();
+
+    long countByDeletedAtIsNull();
 }

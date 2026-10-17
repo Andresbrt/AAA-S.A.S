@@ -16,4 +16,8 @@ public interface PropertyRepository extends JpaRepository<Property, UUID>, JpaSp
     List<Property> findByProjectIdAndDeletedAtIsNullAndStatus(UUID projectId, com.aaasas.inmobiliaria.property.domain.PropertyStatus status);
 
     Optional<Property> findByIdAndDeletedAtIsNull(UUID id);
+
+    long countByDeletedAtIsNullAndStatus(com.aaasas.inmobiliaria.property.domain.PropertyStatus status);
+
+    long countByDeletedAtIsNull();
 }

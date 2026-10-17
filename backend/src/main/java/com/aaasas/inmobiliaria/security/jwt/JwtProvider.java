@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -24,15 +25,48 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
     }
 
+    public static final String CLAIM_TOKEN_TYPE = "token_type";
+    public static final String TYPE_ACCESS = "access";
+    public static final String TYPE_MFA = "mfa";
+    private static final long MFA_TOKEN_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutos
+
     public String generateAccessToken(UUID userId, String email, String role) {
         return Jwts.builder()
             .subject(userId.toString())
             .claim("email", email)
             .claim("role", role)
+            .claim(CLAIM_TOKEN_TYPE, TYPE_ACCESS)
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + jwtProperties.accessTokenExpirationMs()))
             .signWith(getSigningKey())
             .compact();
+    }
+
+    /**
+     * Token de corta duración emitido tras validar la contraseña cuando el usuario tiene MFA.
+     * NO sirve como token de acceso: solo se acepta en /auth/mfa/verify.
+     */
+    public String generateMfaToken(UUID userId) {
+        return Jwts.builder()
+            .subject(userId.toString())
+            .claim(CLAIM_TOKEN_TYPE, TYPE_MFA)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + MFA_TOKEN_EXPIRATION_MS))
+            .signWith(getSigningKey())
+            .compact();
+    }
+
+    /** Devuelve el userId si el token es un token MFA válido y vigente. */
+    public Optional<UUID> parseMfaToken(String token) {
+        if (token == null || !validateToken(token)) return Optional.empty();
+        Claims claims = parseClaims(token);
+        if (!TYPE_MFA.equals(claims.get(CLAIM_TOKEN_TYPE, String.class))) return Optional.empty();
+        return Optional.of(UUID.fromString(claims.getSubject()));
+    }
+
+    /** Solo los tokens de tipo "access" autentican peticiones. */
+    public boolean isAccessToken(String token) {
+        return TYPE_ACCESS.equals(parseClaims(token).get(CLAIM_TOKEN_TYPE, String.class));
     }
 
     public String generateRefreshToken() {

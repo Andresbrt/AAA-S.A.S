@@ -45,6 +45,26 @@ public class CompanyInfo extends AuditableEntity {
     @Column(name = "whatsapp_message", length = 500)
     private String whatsappMessage;
 
+    // Campos de Redes Sociales
+    @Column(name = "instagram_url", length = 500)
+    private String instagramUrl;
+
+    @Column(name = "facebook_url", length = 500)
+    private String facebookUrl;
+
+    @Column(name = "youtube_url", length = 500)
+    private String youtubeUrl;
+
+    // Campos de Inicio (Homepage)
+    @Column(name = "hero_video_url", length = 500)
+    private String heroVideoUrl;
+
+    @Column(name = "hero_title", length = 255)
+    private String heroTitle;
+
+    @Column(name = "hero_subtitle", columnDefinition = "TEXT")
+    private String heroSubtitle;
+
     // Campos SEO
     @Column(name = "meta_title", length = 255)
     private String metaTitle;
