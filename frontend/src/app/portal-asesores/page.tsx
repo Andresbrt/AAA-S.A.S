@@ -19,7 +19,7 @@ import {
 
 import { login, verifyMfa } from "@/lib/api";
 
-// Dynamically import 3D canvas with SSR disabled to prevent any hydration mismatch
+// Dynamically import subtle 3D background with SSR disabled
 const Admin3DCanvas = dynamic(
   () => import("@/components/admin/Admin3DCanvas"),
   { ssr: false }
@@ -41,7 +41,6 @@ export default function LoginPage() {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Auto-focus first input on step change
   useEffect(() => {
     if (step === 2) {
       setTimeout(() => {
@@ -74,7 +73,6 @@ export default function LoginPage() {
           } else {
             localStorage.removeItem("admin_remembered_email");
           }
-          // Set cookie for Next.js middleware protection
           document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
           window.location.href = "/admin";
         } else {
@@ -119,7 +117,6 @@ export default function LoginPage() {
   };
 
   const handleMfaChange = (index: number, value: string) => {
-    // Only numbers
     const cleanVal = value.replace(/[^0-9]/g, "");
     if (!cleanVal && value !== "") return;
 
@@ -149,72 +146,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#040C12] text-slate-100 flex flex-col justify-between overflow-x-hidden selection:bg-[#376F87] selection:text-white font-sans">
+    <div className="relative min-h-screen w-full bg-[#F9F8F6] text-gray-900 flex flex-col justify-between selection:bg-[var(--color-caribbean-blue)] selection:text-white font-sans overflow-x-hidden">
       
-      {/* 3D WebGL Background Layer */}
+      {/* Subtle, Minimalist 3D Ocean Breeze Background */}
       <Admin3DCanvas />
 
-      {/* Top Luxury Header Bar */}
-      <header className="relative z-20 w-full px-6 py-5 flex justify-between items-center max-w-7xl mx-auto">
+      {/* Minimalist Top Header */}
+      <header className="relative z-20 w-full px-6 py-6 flex justify-between items-center max-w-7xl mx-auto">
         <Link 
           href="/" 
-          className="group flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+          className="group flex items-center gap-3 text-gray-600 hover:text-[var(--color-caribbean-dark)] transition-colors"
         >
-          <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center group-hover:border-[#D4AF37]/50 group-hover:bg-[#376F87]/20 transition-all duration-300">
-            <ArrowLeft className="w-4 h-4 text-slate-300 group-hover:text-[#D4AF37] group-hover:-translate-x-0.5 transition-all" />
+          <div className="w-10 h-10 rounded-2xl bg-white/80 border border-gray-200/80 shadow-sm flex items-center justify-center group-hover:border-[var(--color-caribbean-blue)] transition-all duration-200">
+            <ArrowLeft className="w-4 h-4 text-gray-500 group-hover:text-[var(--color-caribbean-dark)] group-hover:-translate-x-0.5 transition-all" />
           </div>
           <div className="flex flex-col text-left">
-            <span className="text-xs uppercase tracking-wider text-slate-400 group-hover:text-slate-200">Volver al sitio</span>
-            <span className="text-xs font-semibold tracking-widest text-[#D4AF37]">GRUPO AAA S.A.S.</span>
+            <span className="text-[11px] font-medium uppercase tracking-wider text-gray-400 group-hover:text-gray-600">
+              Volver al sitio
+            </span>
+            <span className="text-sm font-light tracking-widest uppercase text-[var(--color-caribbean-dark)]">
+              Grupo <span className="font-bold">AAA</span>
+            </span>
           </div>
         </Link>
 
-        {/* Security Badge Pill */}
-        <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md text-[11px] font-medium tracking-wider uppercase text-slate-300 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          Conexión Segura 256-bit SSL
+        {/* Minimalist Security Badge */}
+        <div className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-gray-200/70 text-xs font-medium text-gray-600 shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Acceso Seguro · SSL 256-Bit</span>
         </div>
       </header>
 
-      {/* Main Centered Luxury Terminal */}
+      {/* Main Centered Minimalist Card */}
       <main className="relative z-20 flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
 
-          {/* Luxury Monogram Brand Emblem */}
-          <div className="text-center mb-7">
-            <div className="relative inline-flex items-center justify-center mb-4">
-              {/* Radial ambient glow around emblem */}
-              <div className="absolute -inset-4 bg-gradient-to-tr from-[#376F87]/40 to-[#D4AF37]/20 rounded-3xl blur-xl opacity-70 animate-pulse pointer-events-none" />
-              
-              <div className="relative w-18 h-18 rounded-2xl bg-gradient-to-b from-[#132A38] to-[#0A1822] border border-[#D4AF37]/40 p-0.5 shadow-2xl shadow-black/80 flex items-center justify-center">
-                <div className="w-full h-full rounded-[14px] bg-[#07131B]/90 flex flex-col items-center justify-center border border-white/5">
-                  <span className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-[#EFE6CF] to-[#D4AF37]">
-                    AAA
-                  </span>
-                  <div className="w-4 h-[1.5px] bg-[#D4AF37] mt-0.5 rounded-full" />
-                </div>
-              </div>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-light text-white tracking-wide">
-              Portal <span className="font-serif italic font-semibold text-[#D4AF37]">Ejecutivo</span>
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2 tracking-wide font-light">
-              Grupo Inmobiliario AAA S.A.S. · Corales del Viento
-            </p>
-          </div>
-
-          {/* Frosted Glassmorphism Card */}
-          <div className="relative rounded-3xl bg-[#06141D]/85 backdrop-blur-2xl border border-white/10 ring-1 ring-white/5 p-7 sm:p-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden">
+          {/* Minimalist Glass Card */}
+          <div className="relative bg-white/90 backdrop-blur-xl border border-white/80 rounded-3xl p-8 sm:p-10 shadow-[0_15px_45px_0_rgba(55,111,135,0.08)] ring-1 ring-gray-900/5">
             
-            {/* Top Gold Horizon Reflection Line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/90 to-transparent" />
+            {/* Elegant Golden Accent Line */}
+            <div className="w-12 h-1 bg-[var(--color-gold-accent)] rounded-full mx-auto mb-6" />
+
+            {/* Header / Brand Title */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-serif font-bold text-[var(--color-caribbean-dark)] tracking-tight">
+                Portal Asesores
+              </h1>
+              <p className="text-sm text-gray-500 mt-2 font-normal leading-relaxed">
+                Acceso exclusivo para el equipo comercial y administrativo de Corales del Viento
+              </p>
+            </div>
 
             {/* Error Message Alert */}
             {errorMsg && (
-              <div className="mb-6 p-3.5 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-200 text-xs sm:text-sm flex items-start gap-3 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200">
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <span className="flex-1 leading-relaxed">{errorMsg}</span>
+              <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3 animate-in fade-in duration-200">
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{errorMsg}</span>
               </div>
             )}
 
@@ -222,11 +209,11 @@ export default function LoginPage() {
               /* STEP 1: CREDENTIALS */
               <form onSubmit={handleCredentialsSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-xs font-medium uppercase tracking-wider text-slate-300 mb-2">
-                    Correo Corporativo
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
+                    Correo Electrónico Corporativo
                   </label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#D4AF37] transition-colors">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[var(--color-caribbean-dark)] transition-colors">
                       <Mail className="h-4 w-4" />
                     </div>
                     <input
@@ -236,26 +223,26 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="asesor@grupoaaa.com"
-                      className="w-full pl-10 pr-4 py-3 bg-[#051119]/80 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#376F87] focus:ring-2 focus:ring-[#376F87]/40 transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-3.5 bg-gray-50/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 transition-all duration-200"
                     />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700">
                       Contraseña de Acceso
                     </label>
                     <button
                       type="button"
                       onClick={() => setShowSupportModal(true)}
-                      className="text-[11px] text-[#D4AF37] hover:text-[#e4c45b] transition-colors hover:underline"
+                      className="text-xs text-[var(--color-caribbean-dark)] hover:text-[var(--color-caribbean-blue)] font-medium transition-colors hover:underline"
                     >
                       ¿Olvidaste tu clave?
                     </button>
                   </div>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#D4AF37] transition-colors">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[var(--color-caribbean-dark)] transition-colors">
                       <Lock className="h-4 w-4" />
                     </div>
                     <input
@@ -265,12 +252,12 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full pl-10 pr-11 py-3 bg-[#051119]/80 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#376F87] focus:ring-2 focus:ring-[#376F87]/40 transition-all duration-200"
+                      className="w-full pl-10 pr-11 py-3.5 bg-gray-50/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 transition-all duration-200"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors"
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-700 transition-colors"
                       aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
                     >
                       {showPassword ? (
@@ -283,31 +270,31 @@ export default function LoginPage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-4 h-4 rounded border-white/20 bg-black/40 text-[#376F87] focus:ring-[#376F87] focus:ring-offset-0 focus:ring-offset-transparent cursor-pointer accent-[#376F87]"
+                      className="w-4 h-4 rounded border-gray-300 text-[var(--color-caribbean-dark)] focus:ring-[var(--color-caribbean-blue)] cursor-pointer accent-[var(--color-caribbean-dark)]"
                     />
-                    <span className="text-xs text-slate-300">Recordar este dispositivo</span>
+                    <span className="text-xs text-gray-600 font-medium">Recordar en este equipo</span>
                   </label>
 
                   <button
                     type="button"
                     onClick={() => setShowSupportModal(true)}
-                    className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+                    className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition-colors"
                   >
                     <HelpCircle className="w-3.5 h-3.5" />
-                    Ayuda TI
+                    Mesa de Ayuda TI
                   </button>
                 </div>
 
-                {/* Primary Executive Submit Button */}
+                {/* Primary Button matching Main Page (.btn-primary-glow) */}
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full mt-2 relative overflow-hidden py-3.5 px-5 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-[#376F87] via-[#2F6177] to-[#1C4253] hover:from-[#43839E] hover:to-[#27596F] border border-[#68A7C2]/30 shadow-[0_4px_25px_rgba(55,111,135,0.45)] hover:shadow-[0_6px_30px_rgba(55,111,135,0.65)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed group"
+                  className="w-full mt-2 py-4 px-6 rounded-xl font-semibold text-sm text-white bg-[var(--color-caribbean-dark)] hover:bg-[#2b596d] shadow-[0_4px_20px_rgba(55,111,135,0.28)] hover:shadow-[0_8px_25px_rgba(55,111,135,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed group"
                 >
                   {isLoading ? (
                     <>
@@ -316,8 +303,8 @@ export default function LoginPage() {
                     </>
                   ) : (
                     <>
-                      <span>Iniciar Sesión Segura</span>
-                      <ArrowRight className="w-4 h-4 text-[#D4AF37] group-hover:translate-x-1 transition-transform" />
+                      <span>Iniciar Sesión</span>
+                      <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </button>
@@ -326,18 +313,18 @@ export default function LoginPage() {
               /* STEP 2: 2-FACTOR AUTHENTICATION */
               <form onSubmit={handleMfaSubmit} className="space-y-6">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#376F87]/20 border border-[#D4AF37]/40 text-[#D4AF37] mb-3 shadow-inner">
-                    <ShieldCheck className="w-6 h-6 text-[#D4AF37]" />
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] mb-3">
+                    <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <h2 className="text-lg font-semibold text-white tracking-wide">
-                    Autenticación en 2 Pasos
+                  <h2 className="text-xl font-serif font-bold text-[var(--color-caribbean-dark)]">
+                    Verificación de Seguridad
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
-                    Hemos emitido una clave de seguridad a tu dispositivo. Ingresa los 6 dígitos:
+                  <p className="text-xs text-gray-500 mt-1 max-w-xs mx-auto leading-relaxed">
+                    Hemos enviado un código a tu dispositivo autenticador. Ingresa los 6 dígitos:
                   </p>
                 </div>
 
-                {/* 6 Digit Inputs */}
+                {/* 6 Clean Digit Inputs */}
                 <div className="flex justify-between gap-2 max-w-[320px] mx-auto">
                   {mfaCode.map((digit, index) => (
                     <input
@@ -353,7 +340,7 @@ export default function LoginPage() {
                       onChange={(e) => handleMfaChange(index, e.target.value)}
                       onKeyDown={(e) => handleMfaKeyDown(index, e)}
                       onPaste={handleMfaPaste}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold bg-[#051119]/90 border border-white/15 focus:border-[#D4AF37] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 transition-all shadow-inner"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold bg-gray-50 border border-gray-200 focus:bg-white focus:border-[var(--color-caribbean-dark)] rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-dark)]/20 transition-all shadow-sm"
                     />
                   ))}
                 </div>
@@ -362,7 +349,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={isLoading || mfaCode.some((d) => d === "")}
-                    className="w-full py-3.5 px-5 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-[#376F87] to-[#1C4253] hover:from-[#43839E] hover:to-[#27596F] border border-[#68A7C2]/30 shadow-[0_4px_25px_rgba(55,111,135,0.45)] hover:shadow-[0_6px_30px_rgba(55,111,135,0.65)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 px-6 rounded-xl font-semibold text-sm text-white bg-[var(--color-caribbean-dark)] hover:bg-[#2b596d] shadow-[0_4px_20px_rgba(55,111,135,0.28)] hover:shadow-[0_8px_25px_rgba(55,111,135,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
                       <>
@@ -371,8 +358,8 @@ export default function LoginPage() {
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
-                        <span>Verificar y Entrar</span>
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                        <span>Verificar y Acceder</span>
                       </>
                     )}
                   </button>
@@ -383,7 +370,7 @@ export default function LoginPage() {
                       setStep(1);
                       setErrorMsg("");
                     }}
-                    className="w-full py-2.5 text-xs text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 text-xs text-gray-500 hover:text-gray-800 transition-colors flex items-center justify-center gap-1.5"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     Volver al formulario de inicio
@@ -392,24 +379,23 @@ export default function LoginPage() {
               </form>
             )}
 
-            {/* Subtle Caribbean Watermark */}
-            <div className="mt-8 pt-5 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+            {/* Card Sub-footer */}
+            <div className="mt-8 pt-5 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
-                Grupo AAA Portal v2.4
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gold-accent)]" />
+                Grupo AAA Inmobiliaria
               </span>
-              <span className="text-slate-500">Exclusivo Asesores VIP</span>
+              <span>Corales del Viento</span>
             </div>
 
           </div>
 
-          {/* IT & Support Helper Pill */}
-          <p className="text-center text-xs text-slate-500 mt-6 leading-relaxed">
-            ¿Problemas de acceso con tus credenciales corporativas?<br />
-            Contacta a mesa de ayuda en{" "}
+          {/* Helper Note */}
+          <p className="text-center text-xs text-gray-500 mt-6 leading-relaxed">
+            ¿Problemas con tus credenciales? Escríbenos a{" "}
             <a 
               href="mailto:soporte@grupoaaa.com" 
-              className="text-[#D4AF37] hover:underline"
+              className="text-[var(--color-caribbean-dark)] font-semibold hover:underline"
             >
               soporte@grupoaaa.com
             </a>
@@ -418,33 +404,33 @@ export default function LoginPage() {
         </div>
       </main>
 
-      {/* Footer Details */}
-      <footer className="relative z-20 py-4 px-6 text-center text-[11px] text-slate-500 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-2 border-t border-white/5">
+      {/* Clean Minimalist Footer */}
+      <footer className="relative z-20 py-6 px-6 text-center text-xs text-gray-400 max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-2 border-t border-gray-200/60">
         <span>© {new Date().getFullYear()} Grupo Inmobiliario AAA S.A.S. Todos los derechos reservados.</span>
-        <div className="flex gap-4 text-slate-400">
-          <Link href="/legal/terminos" className="hover:text-slate-200 transition-colors">Términos</Link>
-          <Link href="/legal/politica-de-privacidad" className="hover:text-slate-200 transition-colors">Privacidad</Link>
+        <div className="flex gap-4">
+          <Link href="/legal/terminos" className="hover:text-gray-600 transition-colors">Términos</Link>
+          <Link href="/legal/politica-de-privacidad" className="hover:text-gray-600 transition-colors">Privacidad</Link>
         </div>
       </footer>
 
-      {/* IT Support Modal */}
+      {/* Minimalist Light Support Modal */}
       {showSupportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-3xl bg-[#091A25] border border-white/10 p-6 shadow-2xl relative">
-            <div className="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-3xl bg-white border border-gray-100 p-6 shadow-2xl relative">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] flex items-center justify-center mb-4">
               <HelpCircle className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-white">Soporte Técnico & Accesos</h3>
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              El restablecimiento de contraseña o llaves MFA es gestionado directamente por la Dirección de Tecnología de Grupo AAA S.A.S. por políticas de seguridad bancaria.
+            <h3 className="text-lg font-serif font-bold text-gray-900">Soporte y Restablecimiento</h3>
+            <p className="text-xs text-gray-600 mt-2 leading-relaxed">
+              Por políticas de seguridad corporativa, el restablecimiento de contraseñas y llaves de acceso MFA es gestionado por la Dirección de Tecnología.
             </p>
-            <div className="mt-4 p-3 rounded-xl bg-black/30 border border-white/5 space-y-1.5 text-xs text-slate-300">
-              <p><strong className="text-white">Email TI:</strong> soporte@grupoaaa.com</p>
-              <p><strong className="text-white">Horario:</strong> Lunes a Sábado 8:00am - 6:00pm</p>
+            <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-1.5 text-xs text-gray-700">
+              <p><strong className="text-gray-900">Canal TI:</strong> soporte@grupoaaa.com</p>
+              <p><strong className="text-gray-900">Atención:</strong> Lunes a Sábado 8:00am - 6:00pm</p>
             </div>
             <button
               onClick={() => setShowSupportModal(false)}
-              className="mt-5 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
+              className="mt-5 w-full py-3 rounded-xl bg-[var(--color-caribbean-dark)] hover:bg-[#2b596d] text-white text-xs font-semibold transition-colors"
             >
               Entendido
             </button>

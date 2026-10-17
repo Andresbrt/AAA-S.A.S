@@ -28,18 +28,18 @@ export default function Admin3DCanvas() {
     const width = window.innerWidth || 1440;
     const height = window.innerHeight || 900;
 
-    // Three.js scene setup
+    // Scene setup with light Caribbean sand fog
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x040b10, 0.0022);
+    scene.fog = new THREE.FogExp2(0xf9f8f6, 0.0035);
 
     const camera = new THREE.PerspectiveCamera(
-      50,
+      45,
       width / height,
       1,
       1000
     );
-    camera.position.set(0, 35, 115);
-    camera.lookAt(0, -6, 0);
+    camera.position.set(0, 30, 105);
+    camera.lookAt(0, -4, 0);
 
     let renderer: THREE.WebGLRenderer | null = null;
     try {
@@ -56,65 +56,56 @@ export default function Admin3DCanvas() {
       return;
     }
 
-    // 1. Architectural 3D Ocean Topography Mesh (Wireframe Waves)
-    const gridSegmentsX = 64;
-    const gridSegmentsY = 64;
-    const gridWidth = 320;
-    const gridHeight = 320;
+    // 1. Subtle, Minimalist Caribbean Wave Surface (Organic topographical flow)
+    const segmentsX = 52;
+    const segmentsY = 52;
+    const meshWidth = 280;
+    const meshHeight = 280;
 
-    const terrainGeo = new THREE.PlaneGeometry(
-      gridWidth,
-      gridHeight,
-      gridSegmentsX,
-      gridSegmentsY
+    const waveGeo = new THREE.PlaneGeometry(
+      meshWidth,
+      meshHeight,
+      segmentsX,
+      segmentsY
     );
-    terrainGeo.rotateX(-Math.PI / 2.3);
+    waveGeo.rotateX(-Math.PI / 2.3);
 
-    const terrainMat = new THREE.MeshBasicMaterial({
-      color: 0x306a82,
+    // Minimalist, elegant architectural wireframe in Caribbean Dark (#376F87) with soft transparency
+    const waveMat = new THREE.MeshBasicMaterial({
+      color: 0x376f87,
       wireframe: true,
       transparent: true,
-      opacity: 0.38,
+      opacity: 0.16,
     });
 
-    const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
-    terrainMesh.position.set(0, -16, -10);
-    scene.add(terrainMesh);
+    const waveMesh = new THREE.Mesh(waveGeo, waveMat);
+    waveMesh.position.set(0, -15, -10);
+    scene.add(waveMesh);
 
-    // 2. Glowing Nodes on Topography Vertices (Points)
-    const pointsCount = (gridSegmentsX + 1) * (gridSegmentsY + 1);
-    const pointColors = new Float32Array(pointsCount * 3);
+    // 2. Soft, floating sunlight motes (Minimalist warm golden and celeste sea mist)
+    const particleCount = 80;
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleVelocities: { x: number; y: number; z: number }[] = [];
 
-    const colorTeal = new THREE.Color(0x376f87);
-    const colorCyan = new THREE.Color(0x38bdf8);
-    const colorGold = new THREE.Color(0xd4af37);
-    const colorDeep = new THREE.Color(0x0a2636);
+    for (let p = 0; p < particleCount; p++) {
+      particlePositions[p * 3] = (Math.random() - 0.5) * 180;
+      particlePositions[p * 3 + 1] = (Math.random() - 0.2) * 80;
+      particlePositions[p * 3 + 2] = (Math.random() - 0.5) * 140;
 
-    let colorIdx = 0;
-    for (let ix = 0; ix <= gridSegmentsX; ix++) {
-      for (let iy = 0; iy <= gridSegmentsY; iy++) {
-        const ratio = (ix + iy) / (gridSegmentsX + gridSegmentsY);
-        let vertexColor = colorDeep.clone().lerp(colorTeal, ratio);
-
-        if ((ix + iy) % 8 === 0) {
-          vertexColor = vertexColor.lerp(colorCyan, 0.9);
-        } else if ((ix * iy) % 15 === 0) {
-          vertexColor = vertexColor.lerp(colorGold, 0.75);
-        }
-
-        pointColors[colorIdx] = vertexColor.r;
-        pointColors[colorIdx + 1] = vertexColor.g;
-        pointColors[colorIdx + 2] = vertexColor.b;
-        colorIdx += 3;
-      }
+      particleVelocities.push({
+        x: (Math.random() - 0.5) * 0.025,
+        y: 0.03 + Math.random() * 0.05,
+        z: (Math.random() - 0.5) * 0.025,
+      });
     }
 
-    const pointsGeo = new THREE.BufferGeometry();
-    const terrainPositions = terrainGeo.attributes.position.clone();
-    pointsGeo.setAttribute("position", terrainPositions);
-    pointsGeo.setAttribute("color", new THREE.BufferAttribute(pointColors, 3));
+    const particleGeo = new THREE.BufferGeometry();
+    particleGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(particlePositions, 3)
+    );
 
-    // Particle texture generation
+    // Soft round brush texture
     const getCircleTexture = () => {
       const c = document.createElement("canvas");
       c.width = 64;
@@ -122,10 +113,10 @@ export default function Admin3DCanvas() {
       const ctx = c.getContext("2d");
       if (ctx) {
         const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-        gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-        gradient.addColorStop(0.25, "rgba(56, 189, 248, 0.9)");
-        gradient.addColorStop(0.7, "rgba(55, 111, 135, 0.35)");
-        gradient.addColorStop(1, "rgba(4, 11, 16, 0)");
+        gradient.addColorStop(0, "rgba(55, 111, 135, 0.8)");
+        gradient.addColorStop(0.3, "rgba(104, 167, 194, 0.4)");
+        gradient.addColorStop(0.7, "rgba(212, 175, 55, 0.2)");
+        gradient.addColorStop(1, "rgba(249, 248, 246, 0)");
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 64, 64);
       }
@@ -136,111 +127,27 @@ export default function Admin3DCanvas() {
 
     const particleTexture = getCircleTexture();
 
-    const pointsMat = new THREE.PointsMaterial({
-      size: 3.8,
-      vertexColors: true,
+    const particleMat = new THREE.PointsMaterial({
+      size: 3.5,
       map: particleTexture,
       transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending,
+      opacity: 0.45,
+      blending: THREE.NormalBlending,
       depthWrite: false,
     });
 
-    const pointsMesh = new THREE.Points(pointsGeo, pointsMat);
-    pointsMesh.position.set(0, -16, -10);
-    scene.add(pointsMesh);
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
 
-    // 3. Golden Luxury Embers / Architectural Starlight
-    const goldCount = 140;
-    const goldPositions = new Float32Array(goldCount * 3);
-    const goldVelocities: { x: number; y: number; z: number }[] = [];
-
-    for (let g = 0; g < goldCount; g++) {
-      goldPositions[g * 3] = (Math.random() - 0.5) * 220;
-      goldPositions[g * 3 + 1] = (Math.random() - 0.2) * 100;
-      goldPositions[g * 3 + 2] = (Math.random() - 0.5) * 160;
-
-      goldVelocities.push({
-        x: (Math.random() - 0.5) * 0.04,
-        y: 0.05 + Math.random() * 0.09,
-        z: (Math.random() - 0.5) * 0.04,
-      });
-    }
-
-    const goldGeometry = new THREE.BufferGeometry();
-    goldGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(goldPositions, 3)
-    );
-
-    const getGoldTexture = () => {
-      const c = document.createElement("canvas");
-      c.width = 64;
-      c.height = 64;
-      const ctx = c.getContext("2d");
-      if (ctx) {
-        const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-        gradient.addColorStop(0, "rgba(255, 255, 240, 1)");
-        gradient.addColorStop(0.3, "rgba(245, 215, 110, 0.9)");
-        gradient.addColorStop(0.7, "rgba(212, 175, 55, 0.4)");
-        gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 64, 64);
-      }
-      const tex = new THREE.CanvasTexture(c);
-      tex.needsUpdate = true;
-      return tex;
-    };
-
-    const goldMaterial = new THREE.PointsMaterial({
-      size: 4.2,
-      color: 0xffffff,
-      map: getGoldTexture(),
-      transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-
-    const goldParticles = new THREE.Points(goldGeometry, goldMaterial);
-    scene.add(goldParticles);
-
-    // 4. Master Plan Compass Rings
-    const ringGeo = new THREE.RingGeometry(52, 52.5, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x376f87,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.22,
-      wireframe: true,
-    });
-    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-    ringMesh.rotation.x = Math.PI / 2.3;
-    ringMesh.position.set(0, -12, -25);
-    scene.add(ringMesh);
-
-    const innerRingGeo = new THREE.RingGeometry(30, 30.4, 48);
-    const innerRingMat = new THREE.MeshBasicMaterial({
-      color: 0xd4af37,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.35,
-      wireframe: true,
-    });
-    const innerRingMesh = new THREE.Mesh(innerRingGeo, innerRingMat);
-    innerRingMesh.rotation.x = Math.PI / 2.3;
-    innerRingMesh.position.set(0, -12, -25);
-    scene.add(innerRingMesh);
-
-    // Parallax mouse tracker
+    // Parallax mouse tracker with gentle damping
     let mouseX = 0;
     let mouseY = 0;
     let targetX = 0;
     let targetY = 0;
 
     const handleMouseMove = (event: MouseEvent) => {
-      targetX = (event.clientX - window.innerWidth / 2) * 0.035;
-      targetY = (event.clientY - window.innerHeight / 2) * 0.025;
+      targetX = (event.clientX - window.innerWidth / 2) * 0.02;
+      targetY = (event.clientY - window.innerHeight / 2) * 0.015;
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
@@ -262,58 +169,50 @@ export default function Admin3DCanvas() {
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      clock += 0.025;
+      clock += 0.018;
 
-      // Smooth camera parallax
-      mouseX += (targetX - mouseX) * 0.04;
-      mouseY += (targetY - mouseY) * 0.04;
+      // Soft camera interpolation
+      mouseX += (targetX - mouseX) * 0.03;
+      mouseY += (targetY - mouseY) * 0.03;
 
-      camera.position.x = mouseX * 0.7;
-      camera.position.y = 35 - mouseY * 0.5;
-      camera.lookAt(0, -6, 0);
+      camera.position.x = mouseX * 0.6;
+      camera.position.y = 30 - mouseY * 0.4;
+      camera.lookAt(0, -4, 0);
 
-      // Rotate architectural rings
-      ringMesh.rotation.z += 0.0012;
-      innerRingMesh.rotation.z -= 0.0018;
-
-      // Deform topography terrain & points together
-      const terrainPos = terrainGeo.attributes.position as THREE.BufferAttribute;
-      const pointsPos = pointsGeo.attributes.position as THREE.BufferAttribute;
-      const tArray = terrainPos.array as Float32Array;
-      const pArray = pointsPos.array as Float32Array;
+      // Organic gentle wave undulation
+      const posAttr = waveGeo.attributes.position as THREE.BufferAttribute;
+      const posArray = posAttr.array as Float32Array;
 
       let vIdx = 0;
-      for (let ix = 0; ix <= gridSegmentsX; ix++) {
-        for (let iy = 0; iy <= gridSegmentsY; iy++) {
-          const zElevation =
-            Math.sin((ix + clock * 1.2) * 0.28) * 3.8 +
-            Math.sin((iy + clock * 0.9) * 0.32) * 3.8 +
-            Math.cos((ix + iy + clock) * 0.18) * 2.2;
+      for (let ix = 0; ix <= segmentsX; ix++) {
+        for (let iy = 0; iy <= segmentsY; iy++) {
+          const elevation =
+            Math.sin((ix + clock) * 0.22) * 2.8 +
+            Math.cos((iy + clock * 0.8) * 0.25) * 2.8;
 
-          tArray[vIdx + 2] = zElevation;
-          pArray[vIdx + 2] = zElevation;
+          posArray[vIdx + 2] = elevation;
           vIdx += 3;
         }
       }
-      terrainPos.needsUpdate = true;
-      pointsPos.needsUpdate = true;
+      posAttr.needsUpdate = true;
 
-      // Update golden embers
-      const goldPosAttr = goldGeometry.attributes.position as THREE.BufferAttribute;
-      const goldArray = goldPosAttr.array as Float32Array;
-      for (let g = 0; g < goldCount; g++) {
-        const vel = goldVelocities[g];
-        goldArray[g * 3] += vel.x;
-        goldArray[g * 3 + 1] += vel.y;
-        goldArray[g * 3 + 2] += vel.z;
+      // Drift particles gently upwards
+      const partPosAttr = particleGeo.attributes.position as THREE.BufferAttribute;
+      const partArray = partPosAttr.array as Float32Array;
 
-        if (goldArray[g * 3 + 1] > 65) {
-          goldArray[g * 3 + 1] = -25;
-          goldArray[g * 3] = (Math.random() - 0.5) * 220;
-          goldArray[g * 3 + 2] = (Math.random() - 0.5) * 160;
+      for (let p = 0; p < particleCount; p++) {
+        const vel = particleVelocities[p];
+        partArray[p * 3] += vel.x;
+        partArray[p * 3 + 1] += vel.y;
+        partArray[p * 3 + 2] += vel.z;
+
+        if (partArray[p * 3 + 1] > 55) {
+          partArray[p * 3 + 1] = -20;
+          partArray[p * 3] = (Math.random() - 0.5) * 180;
+          partArray[p * 3 + 2] = (Math.random() - 0.5) * 140;
         }
       }
-      goldPosAttr.needsUpdate = true;
+      partPosAttr.needsUpdate = true;
 
       renderer?.render(scene, camera);
     };
@@ -325,16 +224,10 @@ export default function Admin3DCanvas() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
 
-      terrainGeo.dispose();
-      terrainMat.dispose();
-      pointsGeo.dispose();
-      pointsMat.dispose();
-      goldGeometry.dispose();
-      goldMaterial.dispose();
-      ringGeo.dispose();
-      ringMat.dispose();
-      innerRingGeo.dispose();
-      innerRingMat.dispose();
+      waveGeo.dispose();
+      waveMat.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
       particleTexture.dispose();
 
       if (renderer) {
@@ -344,28 +237,21 @@ export default function Admin3DCanvas() {
   }, []);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#040B10]">
-      {/* Dynamic ambient color glows */}
-      <div className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[75vw] h-[55vh] rounded-full bg-gradient-to-b from-[#376F87]/30 via-[#234d5e]/15 to-transparent blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 right-[5%] w-[45vw] h-[45vh] rounded-full bg-[#D4AF37]/15 blur-[150px] pointer-events-none" />
-      <div className="absolute top-1/3 left-[2%] w-[35vw] h-[45vh] rounded-full bg-[#0E3547]/35 blur-[130px] pointer-events-none" />
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#F9F8F6]">
+      {/* Soft ambient Mediterranean & Caribbean air gradients matching main page */}
+      <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[85vw] h-[65vh] rounded-full bg-gradient-to-b from-[#EBF3F6] via-[#F0F6F8]/60 to-transparent blur-[120px] pointer-events-none" />
+      <div className="absolute -bottom-[10%] right-[10%] w-[50vw] h-[50vh] rounded-full bg-[#D4AF37]/5 blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/3 left-[5%] w-[40vw] h-[45vh] rounded-full bg-[#4E8EA9]/6 blur-[130px] pointer-events-none" />
 
-      {webGlSupported ? (
+      {webGlSupported && (
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full block pointer-events-none opacity-95 transition-opacity duration-1000"
+          className="absolute inset-0 w-full h-full block pointer-events-none opacity-80 transition-opacity duration-1000"
         />
-      ) : (
-        /* Graceful 2D luxury gradient fallback */
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#040B10] via-[#091F2B] to-[#040C12] pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(55,111,135,0.35),transparent_70%)] animate-pulse" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(212,175,55,0.15),transparent_50%)]" />
-        </div>
       )}
 
-      {/* Atmospheric Vignette & Ocean depth gradients */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#040b10] via-transparent to-[#040b10]/80 pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(4,11,16,0.85)_100%)] pointer-events-none" />
+      {/* Subtle organic vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(249,248,246,0.75)_100%)] pointer-events-none" />
     </div>
   );
 }
