@@ -3,8 +3,8 @@ services:
   - type: web
     name: inmobiliaria-api
     runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    dockerfilePath: Dockerfile
+    dockerContext: .
     region: oregon
     plan: free
     healthCheckPath: /actuator/health
