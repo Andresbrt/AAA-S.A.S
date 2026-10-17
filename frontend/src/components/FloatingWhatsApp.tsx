@@ -1,8 +1,9 @@
 'use client';
 import { PiWhatsappLogoLight } from 'react-icons/pi';
+import { buildWhatsAppUrl } from '@/lib/contact';
 
 export default function FloatingWhatsApp() {
-  const WHATSAPP_URL = "https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0";
+  const WHATSAPP_URL = buildWhatsAppUrl();
 
   return (
     <a

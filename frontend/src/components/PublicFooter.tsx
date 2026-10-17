@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PiInstagramLogoLight, PiTiktokLogoLight, PiFacebookLogoLight } from 'react-icons/pi';
+import { getCompanyPhoneDisplay, buildWhatsAppUrl } from '@/lib/contact';
 
 export default function PublicFooter({ company }: { company: any }) {
   return (
@@ -64,9 +65,11 @@ export default function PublicFooter({ company }: { company: any }) {
             {company?.contactAddress && (
               <p className="text-white/70 text-sm mb-2">📍 {company.contactAddress}</p>
             )}
-            {company?.contactPhone && (
-              <p className="text-white/70 text-sm mb-2">📞 {company.contactPhone}</p>
-            )}
+            <p className="text-white/70 text-sm mb-2">
+              📞 <a href={buildWhatsAppUrl('Hola! Me gustaría comunicarme con el equipo de Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-gold-accent)] transition-colors">
+                {getCompanyPhoneDisplay(company?.contactPhone)}
+              </a>
+            </p>
             {company?.contactEmail && (
               <p className="text-white/70 text-sm">✉️ {company.contactEmail}</p>
             )}

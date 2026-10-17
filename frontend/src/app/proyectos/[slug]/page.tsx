@@ -8,6 +8,7 @@ import PublicNavbar from '@/components/PublicNavbar';
 import InteractiveMasterPlan from '@/components/InteractiveMasterPlan';
 import ProjectGallery from '@/components/ProjectGallery';
 import { PiMapPinLight, PiRulerLight, PiSwimmingPoolLight, PiWhatsappLogoLight } from 'react-icons/pi';
+import { buildWhatsAppUrl } from '@/lib/contact';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -75,8 +76,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     console.error("Error fetching properties", err);
   }
 
-  const phone = '573122384172';
-  const whatsappUrl = `https://wa.me/${phone}?text=Hola!%20Estoy%20interesado%20en%20el%20proyecto%20${encodeURIComponent(project.name)}.%20¿Me%20podrían%20dar%20más%20información?`;
+  const whatsappUrl = buildWhatsAppUrl(`Hola! Estoy interesado en el proyecto ${project.name}. ¿Me podrían dar más información?`);
 
   let finalMapUrl = project.mapUrl;
   if (finalMapUrl && finalMapUrl.includes('<iframe') && finalMapUrl.includes('src="')) {

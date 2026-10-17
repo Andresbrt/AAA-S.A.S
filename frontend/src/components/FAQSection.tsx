@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { buildWhatsAppUrl } from '@/lib/contact';
 
 export default function FAQSection() {
   const [activeCategory, setActiveCategory] = useState('Todas');
@@ -107,7 +108,7 @@ export default function FAQSection() {
         
         <div className="text-center mt-12">
           <p className="text-sm text-gray-500 mb-4">¿Tienes una duda particular que no está listada?</p>
-          <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-[var(--color-caribbean-blue)] font-bold hover:underline">
+          <a href={buildWhatsAppUrl('Hola! Tengo una consulta sobre los proyectos de Grupo AAA para el área de asesoría jurídica.')} target="_blank" rel="noopener noreferrer" className="text-[var(--color-caribbean-blue)] font-bold hover:underline">
             Hablar con un Asesor Jurídico &rarr;
           </a>
         </div>

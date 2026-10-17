@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { getCompanyInfo, getFeaturedProjects } from '@/lib/api';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import WhatsAppButton from '@/components/WhatsAppButton';
 import ContactForm from '@/components/ContactForm';
+import { buildWhatsAppUrl, getCompanyPhoneDisplay } from '@/lib/contact';
 import ProjectsPortfolio from '@/components/ProjectsPortfolio';
 import ServicesSection from '@/components/ServicesSection';
 import AboutUsSection from '@/components/AboutUsSection';
@@ -68,7 +68,7 @@ export default function HomePage() {
               <Link href="#proyectos" className="bg-[var(--color-gold-accent)] text-white hover:bg-[#B89B2F] font-bold text-sm px-8 py-4 rounded-full transition shadow-[0_0_20px_rgba(212,175,55,0.4)]">
                 VER PORTAFOLIO
               </Link>
-              <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="bg-white/10 backdrop-blur-md text-white border border-white/50 hover:bg-white hover:text-[var(--color-caribbean-dark)] font-bold text-sm px-8 py-4 rounded-full transition">
+              <a href={buildWhatsAppUrl('Hola! Me gustaría agendar una asesoría personalizada con Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="bg-white/10 backdrop-blur-md text-white border border-white/50 hover:bg-white hover:text-[var(--color-caribbean-dark)] font-bold text-sm px-8 py-4 rounded-full transition">
                 ASESORÍA PERSONAL
               </a>
             </div>
@@ -107,17 +107,22 @@ export default function HomePage() {
                 </p>
 
                 <div className="space-y-8">
-                  {company?.contactPhone && (
-                    <div className="flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl border border-white/20">
-                        📞
-                      </div>
-                      <div>
-                        <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Llámanos</p>
-                        <p className="text-xl font-bold">{company.contactPhone}</p>
-                      </div>
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl border border-white/20">
+                      📞
                     </div>
-                  )}
+                    <div>
+                      <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Llámanos o Escríbenos</p>
+                      <a 
+                        href={buildWhatsAppUrl('Hola! Me gustaría comunicarme telefónicamente o por WhatsApp con Grupo AAA.')} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xl font-bold hover:text-[var(--color-gold-accent)] transition-colors"
+                      >
+                        {getCompanyPhoneDisplay(company?.contactPhone)}
+                      </a>
+                    </div>
+                  </div>
                   {company?.contactEmail && (
                     <div className="flex items-center gap-5">
                       <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl border border-white/20">
@@ -142,14 +147,6 @@ export default function HomePage() {
       </main>
 
       <PublicFooter company={company} />
-
-      {/* Floating WhatsApp Button */}
-      {company?.whatsappNumber && (
-        <WhatsAppButton
-          phone={company.whatsappNumber}
-          message={company?.whatsappMessage || "Hola, me interesa conocer más sobre el Portafolio de Proyectos de Grupo AAA."}
-        />
-      )}
       <SocialPopup />
     </>
   );

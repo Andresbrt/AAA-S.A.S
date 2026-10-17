@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PiWhatsappLogoLight, PiFileTextLight, PiMapPinLight } from 'react-icons/pi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { buildWhatsAppUrl } from '@/lib/contact';
 
 export interface Lot {
   id: string | number;
@@ -82,9 +83,8 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
   };
 
   const handleWhatsApp = () => {
-    const phone = companyPhone ? companyPhone.replace(/\D/g, '') : '573000000000';
     const message = `Hola, estoy muy interesado en el LOTE #${selectedLot.number} (${selectedLot.name}) por un valor de $${selectedLot.price.toLocaleString()} COP. ¿Me podrían brindar más información?`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -268,7 +268,7 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
                       <PiWhatsappLogoLight className="w-4 h-4 md:w-5 md:h-5" />
                       APARTAR LOTE AHORA
                     </button>
-                    <a href="https://api.whatsapp.com/send/?phone=573122384172&text=Hola!%20Estoy%20interesado%20en%20el%20proyecto%20Corales%20del%20Viento.%20%C2%BFMe%20podr%C3%ADas%20compartir%20el%20plano%20en%20PDF%20con%20los%20precios%20y%20lotes%20disponibles?&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="w-full bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[var(--color-caribbean-dark)] font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 md:gap-3 transition-all tracking-wider text-xs md:text-sm uppercase">
+                    <a href={buildWhatsAppUrl('Hola! Estoy interesado en el proyecto Corales del Viento. ¿Me podrías compartir el plano en PDF con los precios y lotes disponibles?')} target="_blank" rel="noopener noreferrer" className="w-full bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[var(--color-caribbean-dark)] font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-2 md:gap-3 transition-all tracking-wider text-xs md:text-sm uppercase">
                       <PiFileTextLight className="w-4 h-4 md:w-5 md:h-5" />
                       SOLICITAR PLANO Y PRECIOS
                     </a>

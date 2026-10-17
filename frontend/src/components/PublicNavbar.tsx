@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { buildWhatsAppUrl } from '@/lib/contact';
 
 export default function PublicNavbar({ variant = 'transparent-dark' }: { variant?: 'transparent-dark' | 'transparent-light' | 'solid' }) {
   const [scrolled, setScrolled] = useState(false);
@@ -36,7 +37,7 @@ export default function PublicNavbar({ variant = 'transparent-dark' }: { variant
           </Link>
         </nav>
 
-        <a href="https://api.whatsapp.com/send/?phone=573122384172&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className={(scrolled || variant === 'transparent-light' || variant === 'solid') ? 'btn-primary-glow' : 'btn-outline-gold !text-white !border-white hover:!bg-white hover:!text-[var(--color-caribbean-dark)]'}>
+        <a href={buildWhatsAppUrl('Hola! Deseo comunicarme con un Asesor VIP de Grupo AAA.')} target="_blank" rel="noopener noreferrer" className={(scrolled || variant === 'transparent-light' || variant === 'solid') ? 'btn-primary-glow' : 'btn-outline-gold !text-white !border-white hover:!bg-white hover:!text-[var(--color-caribbean-dark)]'}>
           Asesor VIP
         </a>
       </div>
