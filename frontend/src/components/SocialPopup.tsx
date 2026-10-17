@@ -1,11 +1,22 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { PiInstagramLogoLight, PiTiktokLogoLight, PiFacebookLogoLight, PiX } from 'react-icons/pi';
 
 export default function SocialPopup() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if (
+      pathname?.startsWith('/admin') || 
+      pathname?.startsWith('/portal-asesores') || 
+      pathname?.startsWith('/login')
+    ) {
+      setIsOpen(false);
+      return;
+    }
+
     // Verificar si ya se mostró en esta sesión
     const hasSeenPopup = sessionStorage.getItem('hasSeenSocialPopup');
     
@@ -17,14 +28,21 @@ export default function SocialPopup() {
       
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [pathname]);
 
   const closePopup = () => {
     setIsOpen(false);
     sessionStorage.setItem('hasSeenSocialPopup', 'true');
   };
 
-  if (!isOpen) return null;
+  if (
+    !isOpen ||
+    pathname?.startsWith('/admin') || 
+    pathname?.startsWith('/portal-asesores') || 
+    pathname?.startsWith('/login')
+  ) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">

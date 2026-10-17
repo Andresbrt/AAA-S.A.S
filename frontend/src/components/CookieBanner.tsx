@@ -2,19 +2,39 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CookieBanner() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Never show inside admin or login portals
+    if (
+      pathname?.startsWith('/admin') || 
+      pathname?.startsWith('/portal-asesores') || 
+      pathname?.startsWith('/login')
+    ) {
+      setIsVisible(false);
+      return;
+    }
+
     const hasConsented = localStorage.getItem('cookie_consent');
     if (!hasConsented) {
       // Small delay so it doesn't pop up instantly on page load
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [pathname]);
+
+  if (
+    pathname?.startsWith('/admin') || 
+    pathname?.startsWith('/portal-asesores') || 
+    pathname?.startsWith('/login')
+  ) {
+    return null;
+  }
 
   const acceptCookies = () => {
     localStorage.setItem('cookie_consent', 'true');

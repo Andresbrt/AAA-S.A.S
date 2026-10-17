@@ -1,9 +1,19 @@
 'use client';
+import { usePathname } from 'next/navigation';
 import { PiWhatsappLogoLight } from 'react-icons/pi';
 import { buildWhatsAppUrl } from '@/lib/contact';
 
 export default function FloatingWhatsApp() {
+  const pathname = usePathname();
   const WHATSAPP_URL = buildWhatsAppUrl();
+
+  if (
+    pathname?.startsWith('/admin') || 
+    pathname?.startsWith('/portal-asesores') || 
+    pathname?.startsWith('/login')
+  ) {
+    return null;
+  }
 
   return (
     <a
