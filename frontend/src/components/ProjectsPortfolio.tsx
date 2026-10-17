@@ -5,31 +5,25 @@ import { motion } from 'framer-motion';
 import { PiSparkleLight, PiMapPinLight, PiCubeLight } from 'react-icons/pi';
 
 export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
-  // If no projects from backend, use a mockup to match the requested design
-  const displayProjects = projects && projects.length > 0 ? projects : [
+  // Datos reales de Corales del Viento (fallback automático si el backend aún no está conectado en Render)
+  const defaultProjects = [
     {
-      id: 1,
+      id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
+      slug: 'corales-del-viento',
       name: 'Condominio Campestre Corales del Viento',
       location: 'San Bernardo del Viento, Córdoba',
-      tag: 'Proyecto Insignia - En Ventas',
-      description: 'Lotes exclusivos a 150m de la playa con Club House, piscina sin fin, vías amplias y acometidas de energía y agua. 100% saneado con matrícula individual.',
-      area: 'Desde 450 m²',
-      investment: 'Desde $60.000.000 COP',
-      financing: 'Hasta 60 meses',
-      image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=2070&auto=format&fit=crop',
-    },
-    {
-      id: 2,
-      name: 'Bahía Cispatá Eco-Village',
-      location: 'San Antero / Bahía Cispatá',
-      tag: 'Próximo Lanzamiento - Preventa',
-      description: 'Condominio náutico y ecológico con muelle privado, acceso directo a la bahía y canales navegables. Diseñado para descanso y deportes marinos.',
-      area: 'Desde 600 m²',
-      investment: 'Desde $130.000.000 COP',
-      financing: 'Lista Cero Preventa',
-      image: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=2070&auto=format&fit=crop',
+      tag: 'Proyecto Insignia - En Preventa',
+      description: 'Lotes campestres y costeros exclusivos a solo 150 metros del mar Caribe. Cuenta con Club House, piscina sin fin, vías amplias y acometidas de energía y agua. 100% saneado con matrícula individual.',
+      area: 'Desde 180 m²',
+      investment: 'Desde $48.443.200 COP',
+      financing: 'Financiación Directa',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
+      has3D: true,
     }
   ];
+
+  const displayProjects = projects && projects.length > 0 ? projects : defaultProjects;
 
   return (
     <section id="proyectos" className="py-32 px-6 lg:px-8 relative bg-[#F9F8F6]">
@@ -60,10 +54,10 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className={`grid grid-cols-1 ${displayProjects.length > 1 ? 'lg:grid-cols-2' : 'max-w-2xl mx-auto'} gap-10`}>
           {displayProjects.map((project: any, index: number) => (
             <motion.div 
-              key={project.id}
+              key={project.id || index}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -108,7 +102,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                   </div>
                 )}
                 
-                {project.id === 1 && (
+                {(project.has3D || project.slug === 'corales-del-viento') && (
                   <div className="absolute bottom-4 right-4 text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 bg-white/90 border-white text-[var(--color-caribbean-dark)]">
                     <PiCubeLight size={16} /> Experiencia 3D Activa
                   </div>
@@ -117,12 +111,10 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               
               {/* Content */}
               <div className="p-8 flex flex-col flex-grow relative z-10 bg-white/20">
-                {!project.logoUrl && (
-                  <h3 className="text-2xl font-bold text-[var(--color-caribbean-dark)] mb-3 font-serif">
-                    {project.name}
-                  </h3>
-                )}
-                <p className={`text-sm leading-relaxed mb-8 font-light ${project.logoUrl ? 'text-gray-500 mt-2' : 'text-gray-600'}`}>
+                <h3 className="text-2xl font-bold text-[var(--color-caribbean-dark)] mb-3 font-serif">
+                  {project.name}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-8 font-light">
                   {project.description || project.shortDescription}
                 </p>
                 
@@ -130,7 +122,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 <div className="grid grid-cols-3 gap-4 mb-8 pt-6 border-t border-[var(--color-gold-accent)]/20">
                   <div>
                     <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Área</p>
-                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.area || 'Desde 450 m²'}</p>
+                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.area || 'Desde 180 m²'}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Inversión</p>
@@ -138,13 +130,13 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                   </div>
                   <div>
                     <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">{project.financing ? 'Financiación' : 'Estado'}</p>
-                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.financing || 'En Ventas'}</p>
+                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.financing || 'En Preventa'}</p>
                   </div>
                 </div>
                 
                 {/* Action Buttons */}
                 <div className="mt-auto flex flex-col sm:flex-row gap-3">
-                  <Link href={`/proyectos/${project.slug}`} className="w-full text-center btn-primary-glow shadow-none text-sm">
+                  <Link href={`/proyectos/${project.slug || 'corales-del-viento'}`} className="w-full text-center btn-primary-glow shadow-none text-sm">
                     <span className="relative z-10">Ver Detalles del Proyecto</span>
                   </Link>
                 </div>

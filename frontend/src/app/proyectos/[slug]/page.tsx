@@ -16,7 +16,13 @@ interface PageProps {
 // SEO Metadata dinámico
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  let project = await getProjectBySlug(slug);
+  if (!project && slug === 'corales-del-viento') {
+    project = {
+      name: 'Condominio Campestre Corales del Viento',
+      shortDescription: 'Lotes campestres y costeros exclusivos a 150m del mar Caribe en San Bernardo del Viento, Córdoba.'
+    } as any;
+  }
   if (!project) return { title: 'Proyecto No Encontrado | Grupo AAA' };
 
   return {
@@ -32,8 +38,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  let project = await getProjectBySlug(slug);
   const company = await getCompanyInfo();
+
+  if (!project && slug === 'corales-del-viento') {
+    project = {
+      id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
+      name: 'Condominio Campestre Corales del Viento',
+      slug: 'corales-del-viento',
+      shortDescription: 'Lotes campestres y costeros exclusivos a solo 150 metros del mar Caribe.',
+      longDescription: 'Condominio Campestre Corales del Viento ofrece una oportunidad única de inversión en el Caribe cordobés, a solo 150 metros de la playa. Un desarrollo exclusivo con Club House, piscina sin fin, amplias vías de acceso, acometidas de servicios públicos y títulos saneados con matrícula individual.',
+      status: 'EN_PREVENTA',
+      minPrice: 48443200,
+      maxPrice: 112369400,
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
+      galleryUrls: [
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+      ],
+      tags: ['Preventa', 'Frente a Playa']
+    };
+  }
 
   if (!project) {
     notFound();
