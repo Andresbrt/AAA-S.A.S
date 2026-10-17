@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' blob: data: https://images.unsplash.com https://xvderakdvfvmnuczamla.supabase.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:8080 https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.google.com https://maps.google.com https://*.google.com; base-uri 'self'; form-action 'self';"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' blob: data: https://images.unsplash.com https://xvderakdvfvmnuczamla.supabase.co; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:8080 https://inmobiliaria-api-uzy2.onrender.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com https://www.google.com https://maps.google.com https://*.google.com; base-uri 'self'; form-action 'self';"
           }
         ]
       }
