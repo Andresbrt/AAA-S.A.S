@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: project.metaDescription || project.shortDescription,
       images: [project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'],
     },
+    alternates: {
+      canonical: `/proyectos/${slug}`,
+    },
   };
 }
 
@@ -85,8 +88,33 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     if (match) finalMapUrl = match[1];
   }
 
+  const schemaJson = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: project.name,
+    description: project.shortDescription || project.description || 'Condominio Campestre en el Caribe Colombiano',
+    url: `https://grupoaaa.com.co/proyectos/${project.slug}`,
+    image: project.bannerImageUrl || project.mainImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: project.cityName || 'San Bernardo del Viento',
+      addressRegion: 'Córdoba',
+      addressCountry: 'CO'
+    },
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'COP',
+      lowPrice: project.minPrice || 48443200,
+      availability: 'https://schema.org/InStock'
+    }
+  };
+
   return (
     <main className="min-h-screen flex flex-col bg-[var(--background)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}
+      />
       <PublicNavbar variant={project.logoUrl ? 'transparent-light' : 'transparent-dark'} />
       
       {/* Hero Section */}

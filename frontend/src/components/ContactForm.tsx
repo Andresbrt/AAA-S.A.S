@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { apiClient } from '@/services/apiClient';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { toast } from 'sonner';
+import { trackLeadSubmit } from '@/lib/analytics';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -53,6 +54,7 @@ export default function ContactForm() {
       });
       
       setStatus('success');
+      trackLeadSubmit(formData.message || 'Contacto General Web');
       toast.success("¡Solicitud enviada con éxito! Un asesor VIP se comunicará contigo.");
       setFormData({
         fullName: '',

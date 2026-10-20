@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { PiWhatsappLogoLight, PiFileTextLight, PiMapPinLight } from 'react-icons/pi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { buildWhatsAppUrl } from '@/lib/contact';
+import { trackLotSelect, trackWhatsAppClick } from '@/lib/analytics';
 
 export interface Lot {
   id: string | number;
@@ -242,6 +243,7 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
   };
 
   const handleWhatsApp = () => {
+    trackWhatsAppClick('masterplan_selected_lot', `Lote ${selectedLot.number}`);
     const message = `Hola, estoy muy interesado en el LOTE #${selectedLot.number} (${selectedLot.name}) por un valor de $${selectedLot.price.toLocaleString()} COP. ¿Me podrían brindar más información?`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
@@ -294,7 +296,12 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
-                    onClick={() => lot.status === 'DISPONIBLE' && setSelectedLot(lot)}
+                    onClick={() => {
+                      if (lot.status === 'DISPONIBLE') {
+                        setSelectedLot(lot);
+                        trackLotSelect(lot.number, lot.area, lot.price);
+                      }
+                    }}
                     className={`relative p-5 rounded-2xl border transition-all duration-300 flex flex-col items-center justify-center min-h-[160px]
                       ${selectedLot?.id === lot.id 
                         ? 'border-[var(--color-gold-accent)] bg-white shadow-[0_10px_30px_rgba(212,175,55,0.15)] scale-[1.02] z-10' 
