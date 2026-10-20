@@ -20,7 +20,7 @@ import { useState, useEffect, useRef } from "react";
 import { getCompanyInfo, updateCompanySettings, uploadMedia } from "@/lib/api";
 import { toast } from "sonner";
 
-const DEFAULT_HERO_VIDEO = "https://cdn.coverr.co/videos/coverr-flying-over-a-beautiful-beach-and-ocean-in-mexico-5727/1080p.mp4";
+const DEFAULT_HERO_VIDEO = "/videos/hero-background.mp4";
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
