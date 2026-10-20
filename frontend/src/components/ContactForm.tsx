@@ -99,7 +99,7 @@ export default function ContactForm() {
             required
             value={formData.fullName}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all text-base md:text-sm"
             placeholder="Ej. Juan Pérez"
           />
         </div>
@@ -111,7 +111,7 @@ export default function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all text-base md:text-sm"
             placeholder="Ej. +57 300 000 0000"
           />
         </div>
@@ -126,7 +126,7 @@ export default function ContactForm() {
           required
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all text-base md:text-sm"
           placeholder="tucorreo@ejemplo.com"
         />
       </div>
@@ -139,7 +139,7 @@ export default function ContactForm() {
           rows={4}
           value={formData.message}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all resize-none"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-caribbean-blue)] bg-white transition-all resize-none text-base md:text-sm"
           placeholder="Escribe tu mensaje aquí..."
         ></textarea>
       </div>

@@ -68,13 +68,14 @@ export default function FAQSection() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="¿Qué quieres saber? (ej: escrituras, agua, cuotas, playa...)"
-              className="w-full pl-12 pr-10 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 text-sm shadow-sm transition-all"
+              className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 text-base sm:text-sm shadow-sm transition-all"
             />
             <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
             {searchTerm && (
               <button 
                 onClick={() => setSearchTerm('')}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
+                aria-label="Limpiar búsqueda"
               >
                 ✕
               </button>
@@ -87,7 +88,7 @@ export default function FAQSection() {
               <button 
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${activeCategory === cat ? 'bg-[var(--color-caribbean-dark)] text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
+                className={`px-5 py-2.5 min-h-[44px] rounded-full text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${activeCategory === cat ? 'bg-[var(--color-caribbean-dark)] text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
               >
                 {cat}
               </button>

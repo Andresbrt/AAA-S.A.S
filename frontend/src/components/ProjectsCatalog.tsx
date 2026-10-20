@@ -65,12 +65,12 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* Category Buttons */}
-            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide text-xs uppercase tracking-widest font-semibold">
+            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide text-xs uppercase tracking-widest font-semibold items-center">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2.5 rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                  className={`px-5 py-2.5 min-h-[44px] flex items-center justify-center rounded-full transition-all duration-300 whitespace-nowrap cursor-pointer ${
                     activeCategory === cat
                       ? 'bg-[var(--color-caribbean-dark)] text-white shadow-md shadow-[var(--color-caribbean-dark)]/20 scale-105'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200/80 hover:text-gray-900'
@@ -88,13 +88,14 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                 placeholder="Buscar proyecto o ciudad..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-full border border-gray-200 text-xs focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 bg-gray-50 transition-all"
+                className="w-full pl-10 pr-10 py-3 md:py-2.5 rounded-full border border-gray-200 text-base sm:text-xs focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 bg-gray-50 transition-all"
               />
               <PiMagnifyingGlassLight className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               {searchTerm && (
                 <button 
                   onClick={() => setSearchTerm('')} 
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-xs text-gray-400 hover:text-gray-600 rounded-full"
+                  aria-label="Limpiar búsqueda"
                 >
                   ✕
                 </button>
