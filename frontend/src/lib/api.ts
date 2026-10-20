@@ -48,7 +48,7 @@ export interface LeadRequest {
 
 export async function getCompanyInfo() {
   try {
-    const res = await fetch(`${API_URL}/public/company`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_URL}/public/company`, { cache: 'no-store' });
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {

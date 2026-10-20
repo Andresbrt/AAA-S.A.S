@@ -12,18 +12,6 @@ export default function Admin3DCanvas() {
     if (!canvas) return;
 
     // Check WebGL support
-    try {
-      const gl =
-        canvas.getContext("webgl") ||
-        canvas.getContext("experimental-webgl");
-      if (!gl) {
-        setWebGlSupported(false);
-        return;
-      }
-    } catch {
-      setWebGlSupported(false);
-      return;
-    }
 
     const width = window.innerWidth || 1440;
     const height = window.innerHeight || 900;
