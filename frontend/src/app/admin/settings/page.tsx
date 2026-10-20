@@ -228,10 +228,12 @@ export default function AdminSettingsPage() {
                 <video
                   key={formData.heroVideoUrl || "default-video"}
                   src={formData.heroVideoUrl || DEFAULT_HERO_VIDEO}
+                  poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop"
                   controls
                   playsInline
                   loop
                   muted
+                  preload="metadata"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-medium text-white flex items-center gap-1.5 pointer-events-none">

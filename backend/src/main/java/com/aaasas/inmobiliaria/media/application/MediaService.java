@@ -64,15 +64,42 @@ public class MediaService {
         String key = String.format("%s/%s/%s-%s",
             entityType.toLowerCase(), entityId, UUID.randomUUID(), sanitizedName);
 
+        java.io.File tempUploadFile = null;
+        java.io.File tempFaststartFile = null;
         try {
-            String url = fileStoragePort.upload(key, file.getInputStream(), file.getSize(), file.getContentType());
+            java.io.InputStream inputStream = file.getInputStream();
+            long uploadSize = file.getSize();
+
+            if (file.getContentType() != null && file.getContentType().startsWith("video/")) {
+                try {
+                    tempUploadFile = java.io.File.createTempFile("raw-video-", ".mp4");
+                    file.transferTo(tempUploadFile);
+                    tempFaststartFile = java.io.File.createTempFile("faststart-", ".mp4");
+
+                    ProcessBuilder pb = new ProcessBuilder("python3", "-m", "qtfaststart", tempUploadFile.getAbsolutePath(), tempFaststartFile.getAbsolutePath());
+                    Process p = pb.start();
+                    boolean finished = p.waitFor(25, java.util.concurrent.TimeUnit.SECONDS);
+                    if (finished && p.exitValue() == 0 && tempFaststartFile.length() > 0) {
+                        inputStream = new java.io.FileInputStream(tempFaststartFile);
+                        uploadSize = tempFaststartFile.length();
+                        log.info("Video web-optimized with qtfaststart before cloud storage upload (size: {} bytes)", uploadSize);
+                    } else {
+                        inputStream = new java.io.FileInputStream(tempUploadFile);
+                    }
+                } catch (Exception ex) {
+                    log.warn("Could not apply qtfaststart to video, using original stream: {}", ex.getMessage());
+                    inputStream = file.getInputStream();
+                }
+            }
+
+            String url = fileStoragePort.upload(key, inputStream, uploadSize, file.getContentType());
 
             MediaFile mediaFile = MediaFile.builder()
                 .fileKey(key)
                 .url(url)
                 .originalName(sanitizedName)
                 .contentType(file.getContentType())
-                .fileSize(file.getSize())
+                .fileSize(uploadSize)
                 .mediaType(typeEnum)
                 .displayOrder(displayOrder)
                 .altText(altText)
@@ -91,6 +118,9 @@ public class MediaService {
             return toResponse(saved);
         } catch (IOException e) {
             throw new com.aaasas.inmobiliaria.shared.exception.FileStorageException("Error reading uploaded file", e);
+        } finally {
+            if (tempUploadFile != null && tempUploadFile.exists()) tempUploadFile.delete();
+            if (tempFaststartFile != null && tempFaststartFile.exists()) tempFaststartFile.delete();
         }
     }
 

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import SocialPopup from '@/components/SocialPopup';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import HeroVideo from '@/components/HeroVideo';
 
 export default function HomePage() {
   const [company, setCompany] = useState<any>(null);
@@ -40,20 +41,7 @@ export default function HomePage() {
         <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-black/40 z-10" />
 
-          <div className="absolute inset-0 z-0">
-            <video
-              key={company?.heroVideoUrl || 'default-video'}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover scale-105"
-              style={{ filter: "brightness(0.8)" }}
-            >
-              <source src={company?.heroVideoUrl || "https://cdn.coverr.co/videos/coverr-flying-over-a-beautiful-beach-and-ocean-in-mexico-5727/1080p.mp4"} type="video/mp4" />
-              Tu navegador no soporta videos HTML5.
-            </video>
-          </div>
+          <HeroVideo videoUrl={company?.heroVideoUrl} />
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
