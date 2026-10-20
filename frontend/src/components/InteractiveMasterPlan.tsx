@@ -238,7 +238,7 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
   });
 
   const formatPrice = (price: number) => {
-    return `$${(price / 1000000)}M COP`;
+    return `$${(price / 1000000).toLocaleString('es-CO', { maximumFractionDigits: 1 })}M COP`;
   };
 
   const handleWhatsApp = () => {
