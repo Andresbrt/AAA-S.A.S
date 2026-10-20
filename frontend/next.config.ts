@@ -17,6 +17,30 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/contacto',
+        destination: '/#contacto',
+        permanent: false,
+      },
+      {
+        source: '/nosotros',
+        destination: '/#nosotros',
+        permanent: false,
+      },
+      {
+        source: '/servicios',
+        destination: '/#servicios',
+        permanent: false,
+      },
+      {
+        source: '/ubicacion',
+        destination: '/#ubicacion',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
