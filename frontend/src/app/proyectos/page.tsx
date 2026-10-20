@@ -1,10 +1,9 @@
 import { Metadata } from 'next';
-import { getAllPublicProjects } from '@/lib/api';
+import { getAllPublicProjects, getCompanyInfo } from '@/lib/api';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import Image from 'next/image';
-import Link from 'next/link';
-import { PiMapPinLight } from 'react-icons/pi';
+import ProjectsCatalog, { ProjectItem } from '@/components/ProjectsCatalog';
 
 export const metadata: Metadata = {
   title: 'Catálogo de Proyectos | Grupo AAA S.A.S',
@@ -12,8 +11,14 @@ export const metadata: Metadata = {
 };
 
 export default async function ProyectosPage() {
-  const data = await getAllPublicProjects(0, 50);
-  const defaultProjects = [
+  const [data, companyData] = await Promise.all([
+    getAllPublicProjects(0, 50),
+    getCompanyInfo()
+  ]);
+
+  const company = companyData?.company || companyData;
+
+  const defaultProjects: ProjectItem[] = [
     {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
@@ -23,10 +28,12 @@ export default async function ProyectosPage() {
       mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
       bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
       minPrice: 48443200,
-      tags: ['Preventa', 'Frente a Playa']
+      status: 'PREVENTA',
+      tags: ['Preventa', 'Frente a Playa', 'Campestre', 'Condominio']
     }
   ];
-  const projects = data.content && data.content.length > 0 ? data.content : defaultProjects;
+
+  const projects: ProjectItem[] = data.content && data.content.length > 0 ? data.content : defaultProjects;
 
   return (
     <main className="min-h-screen flex flex-col bg-[var(--background)]">
@@ -66,83 +73,10 @@ export default async function ProyectosPage() {
         </div>
       </section>
 
-      {/* Filters (Mockup UI for interaction designer persona) */}
-      <section className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-20 z-40">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="flex gap-10 overflow-x-auto py-6 scrollbar-hide text-sm uppercase tracking-widest font-medium">
-            <button className="text-[var(--color-caribbean-dark)] border-b-2 border-[var(--color-gold-accent)] pb-2 whitespace-nowrap">Todos</button>
-            <button className="text-gray-400 hover:text-[var(--color-caribbean-dark)] transition-colors pb-2 whitespace-nowrap">Lotes Campestres</button>
-            <button className="text-gray-400 hover:text-[var(--color-caribbean-dark)] transition-colors pb-2 whitespace-nowrap">Casas</button>
-            <button className="text-gray-400 hover:text-[var(--color-caribbean-dark)] transition-colors pb-2 whitespace-nowrap">Frente al Mar</button>
-          </div>
-        </div>
-      </section>
+      {/* Interactive Catalog Component with Live Filter and Search */}
+      <ProjectsCatalog initialProjects={projects} />
 
-      {/* Grid */}
-      <section className="py-24 px-6 flex-grow">
-        <div className="container mx-auto max-w-7xl">
-          {projects.length === 0 ? (
-            <div className="text-center py-32 bg-white rounded-3xl shadow-sm border border-gray-100">
-              <h3 className="text-3xl font-serif text-[var(--color-caribbean-dark)] mb-6">No hay proyectos disponibles en este momento.</h3>
-              <p className="text-gray-500 font-light text-lg">Estamos trabajando en nuevos desarrollos. ¡Vuelve pronto!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
-              {projects.map((project: any) => (
-                <Link href={`/proyectos/${project.slug}`} key={project.id} className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(55,111,135,0.15)] transition-all duration-500 hover:-translate-y-3 border border-gray-100">
-                  <div className={`relative h-[300px] w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : ''}`}>
-                    <Image 
-                      src={project.logoUrl || project.mainImageUrl || project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
-                      alt={project.name}
-                      fill
-                      className={project.logoUrl ? "object-contain p-14 transition-transform duration-1000 group-hover:scale-105" : "object-cover transition-transform duration-1000 group-hover:scale-110"}
-                    />
-                    {!project.logoUrl && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                    )}
-                    
-                    <div className={`absolute top-6 left-6 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] border border-[var(--color-caribbean-dark)]/20' : 'bg-white/95 text-[var(--color-caribbean-dark)]'}`}>
-                      {project.status?.replace('_', ' ') || 'PREVENTA'}
-                    </div>
-
-                    <div className="absolute bottom-6 left-6 right-6">
-                      {!project.logoUrl && (
-                        <h3 className="text-3xl font-serif text-white mb-3 group-hover:text-[var(--color-gold-accent)] transition-colors drop-shadow-md">
-                          {project.name}
-                        </h3>
-                      )}
-                      <div className={`flex items-center text-xs tracking-[0.15em] ${project.logoUrl ? 'text-[var(--color-caribbean-dark)] font-medium bg-white/70 backdrop-blur-md px-3 py-1.5 rounded-lg inline-flex shadow-sm' : 'text-white/90 drop-shadow-sm'}`}>
-                        <PiMapPinLight className="w-4 h-4 mr-1.5" />
-                        {project.cityName || 'Colombia'}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-8 lg:p-10 flex flex-col flex-grow">
-                    <p className="text-gray-500 text-sm mb-10 line-clamp-3 font-light leading-relaxed flex-grow">
-                      {project.shortDescription || 'Un exclusivo desarrollo inmobiliario pensado para brindarte la mejor calidad de vida y rentabilidad excepcional en ubicaciones premium.'}
-                    </p>
-                    
-                    <div className="pt-6 border-t border-gray-100 flex items-center justify-between mt-auto">
-                      <div>
-                        <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Inversión desde</span>
-                        <span className="text-2xl font-serif text-[var(--color-caribbean-dark)]">
-                          ${project.minPrice ? project.minPrice.toLocaleString() : '105.000.000'} <span className="text-xs font-sans font-light text-gray-400 tracking-widest ml-1">COP</span>
-                        </span>
-                      </div>
-                      <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-[var(--color-caribbean-dark)] group-hover:border-[var(--color-caribbean-dark)] group-hover:text-white transition-all duration-300">
-                        <span className="text-xl font-light">&rarr;</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <PublicFooter company={{}} />
+      <PublicFooter company={company} />
     </main>
   );
 }

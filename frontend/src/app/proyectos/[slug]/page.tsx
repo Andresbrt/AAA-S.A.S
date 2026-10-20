@@ -40,7 +40,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
   let project = await getProjectBySlug(slug);
-  const company = await getCompanyInfo();
+  const companyData = await getCompanyInfo();
+  const company = companyData?.company || companyData;
 
   if (!project && slug === 'corales-del-viento') {
     project = {

@@ -20,8 +20,14 @@ export default function HomePage() {
   const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    getCompanyInfo().then(res => { if (res) setCompany(res) });
-    getFeaturedProjects().then(res => { if (res) setFeaturedProjects(res) });
+    getCompanyInfo().then(res => {
+      if (res) {
+        setCompany(res.company || res);
+      }
+    });
+    getFeaturedProjects().then(res => {
+      if (res) setFeaturedProjects(res);
+    });
   }, []);
 
   return (
@@ -64,7 +70,7 @@ export default function HomePage() {
             <p className="text-white/90 text-base md:text-lg lg:text-xl font-medium mb-10 md:mb-12 max-w-2xl mx-auto drop-shadow-lg px-2">
               {company?.heroSubtitle || 'Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano.'}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link href="#proyectos" className="bg-[var(--color-gold-accent)] text-white hover:bg-[#B89B2F] font-bold text-sm px-8 py-4 rounded-full transition shadow-[0_0_20px_rgba(212,175,55,0.4)]">
                 VER PORTAFOLIO
               </Link>
@@ -72,7 +78,39 @@ export default function HomePage() {
                 ASESORÍA PERSONAL
               </a>
             </div>
+
+            {/* Trust Highlights */}
+            <div className="pt-6 border-t border-white/20 grid grid-cols-2 md:grid-cols-4 gap-4 text-white/80 text-xs md:text-sm">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
+                <span>+12 Años de Trayectoria</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
+                <span>100% Blindaje Notarial</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
+                <span>A 150m del Mar Caribe</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
+                <span>Financiación Directa</span>
+              </div>
+            </div>
           </motion.div>
+
+          {/* Subtle scroll down arrow */}
+          <Link 
+            href="#proyectos" 
+            aria-label="Ir a proyectos"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-white/70 hover:text-white transition-colors animate-bounce hidden sm:flex flex-col items-center gap-1 text-[10px] tracking-widest uppercase font-semibold"
+          >
+            <span>Explorar</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </Link>
         </section>
 
         {/* 1. PORTAFOLIO DE PROYECTOS */}

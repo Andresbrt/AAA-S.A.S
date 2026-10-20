@@ -1,14 +1,25 @@
 import React from 'react';
 import Link from 'next/link';
+import PublicNavbar from '@/components/PublicNavbar';
+import PublicFooter from '@/components/PublicFooter';
+import { getCompanyInfo } from '@/lib/api';
 
 export const metadata = {
   title: 'Política de Tratamiento de Datos Personales | Grupo AAA S.A.S.',
   description: 'Conoce nuestra política de protección y tratamiento de datos personales conforme a la Ley 1581 de 2012 (Colombia).',
 };
 
-export default function PoliticaPrivacidadPage() {
+export default async function PoliticaPrivacidadPage() {
+  const companyData = await getCompanyInfo();
+  const company = companyData?.company || companyData;
+
   return (
-    <main className="min-h-screen bg-[var(--background)] pt-28 pb-20">
+    <>
+      <div className="bg-[var(--color-caribbean-dark)] pb-20">
+        <PublicNavbar />
+      </div>
+
+      <main className="min-h-screen bg-[var(--background)] py-16">
       <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
         <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12">
           
@@ -97,5 +108,8 @@ export default function PoliticaPrivacidadPage() {
         </div>
       </div>
     </main>
+
+    <PublicFooter company={company} />
+    </>
   );
 }

@@ -6,6 +6,8 @@ export default function FAQSection() {
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   const categories = ['Todas', 'Legal & Títulos', 'Financiero', 'Servicios & Obras', 'Ubicación'];
 
   const faqs = [
@@ -36,7 +38,14 @@ export default function FAQSection() {
     }
   ];
 
-  const filteredFaqs = activeCategory === 'Todas' ? faqs : faqs.filter(faq => faq.category === activeCategory);
+  const filteredFaqs = faqs.filter(faq => {
+    const matchesCategory = activeCategory === 'Todas' || faq.category === activeCategory;
+    const term = searchTerm.trim().toLowerCase();
+    const matchesSearch = !term || 
+      faq.question.toLowerCase().includes(term) || 
+      faq.answer.toLowerCase().includes(term);
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <section id="faq" className="py-24 px-6 lg:px-8 bg-white border-t border-gray-100">
@@ -52,14 +61,24 @@ export default function FAQSection() {
             Respuestas claras y fundamentadas a las dudas más comunes de nuestros compradores.
           </p>
           
-          {/* Search bar mock */}
+          {/* Real-time interactive search */}
           <div className="relative max-w-xl mx-auto mb-10">
             <input 
               type="text" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="¿Qué quieres saber? (ej: escrituras, agua, cuotas, playa...)"
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-1 focus:ring-[var(--color-caribbean-blue)] text-sm shadow-sm"
+              className="w-full pl-12 pr-10 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 text-sm shadow-sm transition-all"
             />
             <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-5 h-5 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {/* Categories */}

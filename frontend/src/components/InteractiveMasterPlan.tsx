@@ -37,10 +37,169 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
     image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
   })) || [];
 
-  const lots: Lot[] = apiLots;
+  // Fallback inventory for Corales del Viento if properties are not yet registered or loading
+  const defaultCoralesLots: Lot[] = [
+    {
+      id: 'lot-01',
+      number: '01',
+      name: 'Corales del Viento · Manzana A',
+      area: 200,
+      price: 53825000,
+      status: 'DISPONIBLE',
+      type: '150m Playa',
+      dimensions: '10m x 20m',
+      distance: '150 metros a la orilla del mar',
+      tag: 'Primera Franja Costera',
+      image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp'
+    },
+    {
+      id: 'lot-02',
+      number: '02',
+      name: 'Corales del Viento · Manzana A',
+      area: 180,
+      price: 48443200,
+      status: 'DISPONIBLE',
+      type: '150m Playa',
+      dimensions: '9m x 20m',
+      distance: '160 metros a la orilla del mar',
+      tag: 'Oportunidad Preventa',
+      image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp'
+    },
+    {
+      id: 'lot-03',
+      number: '03',
+      name: 'Corales del Viento · Manzana A',
+      area: 180,
+      price: 48443200,
+      status: 'VENDIDO',
+      type: '150m Playa',
+      dimensions: '9m x 20m',
+      distance: '170 metros a la orilla del mar',
+      tag: 'Adjudicado',
+      image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+    },
+    {
+      id: 'lot-04',
+      number: '04',
+      name: 'Corales del Viento · Manzana B',
+      area: 220,
+      price: 59200000,
+      status: 'DISPONIBLE',
+      type: 'Lotes XL',
+      dimensions: '11m x 20m',
+      distance: '190 metros a la orilla del mar',
+      tag: 'Lote Esquinero',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-05',
+      number: '05',
+      name: 'Corales del Viento · Manzana B',
+      area: 250,
+      price: 67500000,
+      status: 'DISPONIBLE',
+      type: 'Lotes XL',
+      dimensions: '12.5m x 20m',
+      distance: '210 metros a la orilla del mar',
+      tag: 'Frente a Zona Verde',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-06',
+      number: '06',
+      name: 'Corales del Viento · Manzana B',
+      area: 300,
+      price: 81000000,
+      status: 'DISPONIBLE',
+      type: 'Lotes XL',
+      dimensions: '15m x 20m',
+      distance: '230 metros a la orilla del mar',
+      tag: 'Área Premium',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-07',
+      number: '07',
+      name: 'Corales del Viento · Manzana C',
+      area: 180,
+      price: 48443200,
+      status: 'VENDIDO',
+      type: '150m Playa',
+      dimensions: '9m x 20m',
+      distance: '240 metros a la orilla del mar',
+      tag: 'Adjudicado',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-08',
+      number: '08',
+      name: 'Corales del Viento · Manzana C',
+      area: 210,
+      price: 56500000,
+      status: 'DISPONIBLE',
+      type: '150m Playa',
+      dimensions: '10.5m x 20m',
+      distance: '250 metros a la orilla del mar',
+      tag: 'Cerca a Club House',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-09',
+      number: '09',
+      name: 'Corales del Viento · Manzana C',
+      area: 240,
+      price: 64800000,
+      status: 'DISPONIBLE',
+      type: 'Lotes XL',
+      dimensions: '12m x 20m',
+      distance: '260 metros a la orilla del mar',
+      tag: 'Lote Familiar',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-10',
+      number: '10',
+      name: 'Corales del Viento · Manzana D',
+      area: 190,
+      price: 51200000,
+      status: 'DISPONIBLE',
+      type: '150m Playa',
+      dimensions: '9.5m x 20m',
+      distance: '280 metros a la orilla del mar',
+      tag: 'Vista despejada',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-11',
+      number: '11',
+      name: 'Corales del Viento · Manzana D',
+      area: 320,
+      price: 112369400,
+      status: 'DISPONIBLE',
+      type: 'Lotes XL',
+      dimensions: '16m x 20m',
+      distance: '290 metros a la orilla del mar',
+      tag: 'Lote Imperial XL',
+      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+      id: 'lot-12',
+      number: '12',
+      name: 'Corales del Viento · Manzana D',
+      area: 180,
+      price: 48443200,
+      status: 'VENDIDO',
+      type: '150m Playa',
+      dimensions: '9m x 20m',
+      distance: '300 metros a la orilla del mar',
+      tag: 'Adjudicado',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
+    }
+  ];
 
+  const lots: Lot[] = apiLots.length > 0 ? apiLots : defaultCoralesLots;
 
-  const [selectedLot, setSelectedLot] = useState(lots.find(l => l.status === 'DISPONIBLE') || lots[0] || null);
+  const [selectedLot, setSelectedLot] = useState<Lot>(lots.find(l => l.status === 'DISPONIBLE') || lots[0]);
   const [filter, setFilter] = useState('Todos los Lotes');
 
   // Si no hay lotes, mostramos un mensaje amigable

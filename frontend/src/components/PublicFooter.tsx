@@ -19,7 +19,7 @@ export default function PublicFooter({ company }: { company: any }) {
           
           <div className="relative z-10 flex items-center gap-4">
             <a 
-              href="https://www.instagram.com/grupoaaa_inversiones?stkn=M204eDJoaWJuZXRs" 
+              href={company?.instagramUrl || "https://www.instagram.com/grupoaaa_inversiones?stkn=M204eDJoaWJuZXRs"} 
               target="_blank" 
               rel="noopener noreferrer"
               className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
@@ -30,7 +30,7 @@ export default function PublicFooter({ company }: { company: any }) {
             </a>
             
             <a 
-              href="https://www.tiktok.com/@grupo.aaa?_r=1&_t=ZS-9A6rSjywCjl" 
+              href={company?.tiktokUrl || "https://www.tiktok.com/@grupo.aaa?_r=1&_t=ZS-9A6rSjywCjl"} 
               target="_blank" 
               rel="noopener noreferrer"
               className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
@@ -41,7 +41,7 @@ export default function PublicFooter({ company }: { company: any }) {
             </a>
             
             <a 
-              href="https://www.facebook.com/share/1CYRi2nCtT/?mibextid=wwXIfr" 
+              href={company?.facebookUrl || "https://www.facebook.com/share/1CYRi2nCtT/?mibextid=wwXIfr"} 
               target="_blank" 
               rel="noopener noreferrer"
               className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
@@ -78,9 +78,12 @@ export default function PublicFooter({ company }: { company: any }) {
           <div>
             <h4 className="text-lg font-medium text-white mb-6">Navegación</h4>
             <ul className="space-y-3">
-              <li><Link href="/" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Inicio</Link></li>
+              <li><Link href="/#inicio" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Inicio</Link></li>
               <li><Link href="/proyectos" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Proyectos Exclusivos</Link></li>
+              <li><Link href="/#servicios" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Servicios Inmobiliarios</Link></li>
               <li><Link href="/#nosotros" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Quiénes Somos</Link></li>
+              <li><Link href="/#ubicacion" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Ubicación & Conectividad</Link></li>
+              <li><Link href="/#faq" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Preguntas Frecuentes</Link></li>
               <li><Link href="/#contacto" className="text-white/70 hover:text-[var(--color-gold-accent)] transition-colors text-sm">Contáctanos</Link></li>
             </ul>
           </div>

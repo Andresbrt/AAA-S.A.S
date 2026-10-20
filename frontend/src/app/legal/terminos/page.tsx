@@ -8,7 +8,8 @@ export const metadata = {
 };
 
 export default async function TerminosPage() {
-  const company = await getCompanyInfo();
+  const companyData = await getCompanyInfo();
+  const company = companyData?.company || companyData;
   return (
     <>
       <div className="bg-[var(--color-caribbean-dark)] pb-20">

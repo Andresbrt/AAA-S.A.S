@@ -76,9 +76,9 @@ export default function LocationSection() {
               </div>
               <p className="text-xs font-bold text-[var(--color-caribbean-dark)] mb-1 mt-2 text-center">Condominio Corales del Viento</p>
               <p className="text-[10px] text-gray-500 mb-2 text-center">A 150m de la orilla del mar Caribe<br/>San Bernardo del Viento, Córdoba</p>
-              <button className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 shadow-md hover:shadow-lg transition-all">
+              <Link href="/proyectos/corales-del-viento" className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 shadow-md hover:shadow-lg transition-all hover:scale-105">
                 📍 Ver Proyecto
-              </button>
+              </Link>
             </motion.div>
 
             <motion.div 
@@ -144,9 +144,15 @@ export default function LocationSection() {
               </div>
             </div>
 
-            <Link href="https://maps.google.com" target="_blank" title="Navegar al proyecto usando Google Maps o Waze" className="w-full bg-white block text-center border-2 border-[var(--color-caribbean-blue)] text-[var(--color-caribbean-blue)] hover:bg-[var(--color-caribbean-blue)] hover:text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-[0_5px_15px_rgba(0,163,224,0.1)] hover:shadow-[0_8px_25px_rgba(0,163,224,0.25)] hover:-translate-y-0.5">
+            <a 
+              href="https://www.google.com/maps/search/?api=1&query=9.354200,-75.952100" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              title="Navegar al proyecto usando Google Maps o Waze" 
+              className="w-full bg-white block text-center border-2 border-[var(--color-caribbean-blue)] text-[var(--color-caribbean-blue)] hover:bg-[var(--color-caribbean-blue)] hover:text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-[0_5px_15px_rgba(0,163,224,0.1)] hover:shadow-[0_8px_25px_rgba(0,163,224,0.25)] hover:-translate-y-0.5"
+            >
               Abrir en Google Maps / Waze
-            </Link>
+            </a>
           </motion.div>
         </div>
       </div>
