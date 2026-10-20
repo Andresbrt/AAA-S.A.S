@@ -74,20 +74,31 @@ public class MediaService {
                 try {
                     tempUploadFile = java.io.File.createTempFile("raw-video-", ".mp4");
                     file.transferTo(tempUploadFile);
-                    tempFaststartFile = java.io.File.createTempFile("faststart-", ".mp4");
+                    tempFaststartFile = java.io.File.createTempFile("compressed-", ".mp4");
 
-                    ProcessBuilder pb = new ProcessBuilder("python3", "-m", "qtfaststart", tempUploadFile.getAbsolutePath(), tempFaststartFile.getAbsolutePath());
+                    // Compress video (max 1080p, web bitrate, audio stripped, faststart)
+                    java.io.File scriptFile = new java.io.File("backend/src/main/resources/scripts/compress_video.py");
+                    if (!scriptFile.exists()) {
+                        scriptFile = new java.io.File("src/main/resources/scripts/compress_video.py");
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(
+                        "python3", scriptFile.getAbsolutePath(),
+                        tempUploadFile.getAbsolutePath(), tempFaststartFile.getAbsolutePath()
+                    );
                     Process p = pb.start();
-                    boolean finished = p.waitFor(25, java.util.concurrent.TimeUnit.SECONDS);
+                    boolean finished = p.waitFor(90, java.util.concurrent.TimeUnit.SECONDS);
                     if (finished && p.exitValue() == 0 && tempFaststartFile.length() > 0) {
                         inputStream = new java.io.FileInputStream(tempFaststartFile);
                         uploadSize = tempFaststartFile.length();
-                        log.info("Video web-optimized with qtfaststart before cloud storage upload (size: {} bytes)", uploadSize);
+                        log.info("Video compressed and web-optimized successfully before cloud upload ({} MB -> {} MB)",
+                            String.format("%.1f", file.getSize() / (1024.0 * 1024.0)),
+                            String.format("%.1f", uploadSize / (1024.0 * 1024.0)));
                     } else {
                         inputStream = new java.io.FileInputStream(tempUploadFile);
                     }
                 } catch (Exception ex) {
-                    log.warn("Could not apply qtfaststart to video, using original stream: {}", ex.getMessage());
+                    log.warn("Could not compress video, using original stream: {}", ex.getMessage());
                     inputStream = file.getInputStream();
                 }
             }
