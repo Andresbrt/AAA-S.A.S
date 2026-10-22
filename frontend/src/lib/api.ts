@@ -48,46 +48,79 @@ export interface LeadRequest {
   source?: string;
 }
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3500): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+export const DEFAULT_COMPANY_INFO = {
+  company: {
+    id: "c1000000-0000-0000-0000-000000000001",
+    name: "GRUPO AAA S.A.S.",
+    aboutUs: "Somos una empresa inmobiliaria comprometida con el desarrollo de proyectos campestres y costeros en el Caribe colombiano.",
+    mission: "Desarrollar proyectos inmobiliarios de alta calidad que transformen la calidad de vida de nuestros clientes.",
+    vision: "Ser la inmobiliaria líder del Caribe colombiano, reconocida por la excelencia de nuestros proyectos.",
+    contactEmail: "info@aaasas.com",
+    contactPhone: "+57 312 238 4172",
+    contactAddress: "Cartagena de Indias, Bolívar, Colombia",
+    whatsappNumber: "573122384172",
+    whatsappMessage: "Hola, me interesa conocer más sobre el Portafolio de Proyectos de Grupo AAA.",
+    instagramUrl: "https://www.instagram.com/grupoaaa_inversiones?stkn=M204eDJoaWJuZXRs",
+    facebookUrl: "https://www.facebook.com/share/1CYRi2nCtT/?mibextid=wwXIfr",
+    tiktokUrl: "https://www.tiktok.com/@grupo.aaa?_r=1&_t=ZS-9A6rSjywCjl",
+    youtubeUrl: "",
+    heroVideoUrl: "/videos/hero-background.mp4",
+    heroTitle: "Vive el lujo en\nArmonía Natural",
+    heroSubtitle: "Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano."
+  },
+  team: []
+};
+
 export const getCompanyInfo = cache(async () => {
   try {
-    const res = await fetch(`${API_URL}/public/company`, { next: { revalidate: 60 } });
-    if (!res.ok) return null;
+    const res = await fetchWithTimeout(`${API_URL}/public/company`, { next: { revalidate: 60 } }, 3500);
+    if (!res.ok) return DEFAULT_COMPANY_INFO;
     return await res.json();
   } catch (error) {
-    console.error('Error fetching company info:', error);
-    return null;
+    return DEFAULT_COMPANY_INFO;
   }
 });
 
 export const getFeaturedProjects = cache(async () => {
   try {
-    const res = await fetch(`${API_URL}/public/projects/featured`, { next: { revalidate: 60 } });
+    const res = await fetchWithTimeout(`${API_URL}/public/projects/featured`, { next: { revalidate: 60 } }, 3500);
     if (!res.ok) return [];
     return await res.json();
   } catch (error) {
-    console.error('Error fetching featured projects:', error);
     return [];
   }
 });
 
 export const getAllPublicProjects = cache(async (page = 0, size = 12) => {
   try {
-    const res = await fetch(`${API_URL}/public/projects?page=${page}&size=${size}`, { next: { revalidate: 60 } });
+    const res = await fetchWithTimeout(`${API_URL}/public/projects?page=${page}&size=${size}`, { next: { revalidate: 60 } }, 3500);
     if (!res.ok) return { content: [] };
     return await res.json();
   } catch (error) {
-    console.error('Error fetching public projects:', error);
     return { content: [] };
   }
 });
 
 export const getProjectBySlug = cache(async (slug: string) => {
   try {
-    const res = await fetch(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 60 } });
+    const res = await fetchWithTimeout(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 60 } }, 3500);
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {
-    console.error(`Error fetching project ${slug}:`, error);
     return null;
   }
 });
@@ -305,11 +338,10 @@ export async function deleteMedia(token: string, id: string) {
 
 export const getProperties = cache(async (projectId: string) => {
   try {
-    const res = await fetch(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=100`, { next: { revalidate: 60 } });
+    const res = await fetchWithTimeout(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=100`, { next: { revalidate: 60 } }, 3500);
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {
-    console.error('Error fetching properties:', error);
     return null;
   }
 });
