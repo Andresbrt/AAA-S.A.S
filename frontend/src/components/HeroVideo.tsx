@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 const DEFAULT_POSTER = '/images/hero-poster.jpg';
-const DEFAULT_VIDEO = '/videos/hero-background.mp4';
+const LOCAL_VIDEO = '/videos/hero-background.mp4';
 
 interface HeroVideoProps {
   videoUrl?: string;
@@ -14,121 +14,101 @@ export default function HeroVideo({ videoUrl, posterUrl = DEFAULT_POSTER }: Hero
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Active video source: prioritize custom company URL if available, fallback to local fast video
-  const targetSrc = (videoUrl && videoUrl.trim() !== '') ? videoUrl : DEFAULT_VIDEO;
+  // If videoUrl is the default Supabase ultralight video or unset, use the local fast file (/videos/hero-background.mp4).
+  // This avoids mid-load source changes that cause Safari to pause and require a click.
+  const isDefaultVideo = !videoUrl || videoUrl.includes('hero-ultralight') || videoUrl.includes('hero-background');
+  const activeSrc = isDefaultVideo ? LOCAL_VIDEO : videoUrl;
 
-  // Robust play execution for Safari (macOS / iOS) and Chromium
-  const attemptPlay = useCallback((targetEl?: HTMLVideoElement | null) => {
-    const video = targetEl || videoRef.current;
+  const playVideo = useCallback(() => {
+    const video = videoRef.current;
     if (!video) return;
 
-    // Safari requires DOM properties to be explicitly true
+    // Enforce native DOM properties for Safari & Chrome
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          // Autoplay policy retry with explicit mute
-          if (video) {
-            video.muted = true;
-            video.play()
-              .then(() => setIsPlaying(true))
-              .catch(() => {
-                // If strict browser policy blocked it, window gesture listeners will trigger it
-              });
-          }
-        });
+    if (video.paused) {
+      const p = video.play();
+      if (p !== undefined) {
+        p.then(() => setIsPlaying(true))
+          .catch(() => {
+            // Retry muted in case of browser policy restriction
+            if (video) {
+              video.muted = true;
+              video.play().then(() => setIsPlaying(true)).catch(() => {});
+            }
+          });
+      }
+    } else {
+      setIsPlaying(true);
     }
   }, []);
 
-  // Update source smoothly on existing DOM element without destroying the video node
+  // Update source smoothly ONLY if a different custom video was passed
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // If source actually changed
     const currentSrcAttr = video.getAttribute('src');
-    if (currentSrcAttr !== targetSrc) {
-      video.src = targetSrc;
+    if (currentSrcAttr !== activeSrc && !video.src.endsWith(activeSrc)) {
+      video.src = activeSrc;
       video.load();
-      attemptPlay(video);
-    } else if (video.paused) {
-      attemptPlay(video);
+      playVideo();
+    } else {
+      playVideo();
     }
-  }, [targetSrc, attemptPlay]);
+  }, [activeSrc, playVideo]);
 
-  // Continuously listen to scroll, wheel, and touch interactions to activate playback immediately
+  // Activate playback on ANY scroll, wheel, touch or interaction continuously
   useEffect(() => {
-    const activateVideo = () => {
-      const video = videoRef.current;
-      if (!video) return;
-
-      if (video.paused) {
-        video.muted = true;
-        video.defaultMuted = true;
-        video.playsInline = true;
-        video.play()
-          .then(() => setIsPlaying(true))
-          .catch(() => {});
-      }
+    const onScrollOrInteract = () => {
+      playVideo();
     };
 
-    // Scroll and interaction triggers
-    window.addEventListener('scroll', activateVideo, { passive: true });
-    window.addEventListener('wheel', activateVideo, { passive: true });
-    window.addEventListener('touchmove', activateVideo, { passive: true });
-    window.addEventListener('touchstart', activateVideo, { passive: true });
-    window.addEventListener('pointerdown', activateVideo, { passive: true });
-    window.addEventListener('click', activateVideo, { passive: true });
+    // Attach continuous listeners for scroll, wheel, touch, and pointers
+    window.addEventListener('scroll', onScrollOrInteract, { passive: true });
+    window.addEventListener('wheel', onScrollOrInteract, { passive: true });
+    window.addEventListener('touchmove', onScrollOrInteract, { passive: true });
+    window.addEventListener('touchstart', onScrollOrInteract, { passive: true });
+    window.addEventListener('pointerdown', onScrollOrInteract, { passive: true });
+    window.addEventListener('pointermove', onScrollOrInteract, { passive: true });
+    window.addEventListener('keydown', onScrollOrInteract, { passive: true });
+    window.addEventListener('click', onScrollOrInteract, { passive: true });
 
-    // Also activate via IntersectionObserver when Hero is in viewport
+    // IntersectionObserver when Hero enters viewport
     let observer: IntersectionObserver | null = null;
     if (typeof window !== 'undefined' && 'IntersectionObserver' in window && videoRef.current) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              activateVideo();
-            }
-          });
-        },
-        { threshold: 0.15 }
-      );
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playVideo();
+          }
+        });
+      }, { threshold: 0.1 });
       observer.observe(videoRef.current);
     }
 
-    return () => {
-      window.removeEventListener('scroll', activateVideo);
-      window.removeEventListener('wheel', activateVideo);
-      window.removeEventListener('touchmove', activateVideo);
-      window.removeEventListener('touchstart', activateVideo);
-      window.removeEventListener('pointerdown', activateVideo);
-      window.removeEventListener('click', activateVideo);
-      if (observer) {
-        observer.disconnect();
-      }
-    };
-  }, [attemptPlay]);
+    // Attempt play immediately on mount
+    playVideo();
 
-  const handleError = () => {
-    const video = videoRef.current;
-    if (video && video.src !== DEFAULT_VIDEO && !video.src.endsWith(DEFAULT_VIDEO)) {
-      console.warn('Custom hero video stream failed to load. Switching to local optimized copy.');
-      video.src = DEFAULT_VIDEO;
-      video.load();
-      attemptPlay(video);
-    }
-  };
+    return () => {
+      window.removeEventListener('scroll', onScrollOrInteract);
+      window.removeEventListener('wheel', onScrollOrInteract);
+      window.removeEventListener('touchmove', onScrollOrInteract);
+      window.removeEventListener('touchstart', onScrollOrInteract);
+      window.removeEventListener('pointerdown', onScrollOrInteract);
+      window.removeEventListener('pointermove', onScrollOrInteract);
+      window.removeEventListener('keydown', onScrollOrInteract);
+      window.removeEventListener('click', onScrollOrInteract);
+      if (observer) observer.disconnect();
+    };
+  }, [playVideo]);
 
   return (
     <div 
-      className="absolute inset-0 z-0 bg-slate-950 overflow-hidden"
+      className="absolute inset-0 z-0 bg-slate-950 overflow-hidden cursor-pointer"
+      onClick={playVideo}
       style={{
         backgroundImage: `url(${posterUrl})`,
         backgroundSize: 'cover',
@@ -139,7 +119,6 @@ export default function HeroVideo({ videoUrl, posterUrl = DEFAULT_POSTER }: Hero
         ref={(el) => {
           videoRef.current = el;
           if (el) {
-            // Apply native properties directly to DOM node
             el.muted = true;
             el.defaultMuted = true;
             el.playsInline = true;
@@ -147,27 +126,28 @@ export default function HeroVideo({ videoUrl, posterUrl = DEFAULT_POSTER }: Hero
             el.setAttribute('webkit-playsinline', '');
             el.setAttribute('muted', '');
             if (el.paused) {
-              attemptPlay(el);
+              el.play().then(() => setIsPlaying(true)).catch(() => {});
             }
           }
         }}
-        src={targetSrc}
+        src={activeSrc}
         poster={posterUrl}
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
-        onCanPlay={() => attemptPlay()}
-        onLoadedData={() => attemptPlay()}
+        preload="auto"
+        onCanPlay={playVideo}
+        onLoadedData={playVideo}
+        onLoadedMetadata={playVideo}
         onPlaying={() => setIsPlaying(true)}
-        onError={handleError}
         className={`w-full h-full object-cover scale-105 transition-opacity duration-700 ${
           isPlaying ? 'opacity-100' : 'opacity-95'
         }`}
         style={{ filter: 'brightness(0.8)' }}
-      />
+      >
+        <source src={activeSrc} type="video/mp4" />
+      </video>
     </div>
   );
 }
-
