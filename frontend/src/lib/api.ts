@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 export interface ProjectRequest {
@@ -46,49 +48,49 @@ export interface LeadRequest {
   source?: string;
 }
 
-export async function getCompanyInfo() {
+export const getCompanyInfo = cache(async () => {
   try {
-    const res = await fetch(`${API_URL}/public/company`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/public/company`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {
     console.error('Error fetching company info:', error);
     return null;
   }
-}
+});
 
-export async function getFeaturedProjects() {
+export const getFeaturedProjects = cache(async () => {
   try {
-    const res = await fetch(`${API_URL}/public/projects/featured`, { next: { revalidate: 0 } });
+    const res = await fetch(`${API_URL}/public/projects/featured`, { next: { revalidate: 60 } });
     if (!res.ok) return [];
     return await res.json();
   } catch (error) {
     console.error('Error fetching featured projects:', error);
     return [];
   }
-}
+});
 
-export async function getAllPublicProjects(page = 0, size = 12) {
+export const getAllPublicProjects = cache(async (page = 0, size = 12) => {
   try {
-    const res = await fetch(`${API_URL}/public/projects?page=${page}&size=${size}`, { next: { revalidate: 0 } });
+    const res = await fetch(`${API_URL}/public/projects?page=${page}&size=${size}`, { next: { revalidate: 60 } });
     if (!res.ok) return { content: [] };
     return await res.json();
   } catch (error) {
     console.error('Error fetching public projects:', error);
     return { content: [] };
   }
-}
+});
 
-export async function getProjectBySlug(slug: string) {
+export const getProjectBySlug = cache(async (slug: string) => {
   try {
-    const res = await fetch(`${API_URL}/public/projects/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {
     console.error(`Error fetching project ${slug}:`, error);
     return null;
   }
-}
+});
 
 export async function createLead(data: LeadRequest) {
   try {
@@ -301,16 +303,16 @@ export async function deleteMedia(token: string, id: string) {
 
 // ---------------- PROPERTIES API ----------------
 
-export async function getProperties(projectId: string) {
+export const getProperties = cache(async (projectId: string) => {
   try {
-    const res = await fetch(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=100`, { next: { revalidate: 0 } });
+    const res = await fetch(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=100`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return await res.json();
   } catch (error) {
     console.error('Error fetching properties:', error);
     return null;
   }
-}
+});
 
 export async function createProperty(token: string, data: PropertyRequest) {
   const res = await fetch(`${API_URL}/admin/properties`, {

@@ -162,6 +162,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                   >
                     <Link 
                       href={`/proyectos/${project.slug}`} 
+                      prefetch={true}
                       className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(55,111,135,0.15)] transition-all duration-500 hover:-translate-y-3 border border-gray-100 h-full"
                     >
                       <div className={`relative h-[300px] w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : 'bg-slate-900'}`}>

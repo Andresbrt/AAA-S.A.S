@@ -228,7 +228,7 @@ export default function AdminSettingsPage() {
                 <video
                   key={formData.heroVideoUrl || "default-video"}
                   src={formData.heroVideoUrl || DEFAULT_HERO_VIDEO}
-                  poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop"
+                  poster="/images/hero-poster.jpg"
                   controls
                   playsInline
                   loop

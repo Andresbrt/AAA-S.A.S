@@ -84,6 +84,7 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "projectBySlug", key = "#slug")
     public ProjectDetailResponse findBySlug(String slug) {
         Project project = projectRepository.findBySlugAndDeletedAtIsNullAndPublishedTrue(slug)
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "slug", slug));
@@ -141,7 +142,7 @@ public class ProjectService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "projectBySlug"}, allEntries = true)
     public ProjectDetailResponse create(CreateProjectRequest request) {
         String slug = SlugUtil.toSlug(request.name());
         if (projectRepository.existsBySlug(slug)) {
@@ -185,7 +186,7 @@ public class ProjectService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "projectBySlug"}, allEntries = true)
     public ProjectDetailResponse update(UUID id, UpdateProjectRequest request) {
         Project project = projectRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", id));
@@ -233,7 +234,7 @@ public class ProjectService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "projectBySlug"}, allEntries = true)
     public void delete(UUID id) {
         Project project = projectRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", id));
@@ -245,7 +246,7 @@ public class ProjectService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "projectBySlug"}, allEntries = true)
     public void togglePublish(UUID id, boolean publish) {
         Project project = projectRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", id));
@@ -255,7 +256,7 @@ public class ProjectService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "projectBySlug"}, allEntries = true)
     public void toggleFeatured(UUID id, boolean featured) {
         Project project = projectRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", id));

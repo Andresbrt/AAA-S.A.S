@@ -136,7 +136,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 
                 {/* Action Buttons */}
                 <div className="mt-auto flex flex-col sm:flex-row gap-3">
-                  <Link href={`/proyectos/${project.slug || 'corales-del-viento'}`} className="w-full text-center btn-primary-glow shadow-none text-sm">
+                  <Link href={`/proyectos/${project.slug || 'corales-del-viento'}`} prefetch={true} className="w-full text-center btn-primary-glow shadow-none text-sm">
                     <span className="relative z-10">Ver Detalles del Proyecto</span>
                   </Link>
                 </div>
@@ -146,7 +146,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
         </div>
         
         <div className="mt-16 text-center">
-          <Link href="/proyectos" className="inline-block btn-outline-gold px-10 py-4">
+          <Link href="/proyectos" prefetch={true} className="inline-block btn-outline-gold px-10 py-4">
             Ver Portafolio Completo
           </Link>
         </div>

@@ -39,7 +39,7 @@ export default function HomePage() {
 
         {/* HERO SECTION CON VIDEO */}
         <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-black/40 z-10" />
+          <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
 
           <HeroVideo videoUrl={company?.heroVideoUrl} />
 

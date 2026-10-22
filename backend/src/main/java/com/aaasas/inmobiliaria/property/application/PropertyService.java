@@ -15,6 +15,7 @@ import com.aaasas.inmobiliaria.shared.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,6 +34,7 @@ public class PropertyService {
     private final ProjectRepository projectRepository;
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "propertiesByProject", key = "#projectId.toString() + '_' + #page + '_' + #size")
     public PageResponse<PropertyResponse> findByProject(UUID projectId, int page, int size) {
         Page<Property> props = propertyRepository.findByProjectIdAndDeletedAtIsNull(
             projectId, PageRequest.of(page, Math.min(size, 50), Sort.by("price")));
@@ -74,7 +76,7 @@ public class PropertyService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "propertiesByProject"}, allEntries = true)
     public PropertyResponse create(CreatePropertyRequest req) {
         Project project = projectRepository.findByIdAndDeletedAtIsNull(req.projectId())
             .orElseThrow(() -> new ResourceNotFoundException("Proyecto", "id", req.projectId()));
@@ -98,7 +100,7 @@ public class PropertyService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "propertiesByProject"}, allEntries = true)
     public PropertyResponse update(UUID id, UpdatePropertyRequest req) {
         Property property = propertyRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));

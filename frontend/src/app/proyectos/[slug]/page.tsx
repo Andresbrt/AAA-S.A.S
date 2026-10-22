@@ -42,8 +42,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  let project = await getProjectBySlug(slug);
-  const companyData = await getCompanyInfo();
+  const [fetchedProject, companyData] = await Promise.all([
+    getProjectBySlug(slug),
+    getCompanyInfo()
+  ]);
+  let project = fetchedProject;
   const company = companyData?.company || companyData;
 
   if (!project && slug === 'corales-del-viento') {
@@ -70,15 +73,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  let properties = [];
-  try {
-    const propsData = await getProperties(project.id);
-    if (propsData && propsData.content) {
-      properties = propsData.content;
-    }
-  } catch (err) {
-    console.error("Error fetching properties", err);
-  }
+  const propsData = project.id ? await getProperties(project.id) : null;
+  const properties = propsData?.content || [];
 
   const whatsappUrl = buildWhatsAppUrl(`Hola! Estoy interesado en el proyecto ${project.name}. ¿Me podrían dar más información?`);
 
