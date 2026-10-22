@@ -2,16 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { getCompanyInfo } from '@/lib/api';
+import { DEFAULT_COMPANY_INFO } from '@/lib/api';
 
 export const metadata = {
   title: 'Política de Tratamiento de Datos Personales | Grupo AAA S.A.S.',
   description: 'Conoce nuestra política de protección y tratamiento de datos personales conforme a la Ley 1581 de 2012 (Colombia).',
 };
 
-export default async function PoliticaPrivacidadPage() {
-  const companyData = await getCompanyInfo();
-  const company = companyData?.company || companyData;
+export default function PoliticaPrivacidadPage() {
+  const company = DEFAULT_COMPANY_INFO.company;
 
   return (
     <>

@@ -5,6 +5,9 @@ import PublicFooter from '@/components/PublicFooter';
 import Image from 'next/image';
 import ProjectsCatalog, { ProjectItem } from '@/components/ProjectsCatalog';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Catálogo de Proyectos | Grupo AAA S.A.S',
   description: 'Explora nuestro portafolio de proyectos campestres, residenciales y costeros en Colombia.',

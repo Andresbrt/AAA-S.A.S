@@ -1,15 +1,14 @@
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { getCompanyInfo } from '@/lib/api';
+import { DEFAULT_COMPANY_INFO } from '@/lib/api';
 
 export const metadata = {
   title: 'Términos y Condiciones | Grupo AAA S.A.S',
   description: 'Términos y condiciones de uso del portal web y servicios inmobiliarios de Grupo AAA S.A.S.',
 };
 
-export default async function TerminosPage() {
-  const companyData = await getCompanyInfo();
-  const company = companyData?.company || companyData;
+export default function TerminosPage() {
+  const company = DEFAULT_COMPANY_INFO.company;
   return (
     <>
       <div className="bg-[var(--color-caribbean-dark)] pb-20">

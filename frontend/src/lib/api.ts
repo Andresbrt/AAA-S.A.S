@@ -49,6 +49,9 @@ export interface LeadRequest {
 }
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3500): Promise<Response> {
+  if (process.env.NEXT_PHASE === 'phase-production-build' || process.env.IS_BUILD_TIME === 'true') {
+    throw new Error('Build-phase: skipping remote fetch to avoid CI/CD timeout');
+  }
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
