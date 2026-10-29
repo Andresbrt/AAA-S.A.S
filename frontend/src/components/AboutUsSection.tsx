@@ -45,30 +45,31 @@ export default function AboutUsSection({ company }: { company: any }) {
                 <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-[var(--color-gold-accent)]" />
                 <h3 className="font-bold text-[var(--color-caribbean-dark)] mb-2 uppercase tracking-wide text-sm">Misión</h3>
                 <p>
-                  Desarrollar y comercializar proyectos inmobiliarios que generen valor y bienestar para nuestros clientes, ofreciendo inmuebles con potencial de crecimiento, calidad y ubicación estratégica. Trabajamos con compromiso, transparencia y responsabilidad, acompañando a nuestros clientes durante el proceso de adquisición y construyendo relaciones basadas en la confianza.
+                  {company?.mission || "Desarrollar y comercializar proyectos inmobiliarios que generen valor y bienestar para nuestros clientes, ofreciendo inmuebles con potencial de crecimiento, calidad y ubicación estratégica. Trabajamos con compromiso, transparencia y responsabilidad, acompañando a nuestros clientes durante el proceso de adquisición y construyendo relaciones basadas en la confianza."}
                 </p>
               </div>
               <div className="relative pl-6 border-l-2 border-gray-100 hover:border-[var(--color-caribbean-blue)] transition-colors duration-300" title="Visión corporativa de Grupo AAA">
                 <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-[var(--color-caribbean-blue)]" />
                 <h3 className="font-bold text-[var(--color-caribbean-dark)] mb-2 uppercase tracking-wide text-sm">Visión</h3>
                 <p>
-                  Consolidarnos como una empresa referente en el sector inmobiliario, reconocida por la calidad de nuestros proyectos, la confianza de nuestros clientes y nuestra capacidad para identificar y desarrollar oportunidades de inversión. Buscamos crecer de manera sostenible, ampliando nuestro portafolio y contribuyendo al desarrollo de espacios que mejoren la calidad de vida y generen valor a largo plazo.
+                  {company?.vision || "Consolidarnos como una empresa referente en el sector inmobiliario, reconocida por la calidad de nuestros proyectos, la confianza de nuestros clientes y nuestra capacidad para identificar y desarrollar oportunidades de inversión. Buscamos crecer de manera sostenible, ampliando nuestro portafolio y contribuyendo al desarrollo de espacios que mejoren la calidad de vida y generen valor a largo plazo."}
                 </p>
               </div>
+
             </motion.div>
             
             {/* Stats Grid */}
             <motion.div variants={slideUp} className="grid grid-cols-2 md:grid-cols-4 gap-4" aria-label="Estadísticas de la empresa">
-              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="Más de 12 años de trayectoria en el sector inmobiliario">
-                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+12</p>
+              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="Más de 5 años de trayectoria en el sector inmobiliario">
+                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+5</p>
                 <p className="text-xs text-gray-500 font-medium">Años de<br/>Trayectoria</p>
               </div>
-              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="4 grandes proyectos inmobiliarios entregados en Córdoba">
-                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+4</p>
+              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="2 grandes proyectos inmobiliarios desarrollados">
+                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+2</p>
                 <p className="text-xs text-gray-500 font-medium">Grandes<br/>Proyectos</p>
               </div>
-              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="Más de 180 hectáreas de tierra gestionadas para proyectos campestres">
-                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+180</p>
+              <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="Más de 10 hectáreas de tierra gestionadas para proyectos campestres">
+                <p className="text-2xl font-bold text-[var(--color-caribbean-blue)] mb-1 group-hover:scale-110 transition-transform">+10</p>
                 <p className="text-xs text-gray-500 font-medium">Hectáreas<br/>Gestionadas</p>
               </div>
               <div className="group bg-gray-50 hover:bg-white rounded-2xl p-4 text-center border border-gray-100 hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-1" title="Garantizamos seguridad jurídica con 100% blindaje notarial en nuestras ventas">

@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PiMapPinLight, PiMagnifyingGlassLight } from 'react-icons/pi';
+import { X, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface ProjectItem {
@@ -25,7 +26,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
   const [activeCategory, setActiveCategory] = useState<string>('Todos');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const categories = ['Todos', 'Frente a Playa', 'Lotes Campestres', 'Preventa', 'Condominios'];
+  const categories = ['Todos', 'Frente al Mar', 'Lotes Campestres', 'En Desarrollo'];
 
   const filteredProjects = useMemo(() => {
     return initialProjects.filter((project) => {
@@ -35,15 +36,14 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
       const name = (project.name || '').toLowerCase();
 
       let matchesCategory = true;
-      if (activeCategory === 'Frente a Playa') {
-        matchesCategory = tags.includes('frente a playa') || desc.includes('playa') || desc.includes('costero') || desc.includes('mar');
+      if (activeCategory === 'Frente al Mar') {
+        matchesCategory = tags.includes('frente al mar') || tags.includes('frente a playa') || desc.includes('mar') || desc.includes('playa') || desc.includes('costero');
       } else if (activeCategory === 'Lotes Campestres') {
         matchesCategory = tags.includes('campestre') || desc.includes('campestre') || name.includes('campestre') || tags.includes('lotes');
-      } else if (activeCategory === 'Preventa') {
-        matchesCategory = project.status === 'PREVENTA' || project.status === 'EN_PREVENTA' || tags.includes('preventa');
-      } else if (activeCategory === 'Condominios') {
-        matchesCategory = name.includes('condominio') || desc.includes('condominio');
+      } else if (activeCategory === 'En Desarrollo') {
+        matchesCategory = project.status === 'EN_DESARROLLO' || project.status === 'EN_PLANOS' || tags.includes('desarrollo') || tags.includes('preventa');
       }
+
 
       // 2. Search Filter
       const term = searchTerm.trim().toLowerCase();
@@ -97,7 +97,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                   className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-xs text-gray-400 hover:text-gray-600 rounded-full"
                   aria-label="Limpiar búsqueda"
                 >
-                  ✕
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -129,10 +129,10 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
 
           {filteredProjects.length === 0 ? (
             <div className="text-center py-24 bg-white rounded-3xl shadow-sm border border-gray-100 max-w-2xl mx-auto p-8">
-              <div className="w-16 h-16 rounded-full bg-blue-50 text-[var(--color-caribbean-blue)] flex items-center justify-center mx-auto mb-4 text-2xl">
-                🏝️
+              <div className="w-16 h-16 rounded-full bg-blue-50 text-[var(--color-caribbean-blue)] flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                <Compass className="w-8 h-8 text-[var(--color-caribbean-blue)]" />
               </div>
-              <h3 className="text-2xl font-serif text-[var(--color-caribbean-dark)] mb-3">
+              <h3 className="text-2xl font-sans font-bold text-[var(--color-caribbean-dark)] mb-3">
                 No encontramos proyectos con esos criterios
               </h3>
               <p className="text-gray-500 font-light text-sm mb-6 leading-relaxed">
@@ -183,7 +183,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
 
                         <div className="absolute bottom-6 left-6 right-6">
                           {!project.logoUrl && (
-                            <h3 className="text-2xl font-serif text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors drop-shadow-md">
+                            <h3 className="text-2xl font-sans font-bold text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors drop-shadow-md">
                               {project.name}
                             </h3>
                           )}
@@ -201,15 +201,16 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                         
                         <div className="pt-6 border-t border-gray-100 flex items-center justify-between mt-auto">
                           <div>
-                            <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Inversión desde</span>
-                            <span className="text-2xl font-serif text-[var(--color-caribbean-dark)] font-bold">
-                              ${project.minPrice ? project.minPrice.toLocaleString() : '48.443.200'} <span className="text-xs font-sans font-light text-gray-400 tracking-widest ml-1">COP</span>
+                            <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Valor Metro Cuadrado</span>
+                            <span className="text-2xl font-sans font-extrabold text-[var(--color-caribbean-dark)] tracking-tight tabular-nums">
+                              $260.000 <span className="text-xs font-sans font-semibold text-gray-400 tracking-wider ml-1">COP / m²</span>
                             </span>
                           </div>
                           <div className="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-[var(--color-caribbean-dark)] group-hover:border-[var(--color-caribbean-dark)] group-hover:text-white transition-all duration-300">
                             <span className="text-lg font-light">&rarr;</span>
                           </div>
                         </div>
+
                       </div>
                     </Link>
                   </motion.div>

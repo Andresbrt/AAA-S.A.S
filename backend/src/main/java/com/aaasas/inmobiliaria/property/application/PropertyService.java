@@ -121,7 +121,7 @@ public class PropertyService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "propertiesByProject"}, allEntries = true)
     public void updateStatus(UUID id, String status) {
         Property property = propertyRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));
@@ -130,7 +130,7 @@ public class PropertyService {
     }
 
     @Transactional
-    @CacheEvict(value = {"publicProjects", "featuredProjects"}, allEntries = true)
+    @CacheEvict(value = {"publicProjects", "featuredProjects", "propertiesByProject"}, allEntries = true)
     public void delete(UUID id) {
         Property prop = propertyRepository.findByIdAndDeletedAtIsNull(id)
             .orElseThrow(() -> new ResourceNotFoundException("Inmueble", "id", id));

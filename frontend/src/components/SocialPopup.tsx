@@ -53,7 +53,7 @@ export default function SocialPopup() {
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop')] bg-cover bg-center opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)] to-transparent" />
           
-          <h3 className="relative z-10 text-white font-serif text-2xl font-bold tracking-wide">
+          <h3 className="relative z-10 text-white font-sans text-2xl font-bold tracking-tight">
             ¡Únete al Grupo AAA!
           </h3>
         </div>
@@ -70,7 +70,8 @@ export default function SocialPopup() {
         <div className="p-8 text-center">
           <p className="text-gray-600 mb-8 font-light leading-relaxed">
             Descubre los mejores proyectos campestres y síguenos para estar al tanto de 
-            nuevos lanzamientos, avances de obra y <strong className="text-[var(--color-gold-accent)] font-medium">ofertas exclusivas</strong> antes que nadie.
+            nuevos lanzamientos, avances de obra y <strong className="text-[var(--color-gold-accent)] font-medium">ofertas exclusivas</strong>.
+
           </p>
 
           <div className="flex justify-center gap-4 mb-6">

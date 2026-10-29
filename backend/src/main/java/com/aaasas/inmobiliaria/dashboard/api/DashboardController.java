@@ -1,11 +1,9 @@
 package com.aaasas.inmobiliaria.dashboard.api;
 
-import com.aaasas.inmobiliaria.lead.domain.LeadStatus;
-import com.aaasas.inmobiliaria.lead.infrastructure.LeadRepository;
-import com.aaasas.inmobiliaria.project.infrastructure.LotRepository;
-import com.aaasas.inmobiliaria.project.infrastructure.ProjectRepository;
-import com.aaasas.inmobiliaria.property.domain.PropertyStatus;
-import com.aaasas.inmobiliaria.property.infrastructure.PropertyRepository;
+import com.aaasas.inmobiliaria.dashboard.application.DashboardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,33 +11,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/v1/admin/dashboard")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+@Tag(name = "Admin: Dashboard", description = "Métricas y estadísticas administrativas")
+@SecurityRequirement(name = "Bearer Authentication")
 public class DashboardController {
 
-    private final ProjectRepository projectRepository;
-    private final PropertyRepository propertyRepository;
-    private final LeadRepository leadRepository;
-    private final LotRepository lotRepository;
+    private final DashboardService dashboardService;
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getStats() {
-        long activeProjects = projectRepository.countByDeletedAtIsNull();
-        long availableProperties = propertyRepository.countByDeletedAtIsNullAndStatus(PropertyStatus.DISPONIBLE);
-        long soldProperties = propertyRepository.countByDeletedAtIsNullAndStatus(PropertyStatus.VENDIDO);
-        long availableLots = lotRepository.countAvailableLots();
-        long soldLots = lotRepository.countSoldLots();
-        long newLeads = leadRepository.countByStatus(LeadStatus.NUEVO);
-
-        return ResponseEntity.ok(Map.of(
-            "activeProjects", activeProjects,
-            "availableLots", availableProperties + availableLots,
-            "soldLots", soldProperties + soldLots,
-            "newLeads", newLeads
-        ));
+    @Operation(summary = "Obtener estadísticas globales del dashboard")
+    public ResponseEntity<DashboardStatsResponse> getStats() {
+        return ResponseEntity.ok(dashboardService.getStats());
     }
 }

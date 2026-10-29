@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
+import { Sun, Waves, Car, Compass, Plane, ArrowUpRight, Navigation } from 'lucide-react';
 
 export default function LocationSection() {
   const slideUp: Variants = {
@@ -76,8 +77,10 @@ export default function LocationSection() {
               </div>
               <p className="text-xs font-bold text-[var(--color-caribbean-dark)] mb-1 mt-2 text-center">Condominio Corales del Viento</p>
               <p className="text-[10px] text-gray-500 mb-2 text-center">A 150m de la orilla del mar Caribe<br/>San Bernardo del Viento, Córdoba</p>
-              <Link href="/proyectos/corales-del-viento" className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-1 shadow-md hover:shadow-lg transition-all hover:scale-105">
-                📍 Ver Proyecto
+              <Link href="/proyectos/corales-del-viento" className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all hover:scale-105">
+                <Compass className="w-3.5 h-3.5" />
+                <span>Ver Proyecto</span>
+                <ArrowUpRight className="w-3 h-3 opacity-80" />
               </Link>
             </motion.div>
 
@@ -88,7 +91,9 @@ export default function LocationSection() {
               transition={{ delay: 0.8 }}
               className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-3 border border-white flex items-center gap-3 hover:scale-105 transition-transform"
             >
-              <span className="text-2xl animate-pulse">☀️</span>
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100">
+                <Sun className="w-5 h-5 animate-spin-slow" />
+              </div>
               <div>
                 <p className="text-xs font-bold text-[var(--color-caribbean-dark)]">28°C - Soleado</p>
                 <p className="text-[10px] text-[var(--color-caribbean-blue)]">Brisa Marina: 18 km/h NE - Oleaje Suave</p>
@@ -115,28 +120,36 @@ export default function LocationSection() {
 
             <div className="space-y-6 mb-8">
               <div className="flex items-start gap-4 group/item">
-                <div className="text-xl group-hover/item:scale-125 transition-transform">🏖️</div>
+                <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Waves className="w-5 h-5" />
+                </div>
                 <div>
                   <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">150 metros</p>
                   <p className="text-xs text-gray-500">Acceso a la orilla del mar Caribe</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 group/item">
-                <div className="text-xl group-hover/item:scale-125 transition-transform">🚗</div>
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Car className="w-5 h-5" />
+                </div>
                 <div>
                   <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">3,2 km (5 min)</p>
                   <p className="text-xs text-gray-500">Casco Urbano San Bernardo del Viento</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 group/item">
-                <div className="text-xl group-hover/item:scale-125 transition-transform">🚤</div>
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Compass className="w-5 h-5" />
+                </div>
                 <div>
                   <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">20 minutos en lancha</p>
                   <p className="text-xs text-gray-500">Isla Fuerte (Reserva de coral y buceo)</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 group/item">
-                <div className="text-xl group-hover/item:scale-125 transition-transform">✈️</div>
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Plane className="w-5 h-5" />
+                </div>
                 <div>
                   <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">85 km (1h 20m)</p>
                   <p className="text-xs text-gray-500">Aeropuerto Los Garzones (Montería)</p>
@@ -149,9 +162,10 @@ export default function LocationSection() {
               target="_blank" 
               rel="noopener noreferrer"
               title="Navegar al proyecto usando Google Maps o Waze" 
-              className="w-full bg-white block text-center border-2 border-[var(--color-caribbean-blue)] text-[var(--color-caribbean-blue)] hover:bg-[var(--color-caribbean-blue)] hover:text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-[0_5px_15px_rgba(0,163,224,0.1)] hover:shadow-[0_8px_25px_rgba(0,163,224,0.25)] hover:-translate-y-0.5"
+              className="w-full bg-white flex items-center justify-center gap-2 border-2 border-[var(--color-caribbean-blue)] text-[var(--color-caribbean-blue)] hover:bg-[var(--color-caribbean-blue)] hover:text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-[0_5px_15px_rgba(0,163,224,0.1)] hover:shadow-[0_8px_25px_rgba(0,163,224,0.25)] hover:-translate-y-0.5"
             >
-              Abrir en Google Maps / Waze
+              <Navigation className="w-4 h-4" />
+              <span>Abrir en Google Maps / Waze</span>
             </a>
           </motion.div>
         </div>

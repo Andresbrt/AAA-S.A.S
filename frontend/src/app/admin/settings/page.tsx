@@ -16,7 +16,8 @@ import {
   Sparkles,
   AlertCircle
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+
 import { getCompanyInfo, updateCompanySettings, uploadMedia } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -46,11 +47,7 @@ export default function AdminSettingsPage() {
     heroVideoUrl: ""
   });
 
-  useEffect(() => {
-    fetchCompanyData();
-  }, []);
-
-  const fetchCompanyData = async () => {
+  const fetchCompanyData = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getCompanyInfo();
@@ -76,7 +73,11 @@ export default function AdminSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchCompanyData();
+  }, [fetchCompanyData]);
 
   const handleSave = async (customData?: typeof formData) => {
     if (!companyId) return;

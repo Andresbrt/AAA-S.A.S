@@ -9,6 +9,8 @@ services:
     plan: free
     healthCheckPath: /actuator/health
     envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
       - key: DATABASE_URL
         value: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:5432/postgres?prepareThreshold=0
       - key: DATABASE_USERNAME
@@ -37,3 +39,5 @@ services:
         sync: false
       - key: MFA_ISSUER
         value: Grupo AAA
+      - key: TURNSTILE_SECRET_KEY
+        sync: false

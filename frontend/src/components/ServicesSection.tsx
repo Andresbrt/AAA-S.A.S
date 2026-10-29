@@ -1,6 +1,6 @@
 "use client";
-import Image from 'next/image';
 import { motion, Variants } from 'framer-motion';
+
 
 import { PiMapTrifoldLight, PiScalesLight, PiHouseLineLight, PiChartLineUpLight } from 'react-icons/pi';
 
@@ -8,29 +8,30 @@ export default function ServicesSection() {
   const services = [
     {
       title: 'Estructuración & urbanismo',
-      description: 'Selección y desarrollo de tierras con estudios topográficos, red vial afirmada, tendido eléctrico certificado y redes de agua potable garantizadas.',
+      description: 'Selección y desarrollo de tierras con estudios topográficos, red vial afirmada, tendido eléctrico certificado y redes de agua garantizadas.',
       badge: '✓ Obras garantizadas',
       icon: <PiMapTrifoldLight size={28} className="text-blue-600" />
     },
     {
-      title: 'Seguridad Jurídica',
-      description: 'Bufete jurídico interno propio. Gestionamos desenglobes, saneamiento catastral, paz y salvos y escrituración pública individual inmediata ante notaría.',
-      badge: '✓ 100% blindado',
+      title: 'Seguridad jurídica / acompañamiento',
+      description: 'Ofrecemos servicios jurídicos como sucesiones, defensores legal, trámites notariales, divorcio y demás ámbitos del derecho.',
+      badge: '✓ Respaldo notarial',
       icon: <PiScalesLight size={28} className="text-blue-600" />
     },
     {
-      title: 'Construcción Bioclimática',
-      description: 'Arquitectura adaptada a la brisa marina caribeña. Ofrecemos modelos de casas campestres llave en mano en madera teca y concreto a la vista.',
-      badge: '✓ Llave en mano',
+      title: 'Arquitectura y diseño',
+      description: 'Ofrecemos diseños y documentación de casas campestres modernas y que se adapten a tu estilo de vida.',
+      badge: '✓ Arquitectura y diseño',
       icon: <PiHouseLineLight size={28} className="text-blue-600" />
     },
     {
       title: 'Gerencia Inmobiliaria',
-      description: 'Asesoramos a inversionistas y fondos familiares en la selección de activos con la mayor tasa interna de retorno (TIR) y plusvalía en el litoral cordobés.',
-      badge: '✓ +22% anual',
+      description: 'Compramos y vendemos propiedades, hipotecas y todo lo relacionado con el área inmobiliaria garantizando una alta valoración.',
+      badge: '✓ Plusvalía',
       icon: <PiChartLineUpLight size={28} className="text-blue-600" />
     }
   ];
+
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },

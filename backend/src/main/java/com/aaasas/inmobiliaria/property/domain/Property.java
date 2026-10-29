@@ -54,6 +54,9 @@ public class Property extends AuditableEntity {
     @Column(name = "floor_or_tower", length = 50)
     private String floorOrTower;
 
+    @Version
+    private Long version;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 }

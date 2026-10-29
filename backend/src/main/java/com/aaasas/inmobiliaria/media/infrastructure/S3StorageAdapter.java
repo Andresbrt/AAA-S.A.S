@@ -15,6 +15,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+
 
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
@@ -95,4 +97,37 @@ public class S3StorageAdapter implements FileStoragePort {
             .build();
         return presigner.presignGetObject(presignRequest).url().toString();
     }
+
+    @Override
+    public com.aaasas.inmobiliaria.media.api.PresignedUploadResponse createPresignedUploadUrl(String key, String contentType, int expirationMinutes) {
+        try {
+            PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(contentType)
+                .build();
+
+            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(expirationMinutes))
+                .putObjectRequest(objectRequest)
+                .build();
+
+            software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presigned = presigner.presignPutObject(presignRequest);
+            String uploadUrl = presigned.url().toString();
+            String publicUrl = getPublicUrl(key);
+
+            log.info("Generated S3 presigned upload URL for key: {}", key);
+            return new com.aaasas.inmobiliaria.media.api.PresignedUploadResponse(
+                key,
+                uploadUrl,
+                publicUrl,
+                "PUT",
+                java.util.Map.of("Content-Type", contentType)
+            );
+        } catch (Exception e) {
+            log.error("Error al generar URL firmada de S3 para {}: {}", key, e.getMessage(), e);
+            throw new FileStorageException("No fue posible generar la URL de subida directa en S3: " + e.getMessage(), e);
+        }
+    }
 }
+

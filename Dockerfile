@@ -20,6 +20,7 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true"
+ENV SPRING_PROFILES_ACTIVE="prod"
 
 USER appuser
 EXPOSE 8080

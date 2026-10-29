@@ -29,7 +29,7 @@ class LeadControllerIntegrationTest extends AbstractIntegrationTest {
     void createLead_success() throws Exception {
         CreateLeadRequest request = new CreateLeadRequest(
             "Juan Pérez", "juan@example.com", "+573001234567",
-            "Estoy interesado en el proyecto", "web", null, true, null
+            "Estoy interesado en el proyecto", "web", null, true, null, "bypass-test"
         );
 
         mockMvc.perform(post("/api/v1/public/leads")
@@ -44,7 +44,7 @@ class LeadControllerIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("POST /api/v1/public/leads — rejects without data consent")
     void createLead_noConsent() throws Exception {
         CreateLeadRequest request = new CreateLeadRequest(
-            "Juan Pérez", "juan@example.com", null, "Mensaje", "web", null, false, null
+            "Juan Pérez", "juan@example.com", null, "Mensaje", "web", null, false, null, "bypass-test"
         );
 
         mockMvc.perform(post("/api/v1/public/leads")
@@ -57,7 +57,7 @@ class LeadControllerIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("POST /api/v1/public/leads — honeypot rejects spam")
     void createLead_honeypotTriggered() throws Exception {
         CreateLeadRequest request = new CreateLeadRequest(
-            "Bot", "bot@spam.com", null, "spam", "web", null, true, "filled-by-bot"
+            "Bot", "bot@spam.com", null, "spam", "web", null, true, "filled-by-bot", "bypass-test"
         );
 
         mockMvc.perform(post("/api/v1/public/leads")

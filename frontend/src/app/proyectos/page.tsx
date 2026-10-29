@@ -26,13 +26,13 @@ export default async function ProyectosPage() {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
       name: 'Condominio Campestre Corales del Viento',
-      shortDescription: 'Lotes campestres y costeros exclusivos a 150m de la playa en San Bernardo del Viento, Córdoba.',
+      shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
       location: 'San Bernardo del Viento, Córdoba',
       mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
       bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
-      minPrice: 48443200,
+      minPrice: 260000,
       status: 'PREVENTA',
-      tags: ['Preventa', 'Frente a Playa', 'Campestre', 'Condominio']
+      tags: ['Frente al Mar', 'Lotes Campestres', 'Portería 24h', 'Piscina']
     }
   ];
 
@@ -67,7 +67,7 @@ export default async function ProyectosPage() {
             </span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 drop-shadow-2xl">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold font-sans text-white mb-6 drop-shadow-2xl tracking-tight">
             Nuestros Proyectos
           </h1>
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light leading-relaxed tracking-wide drop-shadow-md">

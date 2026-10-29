@@ -3,6 +3,7 @@ package com.aaasas.inmobiliaria.media.api;
 import com.aaasas.inmobiliaria.media.application.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,23 @@ public class MediaController {
 
     private final MediaService mediaService;
 
+    @PostMapping("/presign")
+    @Operation(summary = "Generar URL prefirmada para subida directa")
+    public ResponseEntity<PresignedUploadResponse> createPresignedUpload(
+            @Valid @RequestBody PresignedUploadRequest request) {
+        return ResponseEntity.ok(mediaService.createPresignedUpload(request));
+    }
+
+    @PostMapping("/complete-direct-upload")
+    @Operation(summary = "Confirmar subida directa completada y registrar metadatos")
+    public ResponseEntity<MediaFileResponse> completeDirectUpload(
+            @Valid @RequestBody CompleteDirectUploadRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(mediaService.completeDirectUpload(request));
+    }
+
     @PostMapping(consumes = "multipart/form-data")
-    @Operation(summary = "Subir archivo")
+    @Operation(summary = "Subir archivo tradicional vía API")
     public ResponseEntity<MediaFileResponse> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam String mediaType,

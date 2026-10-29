@@ -138,6 +138,13 @@ public class AuthService {
         User user = userRepository.findById(storedToken.getUserId())
             .orElseThrow(() -> new UnauthorizedException("Usuario no encontrado."));
 
+        if (!user.isActive()) {
+            throw new UnauthorizedException("Cuenta desactivada. Contacte al administrador.");
+        }
+        if (user.isAccountLocked()) {
+            throw new UnauthorizedException("Cuenta bloqueada temporalmente. Intente más tarde.");
+        }
+
         return generateTokens(user);
     }
 

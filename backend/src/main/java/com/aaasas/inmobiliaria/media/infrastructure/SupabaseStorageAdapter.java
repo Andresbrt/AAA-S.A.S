@@ -82,4 +82,53 @@ public class SupabaseStorageAdapter implements FileStoragePort {
         return String.format("%s/storage/v1/object/sign/%s/%s?expiresIn=%d",
             supabaseUrl, bucket, key, expirationMinutes * 60);
     }
+
+    @Override
+    public com.aaasas.inmobiliaria.media.api.PresignedUploadResponse createPresignedUploadUrl(String key, String contentType, int expirationMinutes) {
+        if (supabaseUrl == null || supabaseUrl.isBlank() || supabaseKey == null || supabaseKey.isBlank()) {
+            throw new FileStorageException("Supabase Storage no está configurado para subidas directas.");
+        }
+        try {
+            String signUrl = String.format("%s/storage/v1/object/upload/sign/%s/%s", supabaseUrl, bucket, key);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + supabaseKey);
+            headers.set("apikey", supabaseKey);
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+            HttpEntity<String> entity = new HttpEntity<>("{}", headers);
+            ResponseEntity<String> response = restTemplate.exchange(signUrl, HttpMethod.POST, entity, String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new FileStorageException("Supabase no devolvió URL firmada: " + response.getStatusCode());
+            }
+
+            com.fasterxml.jackson.databind.JsonNode rootNode = new com.fasterxml.jackson.databind.ObjectMapper().readTree(response.getBody());
+            String relativeUrl = rootNode.path("url").asText();
+            if (relativeUrl.isBlank()) {
+                throw new FileStorageException("Respuesta inválida de Supabase Storage: " + response.getBody());
+            }
+
+            String uploadUrl;
+            if (relativeUrl.startsWith("/storage/v1")) {
+                uploadUrl = supabaseUrl + relativeUrl;
+            } else if (relativeUrl.startsWith("/")) {
+                uploadUrl = supabaseUrl + "/storage/v1" + relativeUrl;
+            } else {
+                uploadUrl = supabaseUrl + "/storage/v1/" + relativeUrl;
+            }
+
+            String publicUrl = getPublicUrl(key);
+            java.util.Map<String, String> requiredHeaders = java.util.Map.of("Content-Type", contentType);
+
+            log.info("Generated Supabase presigned upload URL for key: {}", key);
+            return new com.aaasas.inmobiliaria.media.api.PresignedUploadResponse(key, uploadUrl, publicUrl, "PUT", requiredHeaders);
+        } catch (FileStorageException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error al generar URL firmada de Supabase para {}: {}", key, e.getMessage(), e);
+            throw new FileStorageException("No fue posible generar la URL de subida directa: " + e.getMessage(), e);
+        }
+    }
 }
+

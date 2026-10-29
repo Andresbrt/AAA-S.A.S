@@ -3,7 +3,8 @@ package com.aaasas.inmobiliaria.lead.application;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -17,11 +18,11 @@ public class LeadNotificationListener {
     private static final Logger log = LoggerFactory.getLogger(LeadNotificationListener.class);
     private final JavaMailSender mailSender;
 
-    @Value("${admin.email:admin@aaasas.com}")
+    @Value("${app.admin.email:${admin.email:aaagrupo.med@gmail.com}}")
     private String adminEmail;
 
     @Async
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleLeadCreatedEvent(LeadCreatedEvent event) {
         log.info("Sending welcome email to lead: {}", event.email());
         try {

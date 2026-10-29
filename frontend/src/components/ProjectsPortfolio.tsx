@@ -10,18 +10,20 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
     {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
-      name: 'Condominio Campestre Corales del Viento',
+      name: 'Corales del Viento',
       location: 'San Bernardo del Viento, Córdoba',
-      tag: 'Proyecto Insignia - En Preventa',
-      description: 'Lotes campestres y costeros exclusivos a solo 150 metros del mar Caribe. Cuenta con Club House, piscina sin fin, vías amplias y acometidas de energía y agua. 100% saneado con matrícula individual.',
+      tag: 'Frente al Mar · Zona Turística',
+      description: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
       area: 'Desde 180 m²',
-      investment: 'Desde $48.443.200 COP',
+      investment: '$260.000 / m²',
       financing: 'Financiación Directa',
+      logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
       mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
       bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
       has3D: true,
     }
   ];
+
 
   const displayProjects = projects && projects.length > 0 ? projects : defaultProjects;
 
@@ -44,7 +46,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
           <p className="text-[var(--color-gold-accent)] uppercase tracking-[0.2em] text-xs font-bold mb-3">
             DESARROLLOS INMOBILIARIOS EXCLUSIVOS
           </p>
-          <h2 className="heading-luxury mb-4 font-serif">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[var(--color-caribbean-dark)] mb-4 tracking-tight font-sans">
             Portafolio de Proyectos
           </h2>
           <div className="w-16 h-1 bg-[var(--color-gold-accent)] mx-auto mb-6"></div>
@@ -111,11 +113,22 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               
               {/* Content */}
               <div className="p-8 flex flex-col flex-grow relative z-10 bg-white/20">
-                <h3 className="text-2xl font-bold text-[var(--color-caribbean-dark)] mb-3 font-serif">
-                  {project.name}
-                </h3>
+                {project.logoUrl || project.bannerImageUrl ? (
+                  <div className="relative h-14 w-48 mb-4">
+                    <Image 
+                      src={project.logoUrl || project.bannerImageUrl} 
+                      alt={project.name || "Corales del Viento"} 
+                      fill 
+                      className="object-contain object-left" 
+                    />
+                  </div>
+                ) : (
+                  <h3 className="text-2xl font-extrabold text-[var(--color-caribbean-dark)] mb-3 font-sans tracking-tight">
+                    {project.name}
+                  </h3>
+                )}
                 <p className="text-gray-600 text-sm leading-relaxed mb-8 font-light">
-                  {project.description || project.shortDescription}
+                  {project.description || project.shortDescription || 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.'}
                 </p>
                 
                 {/* Metrics */}
@@ -125,14 +138,15 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                     <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.area || 'Desde 180 m²'}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Inversión</p>
-                    <p className="text-sm font-bold text-[var(--color-caribbean-blue)]">{project.investment || (project.minPrice ? `Desde $${project.minPrice.toLocaleString()} COP` : 'Consultar')}</p>
+                    <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Metro Cuadrado</p>
+                    <p className="text-sm font-extrabold text-[var(--color-caribbean-blue)] tabular-nums">$260.000 COP</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">{project.financing ? 'Financiación' : 'Estado'}</p>
-                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">{project.financing || 'En Preventa'}</p>
+                    <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Ubicación</p>
+                    <p className="text-sm font-bold text-[var(--color-caribbean-dark)]">A 5 min del mar</p>
                   </div>
                 </div>
+
                 
                 {/* Action Buttons */}
                 <div className="mt-auto flex flex-col sm:flex-row gap-3">

@@ -36,15 +36,24 @@ import java.util.UUID;
 import java.util.ArrayList;
 
 @Service
-@RequiredArgsConstructor
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final AmenityRepository amenityRepository;
     private final CityRepository cityRepository;
-    
-    @org.springframework.beans.factory.annotation.Autowired(required = false)
-    private ProjectSearchRepository projectSearchRepository;
+    private final ProjectSearchRepository projectSearchRepository;
+
+    public ProjectService(
+            ProjectRepository projectRepository,
+            AmenityRepository amenityRepository,
+            CityRepository cityRepository,
+            java.util.Optional<ProjectSearchRepository> projectSearchRepository
+    ) {
+        this.projectRepository = projectRepository;
+        this.amenityRepository = amenityRepository;
+        this.cityRepository = cityRepository;
+        this.projectSearchRepository = projectSearchRepository.orElse(null);
+    }
 
     // ── Public queries ────────────────────────────────────────
 
@@ -129,9 +138,6 @@ public class ProjectService {
             return ProjectStatus.BORRADOR;
         }
         String normalized = statusStr.trim().toUpperCase();
-        if ("EN_VENTA".equals(normalized) || "VENTA".equals(normalized)) {
-            return ProjectStatus.EN_PLANOS;
-        }
         try {
             return ProjectStatus.valueOf(normalized);
         } catch (IllegalArgumentException e) {

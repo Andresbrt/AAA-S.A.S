@@ -70,11 +70,12 @@ export const DEFAULT_COMPANY_INFO = {
     id: "c1000000-0000-0000-0000-000000000001",
     name: "GRUPO AAA S.A.S.",
     aboutUs: "Somos una empresa inmobiliaria comprometida con el desarrollo de proyectos campestres y costeros en el Caribe colombiano.",
-    mission: "Desarrollar proyectos inmobiliarios de alta calidad que transformen la calidad de vida de nuestros clientes.",
-    vision: "Ser la inmobiliaria líder del Caribe colombiano, reconocida por la excelencia de nuestros proyectos.",
-    contactEmail: "info@aaasas.com",
+    mission: "Desarrollar y comercializar proyectos inmobiliarios que generen valor y bienestar para nuestros clientes, ofreciendo inmuebles con potencial de crecimiento, calidad y ubicación estratégica. Trabajamos con compromiso, transparencia y responsabilidad, acompañando a nuestros clientes durante el proceso de adquisición y construyendo relaciones basadas en la confianza.",
+    vision: "Consolidarnos como una empresa referente en el sector inmobiliario, reconocida por la calidad de nuestros proyectos, la confianza de nuestros clientes y nuestra capacidad para identificar y desarrollar oportunidades de inversión. Buscamos crecer de manera sostenible, ampliando nuestro portafolio y contribuyendo al desarrollo de espacios que mejoren la calidad de vida y generen valor a largo plazo.",
+    contactEmail: "aaagrupo.med@gmail.com",
+
     contactPhone: "+57 312 238 4172",
-    contactAddress: "Cartagena de Indias, Bolívar, Colombia",
+    contactAddress: "",
     whatsappNumber: "573122384172",
     whatsappMessage: "Hola, me interesa conocer más sobre el Portafolio de Proyectos de Grupo AAA.",
     instagramUrl: "https://www.instagram.com/grupoaaa_inversiones?stkn=M204eDJoaWJuZXRs",
@@ -82,9 +83,10 @@ export const DEFAULT_COMPANY_INFO = {
     tiktokUrl: "https://www.tiktok.com/@grupo.aaa?_r=1&_t=ZS-9A6rSjywCjl",
     youtubeUrl: "",
     heroVideoUrl: "/videos/hero-background.mp4",
-    heroTitle: "Vive el lujo en\nArmonía Natural",
-    heroSubtitle: "Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano."
+    heroTitle: "Vive el lujo en\ntu lugar ideal",
+    heroSubtitle: "Descubre nuestros condominios y proyectos costeros diseñados para un estilo de vida excepcional."
   },
+
   team: []
 };
 
@@ -291,12 +293,94 @@ export async function deleteProject(token: string, id: string) {
   if (!res.ok) throw new Error('Error al eliminar el proyecto');
 }
 
-export async function uploadMedia(token: string, file: File, mediaType: string, entityType: string, entityId: string) {
+export interface PresignedUploadResponse {
+  fileKey: string;
+  uploadUrl: string;
+  publicUrl: string;
+  httpMethod: string;
+  headers?: Record<string, string>;
+}
+
+export async function uploadMedia(
+  token: string,
+  file: File,
+  mediaType: string,
+  entityType: string,
+  entityId: string,
+  altText: string = '',
+  displayOrder: number = 0
+): Promise<MediaFile> {
+  // 1. Intento de subida directa con Presigned URL (cero consumo de CPU/RAM en el backend de Render)
+  try {
+    const presignRes = await fetch(`${API_URL}/admin/media/presign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type || 'application/octet-stream',
+        mediaType,
+        entityType,
+        entityId,
+        fileSize: file.size
+      })
+    });
+
+    if (presignRes.ok) {
+      const presignData: PresignedUploadResponse = await presignRes.json();
+      
+      const uploadHeaders: Record<string, string> = {
+        'Content-Type': file.type || 'application/octet-stream',
+        ...(presignData.headers || {})
+      };
+
+      const directRes = await fetch(presignData.uploadUrl, {
+        method: presignData.httpMethod || 'PUT',
+        headers: uploadHeaders,
+        body: file
+      });
+
+      if (directRes.ok) {
+        // Confirmar en el backend y persistir metadatos
+        const confirmRes = await fetch(`${API_URL}/admin/media/complete-direct-upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            fileKey: presignData.fileKey,
+            url: presignData.publicUrl,
+            originalName: file.name,
+            contentType: file.type || 'application/octet-stream',
+            fileSize: file.size,
+            mediaType,
+            entityType,
+            entityId,
+            altText,
+            displayOrder
+          })
+        });
+
+        if (confirmRes.ok) {
+          return await confirmRes.json();
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Subida directa con URL prefirmada no disponible, usando fallback multipart:', err);
+  }
+
+  // 2. Fallback estándar multipart/form-data
   const formData = new FormData();
   formData.append('file', file);
   formData.append('mediaType', mediaType);
   formData.append('entityType', entityType);
   formData.append('entityId', entityId);
+  formData.append('altText', altText);
+  formData.append('displayOrder', String(displayOrder));
 
   const res = await fetch(`${API_URL}/admin/media`, {
     method: 'POST',
@@ -307,6 +391,7 @@ export async function uploadMedia(token: string, file: File, mediaType: string, 
   });
   return handleResponse(res, 'Error al subir el archivo');
 }
+
 
 export interface MediaFile {
   id: string;

@@ -33,4 +33,7 @@ public class Lot extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+
+    @Version
+    private Long version;
 }

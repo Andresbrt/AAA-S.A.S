@@ -14,11 +14,11 @@ export default function NotFound() {
           Error 404 · Página No Encontrada
         </span>
 
-        <h1 className="text-6xl md:text-8xl font-serif font-bold text-white mb-6 drop-shadow-xl tracking-tight">
+        <h1 className="text-6xl md:text-8xl font-sans font-extrabold text-white mb-6 drop-shadow-xl tracking-tight">
           404
         </h1>
 
-        <h2 className="text-2xl md:text-3xl font-serif text-white/95 mb-4">
+        <h2 className="text-2xl md:text-3xl font-sans font-medium text-white/95 mb-4">
           La propiedad o página no existe
         </h2>
 

@@ -1,5 +1,3 @@
-"use client";
-import { useEffect, useState } from 'react';
 import { getCompanyInfo, getFeaturedProjects } from '@/lib/api';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
@@ -11,25 +9,20 @@ import AboutUsSection from '@/components/AboutUsSection';
 import LocationSection from '@/components/LocationSection';
 import FAQSection from '@/components/FAQSection';
 import Link from 'next/link';
+import { PhoneCall, Mail } from 'lucide-react';
 import SocialPopup from '@/components/SocialPopup';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
 import HeroVideo from '@/components/HeroVideo';
+import HeroContent from '@/components/HeroContent';
 
-export default function HomePage() {
-  const [company, setCompany] = useState<any>(null);
-  const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);
+export const revalidate = 60;
 
-  useEffect(() => {
-    getCompanyInfo().then(res => {
-      if (res) {
-        setCompany(res.company || res);
-      }
-    });
-    getFeaturedProjects().then(res => {
-      if (res) setFeaturedProjects(res);
-    });
-  }, []);
+export default async function HomePage() {
+  const [companyRes, featuredProjects] = await Promise.all([
+    getCompanyInfo(),
+    getFeaturedProjects()
+  ]);
+
+  const company = companyRes?.company || companyRes;
 
   return (
     <>
@@ -42,60 +35,16 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
 
           <HeroVideo videoUrl={company?.heroVideoUrl} />
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-20"
-          >
-            <h2 className="text-[var(--color-gold-accent)] text-xs md:text-sm lg:text-base tracking-[0.2em] md:tracking-[0.3em] uppercase mb-4 md:mb-6 font-bold drop-shadow-lg bg-black/20 inline-block px-4 md:px-6 py-2 rounded-full backdrop-blur-md border border-[var(--color-gold-accent)]/30">
-              {company?.name || 'GRUPO AAA S.A.S.'}
-            </h2>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 md:mb-8 tracking-tight drop-shadow-2xl leading-tight font-serif whitespace-pre-line">
-              {company?.heroTitle || 'Vive el lujo en\nArmonía Natural'}
-            </h1>
-            <p className="text-white/90 text-base md:text-lg lg:text-xl font-medium mb-10 md:mb-12 max-w-2xl mx-auto drop-shadow-lg px-2">
-              {company?.heroSubtitle || 'Descubre parcelaciones campestres exclusivas diseñadas para elevar tu estilo de vida en el Caribe colombiano.'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href="#proyectos" className="bg-[var(--color-gold-accent)] text-white hover:bg-[#B89B2F] font-bold text-sm px-8 py-4 rounded-full transition shadow-[0_0_20px_rgba(212,175,55,0.4)]">
-                VER PORTAFOLIO
-              </Link>
-              <a href={buildWhatsAppUrl('Hola! Me gustaría agendar una asesoría personalizada con Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="bg-white/10 backdrop-blur-md text-white border border-white/50 hover:bg-white hover:text-[var(--color-caribbean-dark)] font-bold text-sm px-8 py-4 rounded-full transition">
-                ASESORÍA PERSONAL
-              </a>
-            </div>
-
-            {/* Trust Highlights */}
-            <div className="pt-6 border-t border-white/20 grid grid-cols-2 md:grid-cols-4 gap-4 text-white/80 text-xs md:text-sm">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
-                <span>+12 Años de Trayectoria</span>
-              </div>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
-                <span>100% Blindaje Notarial</span>
-              </div>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
-                <span>A 150m del Mar Caribe</span>
-              </div>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-[var(--color-gold-accent)] font-bold text-base">✦</span>
-                <span>Financiación Directa</span>
-              </div>
-            </div>
-          </motion.div>
+          <HeroContent company={company} />
 
           {/* Subtle scroll down arrow */}
           <Link 
             href="#proyectos" 
-            aria-label="Ir a proyectos"
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-white/70 hover:text-white transition-colors animate-bounce hidden sm:flex flex-col items-center gap-1 text-[10px] tracking-widest uppercase font-semibold"
+            aria-label="Ir al portafolio de proyectos"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-white/70 hover:text-white transition-colors animate-bounce hidden sm:flex flex-col items-center gap-1 text-[10px] tracking-widest uppercase font-semibold focus:outline-none focus:ring-2 focus:ring-amber-300 rounded"
           >
             <span>Explorar</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </Link>
@@ -117,9 +66,9 @@ export default function HomePage() {
         <FAQSection />
 
         {/* 6. CONTACTO / CRM */}
-        <section id="contacto" className="py-24 px-6 lg:px-8 bg-[var(--color-caribbean-dark)] relative overflow-hidden">
+        <section id="contacto" className="py-24 px-6 lg:px-8 bg-[var(--color-caribbean-dark)] relative overflow-hidden" aria-labelledby="contacto-heading">
           {/* Decorative background for contact section */}
-          <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1577002621008-0130932c510b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center" />
+          <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1577002621008-0130932c510b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center" aria-hidden="true" />
 
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -127,15 +76,15 @@ export default function HomePage() {
                 <p className="text-[var(--color-caribbean-light)] uppercase tracking-widest text-xs font-bold mb-4">
                   Atención Exclusiva
                 </p>
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6">Agenda tu Asesoría</h2>
+                <h2 id="contacto-heading" className="text-4xl lg:text-5xl font-bold mb-6">Agenda tu Asesoría</h2>
                 <p className="text-white/80 text-lg mb-10 font-light leading-relaxed">
                   Déjanos tus datos y uno de nuestros asesores comerciales se pondrá en contacto contigo para brindarte información detallada sobre nuestros proyectos, ubicación exacta y opciones de financiamiento sin intereses.
                 </p>
 
                 <div className="space-y-8">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl border border-white/20">
-                      📞
+                    <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[var(--color-gold-accent)] border border-white/20 shadow-inner" aria-hidden="true">
+                      <PhoneCall className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Llámanos o Escríbenos</p>
@@ -143,7 +92,8 @@ export default function HomePage() {
                         href={buildWhatsAppUrl('Hola! Me gustaría comunicarme telefónicamente o por WhatsApp con Grupo AAA.')} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-xl font-bold hover:text-[var(--color-gold-accent)] transition-colors"
+                        className="text-xl font-bold hover:text-[var(--color-gold-accent)] transition-colors focus:outline-none focus:underline"
+                        aria-label={`Llamar o escribir al teléfono ${getCompanyPhoneDisplay(company?.contactPhone)}`}
                       >
                         {getCompanyPhoneDisplay(company?.contactPhone)}
                       </a>
@@ -151,12 +101,17 @@ export default function HomePage() {
                   </div>
                   {company?.contactEmail && (
                     <div className="flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl border border-white/20">
-                        ✉️
+                      <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[var(--color-gold-accent)] border border-white/20 shadow-inner" aria-hidden="true">
+                        <Mail className="w-6 h-6" />
                       </div>
                       <div>
                         <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Escríbenos</p>
-                        <p className="text-lg font-bold">{company.contactEmail}</p>
+                        <a 
+                          href={`mailto:${company.contactEmail}`}
+                          className="text-lg font-bold hover:text-[var(--color-gold-accent)] transition-colors focus:outline-none focus:underline"
+                        >
+                          {company.contactEmail}
+                        </a>
                       </div>
                     </div>
                   )}

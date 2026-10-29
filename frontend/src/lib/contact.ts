@@ -4,7 +4,7 @@
  */
 export const COMPANY_WHATSAPP_NUMBER = '573122384172';
 export const COMPANY_PHONE_DISPLAY = '+57 312 238 4172';
-export const COMPANY_EMAIL = 'info@aaasas.com';
+export const COMPANY_EMAIL = 'aaagrupo.med@gmail.com';
 
 export const DEFAULT_WHATSAPP_MESSAGE = 'Hola, me gustaría recibir más información sobre los proyectos de Grupo AAA.';
 

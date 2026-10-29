@@ -8,7 +8,20 @@ import PublicNavbar from '@/components/PublicNavbar';
 import InteractiveMasterPlan from '@/components/InteractiveMasterPlan';
 import ProjectGallery from '@/components/ProjectGallery';
 import { PiMapPinLight, PiRulerLight, PiSwimmingPoolLight, PiWhatsappLogoLight } from 'react-icons/pi';
+import { ShieldCheck, Waves, Sparkles, Flame, Trees, Car, Plane, CheckCircle2, Ruler, MapPin } from 'lucide-react';
 import { buildWhatsAppUrl } from '@/lib/contact';
+
+function getAmenityIcon(tag: string) {
+  const t = tag.toLowerCase();
+  if (t.includes('portería') || t.includes('seguridad')) return <ShieldCheck className="w-5 h-5 text-sky-600" />;
+  if (t.includes('piscina') || t.includes('playa') || t.includes('mar')) return <Waves className="w-5 h-5 text-sky-600" />;
+  if (t.includes('juegos') || t.includes('parque')) return <Sparkles className="w-5 h-5 text-sky-600" />;
+  if (t.includes('bbq') || t.includes('asador')) return <Flame className="w-5 h-5 text-sky-600" />;
+  if (t.includes('verde') || t.includes('ecol')) return <Trees className="w-5 h-5 text-sky-600" />;
+  if (t.includes('vía') || t.includes('pavimentada')) return <Car className="w-5 h-5 text-sky-600" />;
+  if (t.includes('montería') || t.includes('tolú') || t.includes('aeropuerto')) return <Plane className="w-5 h-5 text-sky-600" />;
+  return <CheckCircle2 className="w-5 h-5 text-sky-600" />;
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -18,10 +31,10 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   let project = await getProjectBySlug(slug);
-  if (!project && slug === 'corales-del-viento') {
+  if (!project && (slug === 'corales-del-viento' || slug === 'condominio-campestre-corales-del-viento')) {
     project = {
-      name: 'Condominio Campestre Corales del Viento',
-      shortDescription: 'Lotes campestres y costeros exclusivos a 150m del mar Caribe en San Bernardo del Viento, Córdoba.'
+      name: 'Corales del Viento',
+      shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.'
     } as any;
   }
   if (!project) return { title: 'Proyecto No Encontrado | Grupo AAA' };
@@ -49,23 +62,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   let project = fetchedProject;
   const company = companyData?.company || companyData;
 
-  if (!project && slug === 'corales-del-viento') {
+  if (!project && (slug === 'corales-del-viento' || slug === 'condominio-campestre-corales-del-viento')) {
     project = {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
-      name: 'Condominio Campestre Corales del Viento',
+      name: 'Corales del Viento',
       slug: 'corales-del-viento',
-      shortDescription: 'Lotes campestres y costeros exclusivos a solo 150 metros del mar Caribe.',
-      longDescription: 'Condominio Campestre Corales del Viento ofrece una oportunidad única de inversión en el Caribe cordobés, a solo 150 metros de la playa. Un desarrollo exclusivo con Club House, piscina sin fin, amplias vías de acceso, acometidas de servicios públicos y títulos saneados con matrícula individual.',
+      shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
+      longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo legal de escritura individual. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. A tan solo 90 minutos de Montería, 50 minutos del aeropuerto de Tolú, y con acceso privilegiado a destinos emblemáticos como Isla Fuerte, San Antero, Coveñas y Cartagena de Indias. Cuenta con portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
       status: 'EN_PREVENTA',
-      minPrice: 48443200,
-      maxPrice: 112369400,
+      minPrice: 260000,
+      maxPrice: 260000,
       mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
       bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
       galleryUrls: [
         'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp',
         'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
       ],
-      tags: ['Preventa', 'Frente a Playa']
+      tags: ['Portería 24 horas', 'Piscina', 'Juegos infantiles', 'Zona BBQ', 'Zonas verdes', 'Vía principal pavimentada', 'A 5 min del mar', 'A 90 min de Montería', 'A 50 min de Tolú']
     };
   }
 
@@ -76,7 +89,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const propsData = project.id ? await getProperties(project.id) : null;
   const properties = propsData?.content || [];
 
-  const whatsappUrl = buildWhatsAppUrl(`Hola! Estoy interesado en el proyecto ${project.name}. ¿Me podrían dar más información?`);
+  const whatsappUrl = buildWhatsAppUrl(`Hola! Estoy interesado en el proyecto ${project.name} ($260.000/m²). ¿Me podrían brindar asesoría para separar mi lote?`);
 
   let finalMapUrl = project.mapUrl;
   if (finalMapUrl && finalMapUrl.includes('<iframe') && finalMapUrl.includes('src="')) {
@@ -100,7 +113,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     offers: {
       '@type': 'AggregateOffer',
       priceCurrency: 'COP',
-      lowPrice: project.minPrice || 48443200,
+      lowPrice: project.minPrice || 260000,
       availability: 'https://schema.org/InStock'
     }
   };
@@ -149,7 +162,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </span>
           
           {!project.logoUrl ? (
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-6 drop-shadow-2xl tracking-wide">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold font-sans text-white mb-6 drop-shadow-2xl tracking-tight">
               {project.name}
             </h1>
           ) : (
@@ -188,26 +201,32 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {project.tags && project.tags.length > 0 ? (
                     project.tags.map((tag: string, index: number) => (
-                      <div key={index} className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                        <div className="w-10 h-10 rounded-full bg-blue-50 text-[var(--color-caribbean-blue)] flex items-center justify-center mb-3">
-                          <span className="text-xl font-light">✨</span>
+                      <div key={index} className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 hover:border-sky-200 shadow-sm hover:shadow-md transition-all text-center group">
+                        <div className="w-10 h-10 rounded-xl bg-sky-50 group-hover:bg-sky-100/80 text-sky-600 flex items-center justify-center mb-3 transition-colors border border-sky-100/60 shadow-sm">
+                          {getAmenityIcon(tag)}
                         </div>
-                        <span className="text-sm font-bold text-gray-700">{tag}</span>
+                        <span className="text-xs md:text-sm font-bold text-gray-700 leading-snug">{tag}</span>
                       </div>
                     ))
                   ) : (
                     <>
-                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                        <PiSwimmingPoolLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                        <span className="text-sm font-bold text-gray-700">Club Social</span>
+                      <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
+                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
+                          <Waves className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs md:text-sm font-bold text-gray-700">Club Social</span>
                       </div>
-                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                        <PiRulerLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                        <span className="text-sm font-bold text-gray-700">Lotes XL</span>
+                      <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
+                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
+                          <Ruler className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs md:text-sm font-bold text-gray-700">Lotes XL</span>
                       </div>
-                      <div className="flex flex-col items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-                        <PiMapPinLight className="w-8 h-8 text-[var(--color-caribbean-blue)] mb-3" />
-                        <span className="text-sm font-bold text-gray-700">Vías Pavimentadas</span>
+                      <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
+                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
+                          <Car className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs md:text-sm font-bold text-gray-700">Vías Pavimentadas</span>
                       </div>
                     </>
                   )}
@@ -218,15 +237,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               {/* Right Col: Pricing & CTA */}
               <div className="lg:col-span-5">
                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 shadow-sm border border-[var(--color-gold-accent)]/20 sticky top-32">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2 block">Inversión desde</span>
-                  <div className="text-4xl font-bold text-[var(--color-caribbean-dark)] tracking-tight mb-8">
-                    ${project.minPrice ? project.minPrice.toLocaleString() : '105.000.000'} <span className="text-lg font-light text-gray-400">COP</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2 block">Valor Inversión</span>
+                  <div className="text-3xl md:text-4xl font-extrabold font-sans text-[var(--color-caribbean-dark)] tracking-tight tabular-nums mb-2">
+                    $260.000 <span className="text-base md:text-lg font-sans font-medium text-gray-500 tracking-normal">el m²</span>
                   </div>
+                  <p className="text-xs text-gray-500 mb-6 font-medium">Terreno 100% plano · Escritura individual</p>
                   
                   <div className="space-y-4">
-                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-[var(--color-caribbean-dark)] hover:bg-[#2b596d] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_10px_20px_rgba(55,111,135,0.25)] hover:-translate-y-1 tracking-wider text-sm uppercase">
+                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-[var(--color-gold-accent)] hover:bg-[#0369A1] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_10px_20px_rgba(2,132,199,0.25)] hover:-translate-y-1 tracking-wider text-sm uppercase">
                       <PiWhatsappLogoLight className="w-5 h-5" />
-                      Contactar a Ventas
+                      SEPARAR TU LOTE
                     </a>
                     <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/public/projects/${project.slug}/brochure`} className="w-full bg-white border border-gray-200 hover:border-gray-300 text-[var(--color-caribbean-dark)] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all tracking-wider text-sm uppercase">
                       Descargar Brochure

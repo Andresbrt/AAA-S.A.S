@@ -17,7 +17,7 @@ export default function TerminosPage() {
 
       <main className="min-h-screen bg-gray-50 py-16 px-6 lg:px-8">
         <div className="container mx-auto max-w-4xl bg-white p-8 md:p-12 shadow-sm border border-gray-100 rounded-2xl">
-          <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-caribbean-dark)] mb-8 font-serif">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-caribbean-dark)] mb-8 font-sans tracking-tight">
             Términos y Condiciones
           </h1>
           

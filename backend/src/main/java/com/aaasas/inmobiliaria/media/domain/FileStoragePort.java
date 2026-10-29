@@ -27,4 +27,10 @@ public interface FileStoragePort {
      * Generate a pre-signed URL for temporary access.
      */
     String getPresignedUrl(String key, int expirationMinutes);
+
+    /**
+     * Generate a pre-signed URL for direct client upload (PUT).
+     */
+    com.aaasas.inmobiliaria.media.api.PresignedUploadResponse createPresignedUploadUrl(String key, String contentType, int expirationMinutes);
 }
+

@@ -75,14 +75,14 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-md p-8 md:p-10 max-w-2xl mx-auto w-full rounded-[2rem] shadow-[0_20px_50px_rgba(55,111,135,0.1)] border border-gray-100">
       {status === 'success' && (
-        <div className="bg-green-50/80 border border-green-200 text-green-800 p-4 rounded-xl mb-6 text-center">
+        <div role="alert" aria-live="polite" className="bg-green-50/80 border border-green-200 text-green-800 p-4 rounded-xl mb-6 text-center">
           <p className="font-medium">¡Gracias por contactarnos!</p>
           <p className="text-sm mt-1">Hemos recibido tu solicitud y un asesor se pondrá en contacto contigo pronto.</p>
         </div>
       )}
 
       {status === 'error' && (
-        <div className="bg-red-50/80 border border-red-200 text-red-800 p-4 rounded-xl mb-6 text-center">
+        <div role="alert" aria-live="polite" className="bg-red-50/80 border border-red-200 text-red-800 p-4 rounded-xl mb-6 text-center">
           <p className="font-medium">Ocurrió un error</p>
           <p className="text-sm mt-1">Por favor, intenta nuevamente más tarde o contáctanos por WhatsApp.</p>
         </div>

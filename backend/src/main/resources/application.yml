@@ -156,3 +156,11 @@ app:
       capacity: 5
       refill-tokens: 5
       refill-duration-seconds: 60
+    brochure:
+      capacity: 5
+      refill-tokens: 5
+      refill-duration-seconds: 60
+
+  turnstile:
+    secret-key: ${TURNSTILE_SECRET_KEY:}
+

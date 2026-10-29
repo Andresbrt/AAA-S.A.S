@@ -22,13 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import com.aaasas.inmobiliaria.project.infrastructure.ProjectRepository;
+import com.aaasas.inmobiliaria.shared.security.TurnstileService;
+
 @Service
 @RequiredArgsConstructor
 public class LeadService {
 
     private static final Logger log = LoggerFactory.getLogger(LeadService.class);
     private final LeadRepository leadRepository;
+    private final ProjectRepository projectRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final TurnstileService turnstileService;
 
     @Transactional
     public LeadResponse createPublicLead(CreateLeadRequest request) {
@@ -36,6 +41,17 @@ public class LeadService {
         if (request.honeypot() != null && !request.honeypot().isBlank()) {
             log.warn("Honeypot triggered for lead from: {}", request.email());
             throw new BusinessRuleException("Solicitud rechazada.", "SPAM_DETECTED");
+        }
+
+        // Anti-spam: Cloudflare Turnstile Captcha verification
+        if (!turnstileService.verify(request.turnstileToken(), null)) {
+            log.warn("Turnstile captcha verification failed for lead from: {}", request.email());
+            throw new BusinessRuleException("La verificación de seguridad (Captcha) ha fallado o ha expirado.", "INVALID_CAPTCHA");
+        }
+
+        // Validate project existence if provided
+        if (request.projectId() != null && !projectRepository.existsById(request.projectId())) {
+            throw new ResourceNotFoundException("Proyecto", "id", request.projectId());
         }
 
         Lead lead = Lead.builder()
@@ -76,11 +92,22 @@ public class LeadService {
         return PageResponse.of(leads, content);
     }
 
+    private LeadStatus parseLeadStatus(String statusStr) {
+        if (statusStr == null || statusStr.isBlank()) {
+            return LeadStatus.NUEVO;
+        }
+        try {
+            return LeadStatus.valueOf(statusStr.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Estado de lead inválido: '" + statusStr + "'.");
+        }
+    }
+
     @Transactional
     public void updateStatus(UUID id, String status) {
         Lead lead = leadRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Lead", "id", id));
-        lead.setStatus(LeadStatus.valueOf(status));
+        lead.setStatus(parseLeadStatus(status));
         leadRepository.save(lead);
     }
 
@@ -90,7 +117,7 @@ public class LeadService {
             .orElseThrow(() -> new ResourceNotFoundException("Lead", "id", id));
         
         if (request.status() != null) {
-            lead.setStatus(LeadStatus.valueOf(request.status()));
+            lead.setStatus(parseLeadStatus(request.status()));
         }
         if (request.assignedTo() != null) {
             lead.setAssignedTo(request.assignedTo());

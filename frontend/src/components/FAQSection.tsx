@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { buildWhatsAppUrl } from '@/lib/contact';
+import { Search, X, ChevronDown } from 'lucide-react';
 
 export default function FAQSection() {
   const [activeCategory, setActiveCategory] = useState('Todas');
@@ -70,14 +71,14 @@ export default function FAQSection() {
               placeholder="¿Qué quieres saber? (ej: escrituras, agua, cuotas, playa...)"
               className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 text-base sm:text-sm shadow-sm transition-all"
             />
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             {searchTerm && (
               <button 
                 onClick={() => setSearchTerm('')}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
                 aria-label="Limpiar búsqueda"
               >
-                ✕
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -112,9 +113,7 @@ export default function FAQSection() {
                     {faq.question}
                   </span>
                 </div>
-                <span className={`transform transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-[var(--color-caribbean-blue)]' : 'text-gray-400'}`}>
-                  ▼
-                </span>
+                <ChevronDown className={`w-5 h-5 transform transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-[var(--color-caribbean-blue)]' : 'text-gray-400'}`} />
               </button>
               
               <div 

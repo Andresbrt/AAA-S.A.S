@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PiInstagramLogoLight, PiTiktokLogoLight, PiFacebookLogoLight } from 'react-icons/pi';
+import { PhoneCall, Mail } from 'lucide-react';
 import { getCompanyPhoneDisplay, buildWhatsAppUrl } from '@/lib/contact';
 
 export default function PublicFooter({ company }: { company: any }) {
@@ -13,8 +14,9 @@ export default function PublicFooter({ company }: { company: any }) {
           <div className="relative z-10 text-center md:text-left max-w-xl">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Únete a nuestra comunidad</h3>
             <p className="text-white/70 font-light leading-relaxed">
-              Descubre avances de obra, inspiración arquitectónica y exclusivas oportunidades de inversión antes que nadie. ¡Síguenos en nuestras redes sociales!
+              Descubre avances de obra, inspiración arquitectónica y exclusivas oportunidades de inversión. ¡Síguenos en nuestras redes sociales!
             </p>
+
           </div>
           
           <div className="relative z-10 flex items-center gap-4">
@@ -62,17 +64,26 @@ export default function PublicFooter({ company }: { company: any }) {
             <p className="text-white/70 text-sm leading-relaxed mb-6">
               {company?.aboutUs || 'Especialistas en parcelaciones campestres premium en Colombia. Conectamos la naturaleza con un estilo de vida de lujo y tranquilidad.'}
             </p>
-            {company?.contactAddress && (
-              <p className="text-white/70 text-sm mb-2">📍 {company.contactAddress}</p>
-            )}
-            <p className="text-white/70 text-sm mb-2">
-              📞 <a href={buildWhatsAppUrl('Hola! Me gustaría comunicarme con el equipo de Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-gold-accent)] transition-colors">
-                {getCompanyPhoneDisplay(company?.contactPhone)}
-              </a>
-            </p>
-            {company?.contactEmail && (
-              <p className="text-white/70 text-sm">✉️ {company.contactEmail}</p>
-            )}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-white/80 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--color-gold-accent)] border border-white/15 shrink-0">
+                  <PhoneCall className="w-4 h-4" />
+                </div>
+                <a href={buildWhatsAppUrl('Hola! Me gustaría comunicarme con el equipo de Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-gold-accent)] transition-colors font-medium">
+                  {getCompanyPhoneDisplay(company?.contactPhone)}
+                </a>
+              </div>
+              {company?.contactEmail && (
+                <div className="flex items-center gap-3 text-white/80 text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--color-gold-accent)] border border-white/15 shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <a href={`mailto:${company.contactEmail}`} className="hover:text-[var(--color-gold-accent)] transition-colors font-medium">
+                    {company.contactEmail}
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
 
           <div>

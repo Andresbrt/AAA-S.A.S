@@ -1,13 +1,19 @@
 package com.aaasas.inmobiliaria.media.application;
 
+import com.aaasas.inmobiliaria.media.api.CompleteDirectUploadRequest;
 import com.aaasas.inmobiliaria.media.api.MediaFileResponse;
+import com.aaasas.inmobiliaria.media.api.PresignedUploadRequest;
+import com.aaasas.inmobiliaria.media.api.PresignedUploadResponse;
 import com.aaasas.inmobiliaria.media.domain.*;
 import com.aaasas.inmobiliaria.media.infrastructure.MediaFileRepository;
 import com.aaasas.inmobiliaria.shared.exception.BusinessRuleException;
+import com.aaasas.inmobiliaria.shared.exception.FileStorageException;
 import com.aaasas.inmobiliaria.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +28,10 @@ import java.util.UUID;
 public class MediaService {
 
     private static final Logger log = LoggerFactory.getLogger(MediaService.class);
+
+    // SVG eliminado para prevenir Stored XSS
     private static final Set<String> ALLOWED_MIME_TYPES = Set.of(
-        "image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml",
+        "image/jpeg", "image/png", "image/webp", "image/gif",
         "video/mp4", "video/quicktime", "video/webm", "application/pdf"
     );
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB (imágenes / PDF)
@@ -39,100 +47,146 @@ public class MediaService {
 
     private final FileStoragePort fileStoragePort;
     private final MediaFileRepository mediaFileRepository;
-    private final org.springframework.cache.CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
+    /**
+     * Genera URL prefirmada para subida directa desde el navegador (cero consumo de RAM en servidor).
+     */
+    public PresignedUploadResponse createPresignedUpload(PresignedUploadRequest request) {
+        validateMetadata(request.fileName(), request.contentType(), request.fileSize());
+
+        String sanitizedName = sanitizeFileName(request.fileName());
+        String key = String.format("%s/%s/%s-%s",
+            request.entityType().toLowerCase(), request.entityId(), UUID.randomUUID(), sanitizedName);
+
+        return fileStoragePort.createPresignedUploadUrl(key, request.contentType(), 15);
+    }
+
+    /**
+     * Confirma la subida directa y persiste los metadatos en la base de datos dentro de una transacción corta.
+     */
     @Transactional
-    public MediaFileResponse upload(MultipartFile file, String mediaType, String entityType,
-                                    UUID entityId, String altText, int displayOrder) {
-        validateFile(file);
+    public MediaFileResponse completeDirectUpload(CompleteDirectUploadRequest request) {
+        com.aaasas.inmobiliaria.media.domain.MediaType typeEnum =
+            com.aaasas.inmobiliaria.media.domain.MediaType.valueOf(request.mediaType());
+        EntityType entityTypeEnum = EntityType.valueOf(request.entityType());
 
-        com.aaasas.inmobiliaria.media.domain.MediaType typeEnum = com.aaasas.inmobiliaria.media.domain.MediaType.valueOf(mediaType);
-        
-        // Si es un tipo de archivo único, eliminar el anterior
+        // Si es tipo único, limpiar archivo previo
         if (SINGLE_SLOT_TYPES.contains(typeEnum)) {
             List<MediaFile> existingFiles = mediaFileRepository.findByEntityTypeAndEntityIdOrderByDisplayOrderAsc(
-                EntityType.valueOf(entityType), entityId
+                entityTypeEnum, request.entityId()
             ).stream().filter(m -> m.getMediaType() == typeEnum).toList();
-            
+
             for (MediaFile oldFile : existingFiles) {
-                fileStoragePort.delete(oldFile.getFileKey());
+                try {
+                    fileStoragePort.delete(oldFile.getFileKey());
+                } catch (Exception ex) {
+                    log.warn("Could not delete previous file from storage: {}", oldFile.getFileKey());
+                }
                 mediaFileRepository.delete(oldFile);
             }
         }
+
+        MediaFile mediaFile = MediaFile.builder()
+            .fileKey(request.fileKey())
+            .url(request.url())
+            .originalName(sanitizeFileName(request.originalName()))
+            .contentType(request.contentType())
+            .fileSize(request.fileSize() != null ? request.fileSize() : 0L)
+            .mediaType(typeEnum)
+            .displayOrder(request.displayOrder() != null ? request.displayOrder() : 0)
+            .altText(request.altText() != null ? request.altText() : "")
+            .entityType(entityTypeEnum)
+            .entityId(request.entityId())
+            .build();
+
+        MediaFile saved = mediaFileRepository.save(mediaFile);
+
+        if (entityTypeEnum == EntityType.PROJECT) {
+            evictProjectCaches();
+        }
+
+        log.info("Direct upload recorded successfully: {} -> {}", request.fileKey(), request.url());
+        return toResponse(saved);
+    }
+
+    /**
+     * Subida tradicional vía API. El I/O de red ocurre FUERA de la transacción para no agotar el pool de Hikari.
+     */
+    public MediaFileResponse upload(MultipartFile file, String mediaType, String entityType,
+                                    UUID entityId, String altText, int displayOrder) {
+        validateFile(file);
 
         String sanitizedName = sanitizeFileName(file.getOriginalFilename());
         String key = String.format("%s/%s/%s-%s",
             entityType.toLowerCase(), entityId, UUID.randomUUID(), sanitizedName);
 
-        java.io.File tempUploadFile = null;
-        java.io.File tempFaststartFile = null;
+        String url;
         try {
-            java.io.InputStream inputStream = file.getInputStream();
-            long uploadSize = file.getSize();
-
-            if (file.getContentType() != null && file.getContentType().startsWith("video/")) {
-                try {
-                    tempUploadFile = java.io.File.createTempFile("raw-video-", ".mp4");
-                    file.transferTo(tempUploadFile);
-                    tempFaststartFile = java.io.File.createTempFile("compressed-", ".mp4");
-
-                    // Compress video (max 1080p, web bitrate, audio stripped, faststart)
-                    java.io.File scriptFile = new java.io.File("backend/src/main/resources/scripts/compress_video.py");
-                    if (!scriptFile.exists()) {
-                        scriptFile = new java.io.File("src/main/resources/scripts/compress_video.py");
-                    }
-
-                    ProcessBuilder pb = new ProcessBuilder(
-                        "python3", scriptFile.getAbsolutePath(),
-                        tempUploadFile.getAbsolutePath(), tempFaststartFile.getAbsolutePath()
-                    );
-                    Process p = pb.start();
-                    boolean finished = p.waitFor(90, java.util.concurrent.TimeUnit.SECONDS);
-                    if (finished && p.exitValue() == 0 && tempFaststartFile.length() > 0) {
-                        inputStream = new java.io.FileInputStream(tempFaststartFile);
-                        uploadSize = tempFaststartFile.length();
-                        log.info("Video compressed and web-optimized successfully before cloud upload ({} MB -> {} MB)",
-                            String.format("%.1f", file.getSize() / (1024.0 * 1024.0)),
-                            String.format("%.1f", uploadSize / (1024.0 * 1024.0)));
-                    } else {
-                        inputStream = new java.io.FileInputStream(tempUploadFile);
-                    }
-                } catch (Exception ex) {
-                    log.warn("Could not compress video, using original stream: {}", ex.getMessage());
-                    inputStream = file.getInputStream();
-                }
-            }
-
-            String url = fileStoragePort.upload(key, inputStream, uploadSize, file.getContentType());
-
-            MediaFile mediaFile = MediaFile.builder()
-                .fileKey(key)
-                .url(url)
-                .originalName(sanitizedName)
-                .contentType(file.getContentType())
-                .fileSize(uploadSize)
-                .mediaType(typeEnum)
-                .displayOrder(displayOrder)
-                .altText(altText)
-                .entityType(EntityType.valueOf(entityType))
-                .entityId(entityId)
-                .build();
-
-            MediaFile saved = mediaFileRepository.save(mediaFile);
-            
-            // Invalidar la caché de proyectos explícitamente si la entidad es PROJECT
-            if (EntityType.valueOf(entityType) == EntityType.PROJECT) {
-                evictProjectCaches();
-            }
-            
-            log.info("File uploaded: {} -> {}", key, url);
-            return toResponse(saved);
+            url = fileStoragePort.upload(key, file.getInputStream(), file.getSize(), file.getContentType());
         } catch (IOException e) {
-            throw new com.aaasas.inmobiliaria.shared.exception.FileStorageException("Error reading uploaded file", e);
-        } finally {
-            if (tempUploadFile != null && tempUploadFile.exists()) tempUploadFile.delete();
-            if (tempFaststartFile != null && tempFaststartFile.exists()) tempFaststartFile.delete();
+            throw new FileStorageException("Error reading uploaded file", e);
         }
+
+        try {
+            return saveUploadedMediaFile(key, url, sanitizedName, file.getContentType(), file.getSize(),
+                mediaType, entityType, entityId, altText, displayOrder);
+        } catch (Exception e) {
+            // Limpieza en almacenamiento si falló el guardado en base de datos
+            try {
+                fileStoragePort.delete(key);
+            } catch (Exception ex) {
+                log.warn("Failed to delete orphaned storage file: {}", key);
+            }
+            throw e;
+        }
+    }
+
+    @Transactional
+    public MediaFileResponse saveUploadedMediaFile(String key, String url, String originalName,
+                                                  String contentType, long fileSize,
+                                                  String mediaType, String entityType,
+                                                  UUID entityId, String altText, int displayOrder) {
+        com.aaasas.inmobiliaria.media.domain.MediaType typeEnum =
+            com.aaasas.inmobiliaria.media.domain.MediaType.valueOf(mediaType);
+        EntityType entityTypeEnum = EntityType.valueOf(entityType);
+
+        if (SINGLE_SLOT_TYPES.contains(typeEnum)) {
+            List<MediaFile> existingFiles = mediaFileRepository.findByEntityTypeAndEntityIdOrderByDisplayOrderAsc(
+                entityTypeEnum, entityId
+            ).stream().filter(m -> m.getMediaType() == typeEnum).toList();
+
+            for (MediaFile oldFile : existingFiles) {
+                try {
+                    fileStoragePort.delete(oldFile.getFileKey());
+                } catch (Exception ex) {
+                    log.warn("Could not delete previous file from storage: {}", oldFile.getFileKey());
+                }
+                mediaFileRepository.delete(oldFile);
+            }
+        }
+
+        MediaFile mediaFile = MediaFile.builder()
+            .fileKey(key)
+            .url(url)
+            .originalName(originalName)
+            .contentType(contentType)
+            .fileSize(fileSize)
+            .mediaType(typeEnum)
+            .displayOrder(displayOrder)
+            .altText(altText)
+            .entityType(entityTypeEnum)
+            .entityId(entityId)
+            .build();
+
+        MediaFile saved = mediaFileRepository.save(mediaFile);
+
+        if (entityTypeEnum == EntityType.PROJECT) {
+            evictProjectCaches();
+        }
+
+        log.info("File uploaded and saved: {} -> {}", key, url);
+        return toResponse(saved);
     }
 
     @Transactional(readOnly = true)
@@ -156,9 +210,25 @@ public class MediaService {
 
     private void evictProjectCaches() {
         if (cacheManager == null) return;
-        for (String name : List.of("publicProjects", "featuredProjects")) {
-            org.springframework.cache.Cache cache = cacheManager.getCache(name);
+        for (String name : List.of("publicProjects", "featuredProjects", "projectBySlug")) {
+            Cache cache = cacheManager.getCache(name);
             if (cache != null) cache.clear();
+        }
+    }
+
+    private void validateMetadata(String fileName, String contentType, Long fileSize) {
+        if (fileName == null || fileName.isBlank()) {
+            throw new BusinessRuleException("El nombre del archivo es obligatorio.");
+        }
+        if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
+            throw new BusinessRuleException("Tipo de archivo no permitido: " + contentType);
+        }
+        boolean isVideo = contentType.startsWith("video/");
+        if (isVideo && fileSize != null && fileSize > MAX_VIDEO_SIZE) {
+            throw new BusinessRuleException("El video excede el tamaño máximo de 50 MB.");
+        }
+        if (!isVideo && fileSize != null && fileSize > MAX_FILE_SIZE) {
+            throw new BusinessRuleException("El archivo excede el tamaño máximo de 10 MB.");
         }
     }
 
@@ -166,16 +236,7 @@ public class MediaService {
         if (file.isEmpty()) {
             throw new BusinessRuleException("El archivo está vacío.");
         }
-        if (!ALLOWED_MIME_TYPES.contains(file.getContentType())) {
-            throw new BusinessRuleException("Tipo de archivo no permitido: " + file.getContentType());
-        }
-        boolean isVideo = file.getContentType() != null && file.getContentType().startsWith("video/");
-        if (isVideo && file.getSize() > MAX_VIDEO_SIZE) {
-            throw new BusinessRuleException("El video excede el tamaño máximo de 50 MB.");
-        }
-        if (!isVideo && file.getSize() > MAX_FILE_SIZE) {
-            throw new BusinessRuleException("El archivo excede el tamaño máximo de 10 MB.");
-        }
+        validateMetadata(file.getOriginalFilename(), file.getContentType(), file.getSize());
     }
 
     private String sanitizeFileName(String fileName) {

@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
     // Si no hay token de sesión, redirige al login.
     // Para entornos locales se podría omitir o modificar, pero esta es la regla estricta.
     if (!token && process.env.NODE_ENV === 'production') {
-       return NextResponse.redirect(new URL('/login', request.url));
+       return NextResponse.redirect(new URL('/portal-asesores', request.url));
     }
   }
 
@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
   // 2. Cabeceras Anti-Intrusos específicas para el runtime
   // Esto protege contra secuestro de clics (Clickjacking) y envenenamiento MIME
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-XSS-Protection', '1; mode=block');
 
   return response;

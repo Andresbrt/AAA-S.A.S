@@ -73,7 +73,8 @@ export default function LoginPage() {
           } else {
             localStorage.removeItem("admin_remembered_email");
           }
-          document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
+          const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+          document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
           window.location.href = "/admin";
         } else {
           throw new Error("No se recibió token de autenticación válido.");
@@ -104,7 +105,8 @@ export default function LoginPage() {
       const token = data.accessToken || data.token;
       if (token) {
         localStorage.setItem("admin_token", token);
-        document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
         window.location.href = "/admin";
       } else {
         throw new Error("Error validando el código de seguridad.");
@@ -189,7 +191,7 @@ export default function LoginPage() {
 
             {/* Header / Brand Title */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-serif font-bold text-[var(--color-caribbean-dark)] tracking-tight">
+              <h1 className="text-3xl font-sans font-bold text-[var(--color-caribbean-dark)] tracking-tight">
                 Portal Asesores
               </h1>
               <p className="text-sm text-gray-500 mt-2 font-normal leading-relaxed">
@@ -316,7 +318,7 @@ export default function LoginPage() {
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] mb-3">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <h2 className="text-xl font-serif font-bold text-[var(--color-caribbean-dark)]">
+                  <h2 className="text-xl font-sans font-bold text-[var(--color-caribbean-dark)]">
                     Verificación de Seguridad
                   </h2>
                   <p className="text-xs text-gray-500 mt-1 max-w-xs mx-auto leading-relaxed">
@@ -420,7 +422,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-2xl bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] flex items-center justify-center mb-4">
               <HelpCircle className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-gray-900">Soporte y Restablecimiento</h3>
+            <h3 className="text-lg font-sans font-bold text-gray-900">Soporte y Restablecimiento</h3>
             <p className="text-xs text-gray-600 mt-2 leading-relaxed">
               Por políticas de seguridad corporativa, el restablecimiento de contraseñas y llaves de acceso MFA es gestionado por la Dirección de Tecnología.
             </p>

@@ -5,9 +5,10 @@
   --color-caribbean-blue: #4E8EA9;
   --color-caribbean-celeste: #68A7C2;
   --color-sand-light: #F9F8F6;
-  --color-gold-accent: #D4AF37;
+  --color-gold-accent: #0284C7; /* Azul Mar Caribe (Acento oficial) */
   --font-sans: var(--font-outfit), system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-serif: var(--font-outfit), var(--font-playfair), system-ui, sans-serif;
+
 }
 
 @layer base {

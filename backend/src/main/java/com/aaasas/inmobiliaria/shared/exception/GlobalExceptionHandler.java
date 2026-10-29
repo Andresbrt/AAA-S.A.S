@@ -150,23 +150,26 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLocking(org.springframework.orm.ObjectOptimisticLockingFailureException ex) {
+        log.warn("Optimistic locking conflict: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+            HttpStatus.CONFLICT, "El registro fue modificado concurrentemente por otro usuario o proceso. Por favor refresque e intente nuevamente."
+        );
+        problem.setTitle("CONCURRENT_MODIFICATION_CONFLICT");
+        problem.setType(URI.create("https://api.aaasas.com/errors/concurrent-conflict"));
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGenericException(Exception ex) {
-        log.error("Unhandled exception", ex);
-        try {
-            java.nio.file.Files.writeString(
-                java.nio.file.Paths.get("error_debug.log"),
-                java.time.Instant.now().toString() + " - " + ex.getMessage() + "\n" +
-                java.util.Arrays.toString(ex.getStackTrace()) + "\n",
-                java.nio.file.StandardOpenOption.CREATE,
-                java.nio.file.StandardOpenOption.APPEND
-            );
-        } catch (Exception ignored) {}
-        
+        log.error("Unhandled server exception: ", ex);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-            HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage() != null ? ex.getMessage() : "Error interno del servidor."
+            HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error interno en el servidor. Por favor intente más tarde."
         );
-        problem.setTitle("INTERNAL_ERROR");
+        problem.setTitle("INTERNAL_SERVER_ERROR");
+        problem.setType(URI.create("https://api.aaasas.com/errors/internal-error"));
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
