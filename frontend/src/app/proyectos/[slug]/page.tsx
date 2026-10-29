@@ -1,4 +1,6 @@
-// Forzar HMR para limpiar caché 2
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getProperties, getCompanyInfo } from '@/lib/api';
@@ -39,13 +41,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
   if (!project) return { title: 'Proyecto No Encontrado | Grupo AAA' };
 
+  const ogImage = 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp';
+
   return {
     title: `${project.metaTitle || project.name} | Grupo AAA S.A.S`,
     description: project.metaDescription || project.shortDescription,
     openGraph: {
       title: project.metaTitle || project.name,
       description: project.metaDescription || project.shortDescription,
-      images: [project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'],
+      images: [ogImage],
     },
     alternates: {
       canonical: `/proyectos/${slug}`,
@@ -65,18 +69,21 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (!project && (slug === 'corales-del-viento' || slug === 'condominio-campestre-corales-del-viento')) {
     project = {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
-      name: 'Corales del Viento',
+      name: 'Condominio Campestre Corales del Viento',
       slug: 'corales-del-viento',
       shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
       longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo legal de escritura individual. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. A tan solo 90 minutos de Montería, 50 minutos del aeropuerto de Tolú, y con acceso privilegiado a destinos emblemáticos como Isla Fuerte, San Antero, Coveñas y Cartagena de Indias. Cuenta con portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
-      status: 'EN_PREVENTA',
+      status: 'PREVENTA',
       minPrice: 260000,
       maxPrice: 260000,
-      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
-      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
+      address: 'San Bernardo del Viento, Córdoba',
+      cityName: 'San Bernardo del Viento',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/08e535d2-f7e8-4a1b-99e9-1949355cd0a9-LOGO_page-0001.webp',
       galleryUrls: [
-        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp',
-        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp'
       ],
       tags: ['Portería 24 horas', 'Piscina', 'Juegos infantiles', 'Zona BBQ', 'Zonas verdes', 'Vía principal pavimentada', 'A 5 min del mar', 'A 90 min de Montería', 'A 50 min de Tolú']
     };
@@ -118,62 +125,64 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     }
   };
 
+  // Determinar imagen de fondo del Hero: NUNCA usar logo como fondo estirado
+  const heroBgImage = (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
+    ? project.bannerImageUrl
+    : (project.mainImageUrl && !project.mainImageUrl.toLowerCase().includes('logo'))
+      ? project.mainImageUrl
+      : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp';
+
+  const logoDisplay = project.logoUrl || (project.bannerImageUrl?.toLowerCase().includes('logo') ? project.bannerImageUrl : null);
+
   return (
     <main className="min-h-screen flex flex-col bg-[var(--background)]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}
       />
-      <PublicNavbar variant={project.logoUrl ? 'transparent-light' : 'transparent-dark'} />
+      <PublicNavbar variant="transparent-light" />
       
-      {/* Hero Section */}
-      <section className="relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center bg-black">
-        {/* Background Image */}
+      {/* Hero Section Ultra Lujo */}
+      <section className="relative h-[70vh] lg:h-[80vh] w-full flex items-center justify-center bg-black overflow-hidden">
+        {/* Background Image en Alta Resolución */}
         <Image 
-          src={project.bannerImageUrl || project.mainImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
+          src={heroBgImage} 
           alt={project.name}
           fill
           sizes="100vw"
-          className="object-cover"
+          className="object-cover transition-transform duration-1000 scale-105"
           priority
         />
         
-        {/* Gradient overlays for text/logo readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-black/20 to-transparent"></div>
+        {/* Degradado y overlay para legibilidad cinematográfica */}
+        <div className="absolute inset-0 bg-black/45"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-black/25 to-black/30"></div>
         
-        {/* Logo Overlay (if exists) */}
-        {project.logoUrl && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4">
-            <div className="relative w-64 h-64 md:w-96 md:h-96">
-              <Image 
-                src={project.logoUrl}
-                alt={`Logo ${project.name}`}
-                fill
-                className="object-contain drop-shadow-2xl"
-              />
-            </div>
-          </div>
-        )}
-        
-        <div className={`relative z-10 text-center px-4 max-w-4xl mx-auto ${project.logoUrl ? 'mt-[25vh] md:mt-[30vh]' : 'mt-20'}`}>
-          <span className="inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-6 border bg-white/10 text-white border-white/20 shadow-xl">
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
+          <span className="inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-4 border bg-white/10 text-white border-white/20 shadow-xl">
             {project.status?.replace('_', ' ') || 'PREVENTA'}
           </span>
-          
-          {!project.logoUrl ? (
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold font-sans text-white mb-6 drop-shadow-2xl tracking-tight">
-              {project.name}
-            </h1>
-          ) : (
-            <h1 className="text-sm md:text-base font-light text-white/80 uppercase tracking-[0.4em] mt-8 mb-6 drop-shadow-md">
-              {project.name}
-            </h1>
+
+          {/* Logotipo Oficial nítido y en proporción real (Nunca deformado) */}
+          {logoDisplay && (
+            <div className="relative w-48 h-20 md:w-64 md:h-24 mx-auto mb-4 drop-shadow-2xl">
+              <Image 
+                src={logoDisplay}
+                alt={`Logo ${project.name}`}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           )}
           
-          <div className="flex items-center justify-center gap-3 text-sm md:text-lg mb-8 font-light text-white/90 tracking-wide drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold font-sans text-white mb-4 drop-shadow-2xl tracking-tight">
+            {project.name}
+          </h1>
+          
+          <div className="flex items-center justify-center gap-2 text-sm md:text-base font-light text-white/90 tracking-wide drop-shadow-md">
             <PiMapPinLight className="w-5 h-5 text-[var(--color-gold-accent)]" />
-            {project.address || 'Ubicación Premium, Colombia'}
+            {project.address || 'San Bernardo del Viento, Córdoba'}
           </div>
         </div>
       </section>

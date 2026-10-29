@@ -39,6 +39,11 @@ const nextConfig: NextConfig = {
         destination: '/#ubicacion',
         permanent: false,
       },
+      {
+        source: '/proyectos/condominio-campestre-corales-del-viento',
+        destination: '/proyectos/corales-del-viento',
+        permanent: true,
+      },
     ];
   },
   async headers() {

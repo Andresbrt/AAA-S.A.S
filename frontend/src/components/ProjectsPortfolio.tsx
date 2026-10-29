@@ -5,25 +5,24 @@ import { motion } from 'framer-motion';
 import { PiSparkleLight, PiMapPinLight, PiCubeLight } from 'react-icons/pi';
 
 export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
-  // Datos reales de Corales del Viento (fallback automático si el backend aún no está conectado en Render)
+  // Datos reales de Corales del Viento (fallback ultra-lujo y garantizado)
   const defaultProjects = [
     {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
-      name: 'Corales del Viento',
+      name: 'Condominio Campestre Corales del Viento',
       location: 'San Bernardo del Viento, Córdoba',
       tag: 'Frente al Mar · Zona Turística',
-      description: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
+      description: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. Lotes 100% planos con escritura individual.',
       area: 'Desde 180 m²',
       investment: '$260.000 / m²',
       financing: 'Financiación Directa',
-      logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
-      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/15930ea4-ed64-40d4-8ef2-b88f2c0fd173-IMG_0535.JPG.webp',
-      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/47421d6e-4fbd-423d-9f1e-3aec64f0d4e0-LOGO_page-0001.webp',
+      logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/08e535d2-f7e8-4a1b-99e9-1949355cd0a9-LOGO_page-0001.webp',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
       has3D: true,
     }
   ];
-
 
   const displayProjects = projects && projects.length > 0 ? projects : defaultProjects;
 
@@ -57,76 +56,78 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
 
         {/* Grid */}
         <div className={`grid grid-cols-1 ${displayProjects.length > 1 ? 'lg:grid-cols-2' : 'max-w-2xl mx-auto'} gap-10`}>
-          {displayProjects.map((project: any, index: number) => (
-            <motion.div 
-              key={project.id || index}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="glass-card overflow-hidden flex flex-col group bg-white/60"
-            >
-              {/* Header Tags */}
-              <div className="flex justify-between items-center px-6 py-4 border-b border-white/40 text-xs font-medium text-gray-700 bg-white/40 backdrop-blur-md">
-                <span className="flex items-center gap-1.5 text-[var(--color-caribbean-dark)] font-bold tracking-wider uppercase">
-                  <PiSparkleLight className="text-[var(--color-gold-accent)]" size={16} /> {project.tag || 'Proyecto Insignia'}
-                </span>
-                <span className="flex items-center gap-1.5 opacity-70">
-                  <PiMapPinLight size={16} /> {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'Córdoba, Colombia')}
-                </span>
-              </div>
-              
-              {/* Image */}
-              <div className="relative h-72 w-full overflow-hidden">
-                {/* Background Image */}
-                <Image 
-                  src={project.mainImageUrl || project.image || project.bannerImageUrl || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop"} 
-                  alt={project.name} 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+          {displayProjects.map((project: any, index: number) => {
+            const cardBgImage = (project.mainImageUrl && !project.mainImageUrl.toLowerCase().includes('logo'))
+              ? project.mainImageUrl
+              : (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
+                ? project.bannerImageUrl
+                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp';
+
+            const logo = project.logoUrl || (project.bannerImageUrl?.toLowerCase().includes('logo') ? project.bannerImageUrl : null);
+
+            return (
+              <motion.div 
+                key={project.id || index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="glass-card overflow-hidden flex flex-col group bg-white/60 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-3xl border border-white/60"
+              >
+                {/* Header Tags */}
+                <div className="flex justify-between items-center px-6 py-4 border-b border-white/40 text-xs font-medium text-gray-700 bg-white/40 backdrop-blur-md">
+                  <span className="flex items-center gap-1.5 text-[var(--color-caribbean-dark)] font-bold tracking-wider uppercase">
+                    <PiSparkleLight className="text-[var(--color-gold-accent)]" size={16} /> {project.tag || 'Proyecto Insignia'}
+                  </span>
+                  <span className="flex items-center gap-1.5 opacity-70">
+                    <PiMapPinLight size={16} /> {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'San Bernardo del Viento, Córdoba')}
+                  </span>
+                </div>
                 
-                {/* Dark overlay to make logo pop if present, or just text pop */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/80 via-black/20 to-transparent transition-opacity duration-500" />
+                {/* Image Fotográfica Real (Sin distorsión) */}
+                <div className="relative h-72 w-full overflow-hidden bg-slate-900">
+                  <Image 
+                    src={cardBgImage} 
+                    alt={project.name} 
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  
+                  {/* Dark overlay cinemático */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-caribbean-dark)]/85 via-black/20 to-transparent" />
+                  
+                  {/* Badge en la foto */}
+                  <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+                    <div>
+                      <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/90 text-[var(--color-caribbean-dark)] shadow-md mb-2">
+                        {project.status?.replace('_', ' ') || 'PREVENTA'}
+                      </span>
+                      <h3 className="text-xl sm:text-2xl font-extrabold text-white font-sans tracking-tight drop-shadow-md">
+                        {project.name}
+                      </h3>
+                    </div>
+
+                    {(project.has3D || project.slug === 'corales-del-viento') && (
+                      <div className="text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1.5 bg-white/95 text-[var(--color-caribbean-dark)] border border-white">
+                        <PiCubeLight size={15} /> 3D Activo
+                      </div>
+                    )}
+                  </div>
+                </div>
                 
-                {/* Logo Overlay */}
-                {project.logoUrl && (
-                  <div className="absolute inset-0 flex items-center justify-center p-12">
-                    <div className="relative w-full h-full">
+                {/* Content */}
+                <div className="p-8 flex flex-col flex-grow relative z-10 bg-white/40">
+                  {logo && (
+                    <div className="relative h-12 w-44 mb-4">
                       <Image 
-                        src={project.logoUrl}
-                        alt={`Logo ${project.name}`}
-                        fill
-                        className="object-contain drop-shadow-2xl"
+                        src={logo} 
+                        alt={`Logo ${project.name}`} 
+                        fill 
+                        className="object-contain object-left" 
                       />
                     </div>
-                  </div>
-                )}
-                
-                {(project.has3D || project.slug === 'corales-del-viento') && (
-                  <div className="absolute bottom-4 right-4 text-xs font-bold px-4 py-2 rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 bg-white/90 border-white text-[var(--color-caribbean-dark)]">
-                    <PiCubeLight size={16} /> Experiencia 3D Activa
-                  </div>
-                )}
-              </div>
-              
-              {/* Content */}
-              <div className="p-8 flex flex-col flex-grow relative z-10 bg-white/20">
-                {project.logoUrl || project.bannerImageUrl ? (
-                  <div className="relative h-14 w-48 mb-4">
-                    <Image 
-                      src={project.logoUrl || project.bannerImageUrl} 
-                      alt={project.name || "Corales del Viento"} 
-                      fill 
-                      className="object-contain object-left" 
-                    />
-                  </div>
-                ) : (
-                  <h3 className="text-2xl font-extrabold text-[var(--color-caribbean-dark)] mb-3 font-sans tracking-tight">
-                    {project.name}
-                  </h3>
-                )}
+                  )}
                 <p className="text-gray-600 text-sm leading-relaxed mb-8 font-light">
                   {project.description || project.shortDescription || 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.'}
                 </p>
@@ -156,7 +157,8 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 </div>
               </div>
             </motion.div>
-          ))}
+          );
+        })}
         </div>
         
         <div className="mt-16 text-center">

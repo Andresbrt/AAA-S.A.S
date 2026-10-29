@@ -165,31 +165,46 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                       prefetch={true}
                       className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(55,111,135,0.15)] transition-all duration-500 hover:-translate-y-3 border border-gray-100 h-full"
                     >
-                      <div className={`relative h-[300px] w-full overflow-hidden ${project.logoUrl ? 'bg-[#F9F8F6]' : 'bg-slate-900'}`}>
+                      <div className="relative h-[300px] w-full overflow-hidden bg-slate-900">
                         <Image 
-                          src={project.logoUrl || project.mainImageUrl || project.bannerImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'} 
+                          src={
+                            (project.mainImageUrl && !project.mainImageUrl.toLowerCase().includes('logo'))
+                              ? project.mainImageUrl
+                              : (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
+                                ? project.bannerImageUrl
+                                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+                          } 
                           alt={project.name}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className={project.logoUrl ? "object-contain p-14 transition-transform duration-1000 group-hover:scale-105" : "object-cover transition-transform duration-1000 group-hover:scale-110"}
+                          className="object-cover transition-transform duration-1000 group-hover:scale-110"
                         />
-                        {!project.logoUrl && (
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                         
-                        <div className={`absolute top-6 left-6 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm ${project.logoUrl ? 'bg-[var(--color-caribbean-dark)]/10 text-[var(--color-caribbean-dark)] border border-[var(--color-caribbean-dark)]/20' : 'bg-white/95 text-[var(--color-caribbean-dark)]'}`}>
+                        <div className="absolute top-6 left-6 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm bg-white/95 text-[var(--color-caribbean-dark)]">
                           {project.status?.replace('_', ' ') || 'PREVENTA'}
                         </div>
 
+                        {project.logoUrl && (
+                          <div className="absolute top-6 right-6 w-20 h-10 bg-white/80 backdrop-blur-md rounded-xl p-1 shadow-sm flex items-center justify-center">
+                            <div className="relative w-full h-full">
+                              <Image 
+                                src={project.logoUrl} 
+                                alt={`Logo ${project.name}`} 
+                                fill 
+                                className="object-contain" 
+                              />
+                            </div>
+                          </div>
+                        )}
+
                         <div className="absolute bottom-6 left-6 right-6">
-                          {!project.logoUrl && (
-                            <h3 className="text-2xl font-sans font-bold text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors drop-shadow-md">
-                              {project.name}
-                            </h3>
-                          )}
-                          <div className={`flex items-center text-xs tracking-[0.15em] ${project.logoUrl ? 'text-[var(--color-caribbean-dark)] font-medium bg-white/70 backdrop-blur-md px-3 py-1.5 rounded-lg inline-flex shadow-sm' : 'text-white/90 drop-shadow-sm'}`}>
+                          <h3 className="text-2xl font-sans font-bold text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors drop-shadow-md">
+                            {project.name}
+                          </h3>
+                          <div className="flex items-center text-xs tracking-[0.15em] text-white/90 drop-shadow-sm">
                             <PiMapPinLight className="w-4 h-4 mr-1.5 text-[var(--color-gold-accent)]" />
-                            {project.location || project.cityName || 'Córdoba, Colombia'}
+                            {project.location || project.cityName || 'San Bernardo del Viento, Córdoba'}
                           </div>
                         </div>
                       </div>

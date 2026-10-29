@@ -123,8 +123,17 @@ export const getAllPublicProjects = cache(async (page = 0, size = 12) => {
 export const getProjectBySlug = cache(async (slug: string) => {
   try {
     const res = await fetchWithTimeout(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 60 } }, 3500);
-    if (!res.ok) return null;
-    return await res.json();
+    if (res.ok) return await res.json();
+
+    // Soporte transparente para slugs alternativos de Corales del Viento
+    if (slug === 'corales-del-viento') {
+      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/condominio-campestre-corales-del-viento`, { next: { revalidate: 60 } }, 3500);
+      if (altRes.ok) return await altRes.json();
+    } else if (slug === 'condominio-campestre-corales-del-viento') {
+      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/corales-del-viento`, { next: { revalidate: 60 } }, 3500);
+      if (altRes.ok) return await altRes.json();
+    }
+    return null;
   } catch (error) {
     return null;
   }

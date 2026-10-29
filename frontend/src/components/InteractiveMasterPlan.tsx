@@ -22,54 +22,111 @@ export interface Lot {
   image: string;
 }
 
-export default function InteractiveMasterPlan({ projectSlug, companyPhone, properties }: { projectSlug?: string, companyPhone?: string, properties?: any[] }) {
-  // Map API properties to the expected format. Use floorOrTower as the "type" category (e.g. 150m Playa)
-  // and type (LOTE/CASA) as tag if needed.
-  const apiLots = properties?.map((p, index) => ({
-    id: p.id,
-    number: p.name?.replace(/\D/g, '') || String(index + 1).padStart(2, '0'),
-    name: p.projectName || 'Proyecto',
-    area: p.privateArea || p.builtArea || 0,
-    price: p.price || 0,
-    status: p.status || 'DISPONIBLE',
-    type: p.floorOrTower || (p.type === 'LOTE' ? 'Lote' : p.type),
-    dimensions: 'Según Plano',
-    distance: p.floorOrTower || '150 - 300 metros',
-    tag: p.type === 'LOTE' ? 'Condominio Campestre' : p.type,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2064&auto=format&fit=crop'
-  })) || [];
+// Fallback oficial de 66 lotes reales de Corales del Viento con áreas y precios calculados a $260.000 COP/m²
+const defaultCoralesLots: Lot[] = [
+  { id: 'lote-01', number: '01', name: 'Corales del Viento · Lote 01', area: 167.51, price: 43552600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-02', number: '02', name: 'Corales del Viento · Lote 02', area: 151.65, price: 39429000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-03', number: '03', name: 'Corales del Viento · Lote 03', area: 196.27, price: 51030200, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-04', number: '04', name: 'Corales del Viento · Lote 04', area: 195.34, price: 50788400, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-05', number: '05', name: 'Corales del Viento · Lote 05', area: 168.57, price: 43828200, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '160 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-06', number: '06', name: 'Corales del Viento · Lote 06', area: 164.25, price: 42705000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '160 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-07', number: '07', name: 'Corales del Viento · Lote 07', area: 164.31, price: 42720600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '160 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-08', number: '08', name: 'Corales del Viento · Lote 08', area: 177.46, price: 46139600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '170 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-09', number: '09', name: 'Corales del Viento · Lote 09', area: 198.99, price: 51737400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '170 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-10', number: '10', name: 'Corales del Viento · Lote 10', area: 166.89, price: 43391400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '170 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-11', number: '11', name: 'Corales del Viento · Lote 11', area: 163.96, price: 42629600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '180 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-12', number: '12', name: 'Corales del Viento · Lote 12', area: 152.49, price: 39647400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '180 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-13', number: '13', name: 'Corales del Viento · Lote 13', area: 139.60, price: 36296000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '180 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-14', number: '14', name: 'Corales del Viento · Lote 14', area: 194.49, price: 50567400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '190 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-15', number: '15', name: 'Corales del Viento · Lote 15', area: 167.59, price: 43573400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '190 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-16', number: '16', name: 'Corales del Viento · Lote 16', area: 166.99, price: 43417400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '190 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-17', number: '17', name: 'Corales del Viento · Lote 17', area: 140.00, price: 36400000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '200 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-18', number: '18', name: 'Corales del Viento · Lote 18', area: 144.61, price: 37598600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '200 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-19', number: '19', name: 'Corales del Viento · Lote 19', area: 165.30, price: 42978000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '200 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-20', number: '20', name: 'Corales del Viento · Lote 20', area: 168.00, price: 43680000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '210 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-21', number: '21', name: 'Corales del Viento · Lote 21', area: 166.99, price: 43417400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '210 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-22', number: '22', name: 'Corales del Viento · Lote 22', area: 140.00, price: 36400000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '210 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-23', number: '23', name: 'Corales del Viento · Lote 23', area: 147.00, price: 38220000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '220 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-24', number: '24', name: 'Corales del Viento · Lote 24', area: 179.34, price: 46628400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '220 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-25', number: '25', name: 'Corales del Viento · Lote 25', area: 140.00, price: 36400000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '220 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-26', number: '26', name: 'Corales del Viento · Lote 26', area: 137.64, price: 35786400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '230 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-27', number: '27', name: 'Corales del Viento · Lote 27', area: 146.59, price: 38113400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '230 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-28', number: '28', name: 'Corales del Viento · Lote 28', area: 146.86, price: 38183600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '230 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-29', number: '29', name: 'Corales del Viento · Lote 29', area: 150.00, price: 39000000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '240 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-30', number: '30', name: 'Corales del Viento · Lote 30', area: 140.00, price: 36400000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '240 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-31', number: '31', name: 'Corales del Viento · Lote 31', area: 138.27, price: 35950200, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '240 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-32', number: '32', name: 'Corales del Viento · Lote 32', area: 145.32, price: 37783200, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '250 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-33', number: '33', name: 'Corales del Viento · Lote 33', area: 148.83, price: 38695800, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '250 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-34', number: '34', name: 'Corales del Viento · Lote 34', area: 205.64, price: 53466400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '250 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-35', number: '35', name: 'Corales del Viento · Lote 35', area: 182.04, price: 47330400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '260 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-36', number: '36', name: 'Corales del Viento · Lote 36', area: 144.19, price: 37489400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '260 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-37', number: '37', name: 'Corales del Viento · Lote 37', area: 156.01, price: 40562600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '260 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-38', number: '38', name: 'Corales del Viento · Lote 38', area: 189.00, price: 49140000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '270 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-39', number: '39', name: 'Corales del Viento · Lote 39', area: 167.81, price: 43630600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '270 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-40', number: '40', name: 'Corales del Viento · Lote 40', area: 144.31, price: 37520600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '270 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-41', number: '41', name: 'Corales del Viento · Lote 41', area: 159.01, price: 41342600, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '280 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-42', number: '42', name: 'Corales del Viento · Lote 42', area: 148.47, price: 38602200, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '280 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-43', number: '43', name: 'Corales del Viento · Lote 43', area: 203.00, price: 52780000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '280 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-44', number: '44', name: 'Corales del Viento · Lote 44', area: 180.00, price: 46800000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '290 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-45', number: '45', name: 'Corales del Viento · Lote 45', area: 180.00, price: 46800000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '290 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-46', number: '46', name: 'Corales del Viento · Lote 46', area: 234.63, price: 61003800, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '290 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-47', number: '47', name: 'Corales del Viento · Lote 47', area: 212.54, price: 55260400, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-48', number: '48', name: 'Corales del Viento · Lote 48', area: 193.10, price: 50206000, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-49', number: '49', name: 'Corales del Viento · Lote 49', area: 196.62, price: 51121200, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-50', number: '50', name: 'Corales del Viento · Lote 50', area: 177.44, price: 46134400, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '160 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-51', number: '51', name: 'Corales del Viento · Lote 51', area: 186.32, price: 48443200, status: 'DISPONIBLE', type: '150m Playa', dimensions: 'Según Plano', distance: '150 metros al mar', tag: 'Oportunidad Preventa', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-52', number: '52', name: 'Corales del Viento · Lote 52', area: 253.17, price: 65824200, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '210 metros al mar', tag: 'Lote XL Frente a Zona Verde', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-53', number: '53', name: 'Corales del Viento · Lote 53', area: 377.88, price: 98248800, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '220 metros al mar', tag: 'Lote XL Premium', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-54', number: '54', name: 'Corales del Viento · Lote 54', area: 405.00, price: 105300000, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '230 metros al mar', tag: 'Lote XL Gran Dimensión', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-55', number: '55', name: 'Corales del Viento · Lote 55', area: 228.67, price: 59454200, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '230 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-56', number: '56', name: 'Corales del Viento · Lote 56', area: 200.00, price: 52000000, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '240 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-57', number: '57', name: 'Corales del Viento · Lote 57', area: 235.28, price: 61172800, status: 'VENDIDO', type: '150m Playa', dimensions: 'Según Plano', distance: '240 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-58', number: '58', name: 'Corales del Viento · Lote 58', area: 265.09, price: 68923400, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '250 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-59', number: '59', name: 'Corales del Viento · Lote 59', area: 278.41, price: 72386600, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '250 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-60', number: '60', name: 'Corales del Viento · Lote 60', area: 294.46, price: 76559600, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '260 metros al mar', tag: 'Lote XL Frente al Mar', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-61', number: '61', name: 'Corales del Viento · Lote 61', area: 303.79, price: 78985400, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '260 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-62', number: '62', name: 'Corales del Viento · Lote 62', area: 303.58, price: 78930800, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '270 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-63', number: '63', name: 'Corales del Viento · Lote 63', area: 257.08, price: 66840800, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '270 metros al mar', tag: 'Lote XL Excelente Ubicación', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-64', number: '64', name: 'Corales del Viento · Lote 64', area: 259.70, price: 67522000, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '280 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-65', number: '65', name: 'Corales del Viento · Lote 65', area: 504.34, price: 131128400, status: 'VENDIDO', type: 'Lotes XL', dimensions: 'Según Plano', distance: '280 metros al mar', tag: 'Adjudicado', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' },
+  { id: 'lote-66', number: '66', name: 'Corales del Viento · Lote 66', area: 432.19, price: 112369400, status: 'DISPONIBLE', type: 'Lotes XL', dimensions: 'Según Plano', distance: '290 metros al mar', tag: 'Lote XL Familiar', image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp' }
+];
 
-  const lots: Lot[] = apiLots;
+export default function InteractiveMasterPlan({ projectSlug, companyPhone, properties }: { projectSlug?: string, companyPhone?: string, properties?: any[] }) {
+  // Map API properties to the expected format
+  const apiLots = (properties && properties.length > 0) ? properties.map((p, index) => {
+    const rawNum = p.name?.replace(/\D/g, '') || String(index + 1);
+    const num = rawNum.length === 1 ? `0${rawNum}` : rawNum;
+    const area = p.privateArea || p.builtArea || 0;
+    const isXL = area >= 250;
+    const defaultType = isXL ? 'Lotes XL' : '150m Playa';
+    return {
+      id: p.id || `prop-${index}`,
+      number: num,
+      name: p.name ? `Corales del Viento · ${p.name}` : `Corales del Viento · Lote ${num}`,
+      area: area,
+      price: p.price || (area * 260000),
+      status: p.status || 'DISPONIBLE',
+      type: p.floorOrTower || defaultType,
+      dimensions: 'Según Plano Oficial',
+      distance: isXL ? '200 - 300 metros al mar' : '150 metros al mar',
+      tag: p.status === 'VENDIDO' ? 'Adjudicado' : 'Oportunidad Preventa',
+      image: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+    };
+  }) : [];
+
+  const lots: Lot[] = apiLots.length > 0 ? apiLots : defaultCoralesLots;
 
   const [selectedLot, setSelectedLot] = useState<Lot | null>(
     lots.find(l => l.status === 'DISPONIBLE') || lots[0] || null
   );
   const [filter, setFilter] = useState('Todos los Lotes');
 
-  // Si no hay lotes registrados para el proyecto, mostramos un mensaje amigable
-  if (lots.length === 0) {
-    return (
-      <section className="py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-medium mb-6">
-            <PiMapPinLight className="text-xl" />
-            <span>Master Plan</span>
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-[var(--color-caribbean-dark)] mb-6">
-            Lotes y Disponibilidad
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto mb-12">
-            El inventario de este proyecto se está actualizando. Pronto podrás ver el master plan interactivo.
-          </p>
-        </div>
-      </section>
-    );
-  }
-
   const filteredLots = lots.filter(lot => {
     if (filter === 'Todos los Lotes') return true;
+    if (filter === 'Disponibles') return lot.status === 'DISPONIBLE';
     if (filter === 'Frente al Mar' || filter === 'Frente a Playa') return lot.type === '150m Playa' || lot.type === 'Frente al Mar' || lot.type?.includes('Playa') || lot.type?.includes('Mar');
-    if (filter === 'Lotes XL') return lot.type === 'Lotes XL' || lot.type === 'Reserva Natural';
+    if (filter === 'Lotes XL') return lot.type === 'Lotes XL' || lot.type === 'Reserva Natural' || lot.area >= 250;
     
     // Dynamic fallback for custom types introduced from DB
     return lot.type?.toLowerCase().includes(filter.toLowerCase()) || lot.distance?.toLowerCase().includes(filter.toLowerCase());
@@ -88,10 +145,9 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
   const handleWhatsApp = () => {
     if (!selectedLot) return;
     trackWhatsAppClick('masterplan_selected_lot', `Lote ${selectedLot.number}`);
-    const message = `Hola, estoy muy interesado en SEPARAR el LOTE #${selectedLot.number} (${selectedLot.name}) por un valor de $${selectedLot.price.toLocaleString()} COP. ¿Me podrían brindar más información?`;
+    const message = `Hola, estoy muy interesado en SEPARAR el LOTE #${selectedLot.number} de Corales del Viento (${selectedLot.area} m² a $260.000/m²) por un valor de $${selectedLot.price.toLocaleString()} COP. ¿Me podrían brindar más información?`;
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer');
   };
-
 
   return (
     <section id="mapa-interactivo" className="py-16 lg:py-24 px-4 sm:px-6 bg-gray-50 relative overflow-hidden">
@@ -108,16 +164,17 @@ export default function InteractiveMasterPlan({ projectSlug, companyPhone, prope
           </h2>
           <div className="w-20 h-1 bg-[var(--color-gold-accent)] mx-auto mb-6 md:mb-8"></div>
           <p className="text-gray-500 max-w-2xl mx-auto text-base md:text-lg font-light leading-relaxed">
-            Selecciona el lote de tu interés para conocer sus dimensiones, ubicación exacta dentro del proyecto y valor de inversión.
+            Selecciona el lote de tu interés para conocer sus dimensiones, ubicación exacta dentro del proyecto y valor de inversión a <strong className="font-bold text-[var(--color-caribbean-dark)]">$260.000 COP/m²</strong>.
           </p>
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 mb-10 md:mb-14" role="group" aria-label="Filtros de la sala de ventas virtual">
           <span className="w-full text-center md:w-auto text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 md:mb-0">Filtrar por:</span>
-          <button type="button" aria-pressed={filter === 'Todos los Lotes'} onClick={() => setFilter('Todos los Lotes')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Todos los Lotes' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(55,111,135,0.25)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Todos</button>
+          <button type="button" aria-pressed={filter === 'Todos los Lotes'} onClick={() => setFilter('Todos los Lotes')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Todos los Lotes' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(55,111,135,0.25)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Todos ({lots.length})</button>
+          <button type="button" aria-pressed={filter === 'Disponibles'} onClick={() => setFilter('Disponibles')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Disponibles' ? 'bg-emerald-700 text-white border-emerald-700 shadow-[0_5px_15px_rgba(16,185,129,0.25)] scale-105' : 'bg-transparent border-emerald-300 text-emerald-700 hover:bg-emerald-50'}`}>Disponibles ({lots.filter(l => l.status === 'DISPONIBLE').length})</button>
           <button type="button" aria-pressed={filter === 'Frente al Mar'} onClick={() => setFilter('Frente al Mar')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Frente al Mar' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(55,111,135,0.25)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Frente al Mar</button>
-          <button type="button" aria-pressed={filter === 'Lotes XL'} onClick={() => setFilter('Lotes XL')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Lotes XL' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(55,111,135,0.25)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Lotes XL</button>
+          <button type="button" aria-pressed={filter === 'Lotes XL'} onClick={() => setFilter('Lotes XL')} className={`px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${filter === 'Lotes XL' ? 'bg-[var(--color-caribbean-dark)] text-white border-[var(--color-caribbean-dark)] shadow-[0_5px_15px_rgba(55,111,135,0.25)] scale-105' : 'bg-transparent border-gray-300 text-gray-500 hover:border-[var(--color-caribbean-blue)] hover:text-[var(--color-caribbean-blue)]'}`}>Lotes XL (&ge; 250m²)</button>
         </div>
 
         {/* Main Interface */}
