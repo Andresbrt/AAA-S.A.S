@@ -45,51 +45,34 @@ export default function LocationSection() {
 
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10 bg-gray-50/50 rounded-3xl lg:rounded-[2.5rem] p-3 sm:p-5 lg:p-10 border border-gray-100 relative group">
           
-          {/* Map Simulation */}
+          {/* Map Real Google Maps */}
           <motion.div 
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
             variants={slideRight}
-            className="w-full lg:w-3/5 h-[350px] md:h-[400px] lg:h-[500px] relative rounded-[2rem] overflow-hidden shadow-inner border border-gray-200 bg-[#E5E3DF]"
-            title="Vista satelital de San Bernardo del Viento, Córdoba"
+            className="w-full lg:w-3/5 h-[380px] md:h-[440px] lg:h-[540px] relative rounded-[2rem] overflow-hidden shadow-lg border border-gray-200 bg-[#E5E3DF]"
+            title="Mapa interactivo y vías de acceso de Condominio Corales del Viento"
           >
-            <Image 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop" 
-              alt="Mapa Satelital y vías de acceso a San Bernardo del Viento" 
-              title="Geolocalización del proyecto inmobiliario"
-              fill
-              sizes="(max-width: 1024px) 100vw, 60vw"
-              className="object-cover opacity-80 mix-blend-luminosity group-hover:scale-105 transition-transform duration-[2000ms]"
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23158.58947186937!2d-76.01472060247147!3d9.349420335356847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e59bf0031585ccb%3A0x778be77018f3c7ec!2sCondominio%20campestre%20corales%20del%20viento!5e1!3m2!1ses!2sco!4v1793217623126!5m2!1ses!2sco"
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Ubicación oficial en Google Maps"
+              className="w-full h-full"
             />
             
-            {/* Custom Map Markers & Widgets (Mockup Simulation) */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6, type: "spring" }}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-4 w-64 border border-[var(--color-caribbean-blue)]/20 z-10"
-            >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-[var(--color-gold-accent)] rounded-full flex items-center justify-center animate-bounce shadow-lg">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <div className="absolute inset-0 rounded-full bg-[var(--color-gold-accent)] animate-ping opacity-75"></div>
-              </div>
-              <p className="text-xs font-bold text-[var(--color-caribbean-dark)] mb-1 mt-2 text-center">Condominio Corales del Viento</p>
-              <p className="text-[10px] text-gray-500 mb-2 text-center">A 150m de la orilla del mar Caribe<br/>San Bernardo del Viento, Córdoba</p>
-              <Link href="/proyectos/corales-del-viento" className="w-full bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[#376F87] text-white text-[10px] font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all hover:scale-105">
-                <Compass className="w-3.5 h-3.5" />
-                <span>Ver Proyecto</span>
-                <ArrowUpRight className="w-3 h-3 opacity-80" />
-              </Link>
-            </motion.div>
-
+            {/* Overlay badge de clima */}
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.8 }}
-              className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-3 border border-white flex items-center gap-3 hover:scale-105 transition-transform"
+              className="absolute top-4 left-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg p-2.5 sm:p-3 border border-white flex items-center gap-2.5 pointer-events-none z-10"
             >
               <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100">
                 <Sun className="w-5 h-5 animate-spin-slow" />
@@ -113,46 +96,49 @@ export default function LocationSection() {
             <h3 className="text-lg md:text-xl font-bold text-[var(--color-caribbean-dark)] mb-2">Condominio Corales del Viento</h3>
             <p className="text-xs md:text-sm text-gray-500 mb-6">San Bernardo del Viento, Vereda Playas del Viento, Córdoba, Colombia</p>
             
-            <div className="bg-gradient-to-r from-blue-50/80 to-emerald-50/80 rounded-xl p-4 flex justify-between items-center mb-8 border border-blue-100/50">
+            <div className="bg-gradient-to-r from-blue-50/80 to-emerald-50/80 rounded-xl p-4 flex justify-between items-center mb-6 border border-blue-100/50">
               <p className="text-xs text-gray-600 font-medium">Coordenadas<br/>GPS</p>
               <p className="text-sm font-bold text-[var(--color-caribbean-blue)] text-right tracking-wider">9.354200,<br/>-75.952100</p>
             </div>
 
-            <div className="space-y-6 mb-8">
-              <div className="flex items-start gap-4 group/item">
-                <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Waves className="w-5 h-5" />
+            <div className="space-y-4 mb-6">
+              <div className="flex items-start gap-3.5 group/item">
+                <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Waves className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">150 metros</p>
-                  <p className="text-xs text-gray-500">Acceso a la orilla del mar Caribe</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">150 metros (5 min a pie)</p>
+                  <p className="text-[11px] text-gray-500">Distancia exacta a la orilla del mar por la vía de acceso conformada</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 group/item">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Car className="w-5 h-5" />
+
+              <div className="flex items-start gap-3.5 group/item">
+                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Plane className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">3,2 km (5 min)</p>
-                  <p className="text-xs text-gray-500">Casco Urbano San Bernardo del Viento</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Aeropuerto Golfo de Morrosquillo (Tolú)</p>
+                  <p className="text-[11px] text-gray-500">A solo 50 minutos de conexión aérea</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 group/item">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Compass className="w-5 h-5" />
+
+              <div className="flex items-start gap-3.5 group/item">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Plane className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">20 minutos en lancha</p>
-                  <p className="text-xs text-gray-500">Isla Fuerte (Reserva de coral y buceo)</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Aeropuerto Internacional Los Garzones (Montería)</p>
+                  <p className="text-[11px] text-gray-500">A 90 minutos con vuelos nacionales e internacionales</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 group/item">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Plane className="w-5 h-5" />
+
+              <div className="flex items-start gap-3.5 group/item">
+                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Compass className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">85 km (1h 20m)</p>
-                  <p className="text-xs text-gray-500">Aeropuerto Los Garzones (Montería)</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Destinos Cercanos & Conectividad</p>
+                  <p className="text-[11px] text-gray-500">Isla Fuerte (20 min en lancha), San Antero, Coveñas, Barranquilla y Santa Marta</p>
                 </div>
               </div>
             </div>

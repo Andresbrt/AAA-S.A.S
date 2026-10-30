@@ -172,7 +172,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                               ? project.mainImageUrl
                               : (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
                                 ? project.bannerImageUrl
-                                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
+                                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg'
                           } 
                           alt={project.name}
                           fill
@@ -182,7 +182,7 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                         
                         <div className="absolute top-6 left-6 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm bg-white/95 text-[var(--color-caribbean-dark)]">
-                          {project.status?.replace('_', ' ') || 'PREVENTA'}
+                          {project.status?.replace('_', ' ') || 'EN VENTAS'}
                         </div>
 
                         {project.logoUrl && (

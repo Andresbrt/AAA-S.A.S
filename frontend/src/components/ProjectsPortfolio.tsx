@@ -13,13 +13,13 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
       name: 'Condominio Campestre Corales del Viento',
       location: 'San Bernardo del Viento, Córdoba',
       tag: 'Frente al Mar · Zona Turística',
-      description: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. Lotes 100% planos con escritura individual.',
+      description: 'En el caribe colombiano a 150 metros del mar (a 5 minutos a pie por vía de acceso conformada) en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
       area: 'Desde 180 m²',
       investment: '$260.000 / m²',
       financing: 'Financiación Directa',
       logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/08e535d2-f7e8-4a1b-99e9-1949355cd0a9-LOGO_page-0001.webp',
-      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
-      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
       has3D: true,
     }
   ];
@@ -61,7 +61,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
               ? project.mainImageUrl
               : (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
                 ? project.bannerImageUrl
-                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp';
+                : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg';
 
             const logo = project.logoUrl || (project.bannerImageUrl?.toLowerCase().includes('logo') ? project.bannerImageUrl : null);
 
@@ -101,7 +101,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                   <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
                     <div>
                       <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/90 text-[var(--color-caribbean-dark)] shadow-md mb-2">
-                        {project.status?.replace('_', ' ') || 'PREVENTA'}
+                        {project.status?.replace('_', ' ') || 'EN VENTAS'}
                       </span>
                       <h3 className="text-xl sm:text-2xl font-extrabold text-white font-sans tracking-tight drop-shadow-md">
                         {project.name}

@@ -14,7 +14,7 @@ export default function ServicesSection() {
     },
     {
       title: 'Seguridad jurídica / acompañamiento',
-      description: 'Ofrecemos servicios jurídicos como sucesiones, defensores legal, trámites notariales, divorcio y demás ámbitos del derecho.',
+      description: 'Ofrecemos servicios jurídicos como sucesiones, defensa jurídica, trámites notariales, divorcio y demás ámbitos del derecho.',
       badge: '✓ Respaldo notarial',
       icon: <PiScalesLight size={28} className="text-blue-600" />
     },

@@ -435,9 +435,23 @@ export async function deleteMedia(token: string, id: string) {
 
 export const getProperties = cache(async (projectId: string) => {
   try {
-    const res = await fetchWithTimeout(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=100`, { next: { revalidate: 60 } }, 3500);
+    const res = await fetchWithTimeout(`${API_URL}/public/properties?projectId=${projectId}&page=0&size=200`, { next: { revalidate: 60 } }, 3500);
     if (!res.ok) return null;
-    return await res.json();
+    const data = await res.json();
+    if (data && data.totalPages > 1 && data.content) {
+      try {
+        const res2 = await fetchWithTimeout(`${API_URL}/public/properties?projectId=${projectId}&page=1&size=200`, { next: { revalidate: 60 } }, 3500);
+        if (res2.ok) {
+          const data2 = await res2.json();
+          if (data2.content && Array.isArray(data2.content)) {
+            data.content = [...data.content, ...data2.content];
+          }
+        }
+      } catch (err) {
+        // Ignorar error secundario
+      }
+    }
+    return data;
   } catch (error) {
     return null;
   }

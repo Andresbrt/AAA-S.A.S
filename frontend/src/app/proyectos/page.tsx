@@ -26,14 +26,14 @@ export default async function ProyectosPage() {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
       name: 'Condominio Campestre Corales del Viento',
-      shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. Lotes 100% planos con escritura individual.',
+      shortDescription: 'En el caribe colombiano a solo 150 metros del mar (5 min a pie) en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
       location: 'San Bernardo del Viento, Córdoba',
-      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
-      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
       logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/08e535d2-f7e8-4a1b-99e9-1949355cd0a9-LOGO_page-0001.webp',
       minPrice: 260000,
-      status: 'PREVENTA',
-      tags: ['Frente al Mar', 'Lotes Campestres', 'Portería 24h', 'Piscina']
+      status: 'EN_VENTAS',
+      tags: ['Frente al Mar', 'Lotes Campestres', 'Portería 24h', 'Piscina & Club Social']
     }
   ];
 

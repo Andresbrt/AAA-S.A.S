@@ -21,7 +21,8 @@ function getAmenityIcon(tag: string) {
   if (t.includes('bbq') || t.includes('asador')) return <Flame className="w-5 h-5 text-sky-600" />;
   if (t.includes('verde') || t.includes('ecol')) return <Trees className="w-5 h-5 text-sky-600" />;
   if (t.includes('vía') || t.includes('pavimentada')) return <Car className="w-5 h-5 text-sky-600" />;
-  if (t.includes('montería') || t.includes('tolú') || t.includes('aeropuerto')) return <Plane className="w-5 h-5 text-sky-600" />;
+  if (t.includes('montería') || t.includes('tolú') || t.includes('aeropuerto') || t.includes('garzones') || t.includes('morrosquillo')) return <Plane className="w-5 h-5 text-sky-600" />;
+  if (t.includes('barranquilla') || t.includes('santa marta') || t.includes('isla fuerte') || t.includes('coveñas') || t.includes('conexión') || t.includes('cerca')) return <MapPin className="w-5 h-5 text-sky-600" />;
   return <CheckCircle2 className="w-5 h-5 text-sky-600" />;
 }
 
@@ -71,21 +72,38 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       name: 'Condominio Campestre Corales del Viento',
       slug: 'corales-del-viento',
-      shortDescription: 'En el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización.',
-      longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo legal de escritura individual. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 5 minutos del mar en zona turística de alta valorización. A tan solo 90 minutos de Montería, 50 minutos del aeropuerto de Tolú, y con acceso privilegiado a destinos emblemáticos como Isla Fuerte, San Antero, Coveñas y Cartagena de Indias. Cuenta con portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
-      status: 'PREVENTA',
+      shortDescription: 'En el caribe colombiano a solo 150 metros del mar (5 min a pie) en zona turística de alta valorización.',
+      longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo de defensa jurídica y escritura individual registrada. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 150 metros de la orilla del mar (a 5 minutos a pie por la vía de acceso conformada) en zona turística de alta valorización. Cuenta con una conectividad aérea y terrestre privilegiada: a 90 minutos del Aeropuerto Internacional Los Garzones de Montería y a 50 minutos del Aeropuerto Golfo de Morrosquillo en Tolú, con rápida conexión hacia Barranquilla, Santa Marta y Cartagena de Indias, y a minutos de destinos paradisíacos como Isla Fuerte, San Antero y Coveñas. Ofrece portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
+      status: 'EN_VENTAS',
       minPrice: 260000,
       maxPrice: 260000,
       address: 'San Bernardo del Viento, Córdoba',
       cityName: 'San Bernardo del Viento',
-      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
-      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23158.58947186937!2d-76.01472060247147!3d9.349420335356847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e59bf0031585ccb%3A0x778be77018f3c7ec!2sCondominio%20campestre%20corales%20del%20viento!5e1!3m2!1ses!2sco!4v1793217623126!5m2!1ses!2sco',
+      mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
+      bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
       logoUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/08e535d2-f7e8-4a1b-99e9-1949355cd0a9-LOGO_page-0001.webp',
       galleryUrls: [
-        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp',
-        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/90cfc907-9663-4a13-9c1a-6ac8730269e0-IMG_0536.JPG.webp'
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/lote-mar.jpg',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/amenities.jpg',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/lote-campestre.jpg',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/lifestyle.jpg',
+        'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp'
       ],
-      tags: ['Portería 24 horas', 'Piscina', 'Juegos infantiles', 'Zona BBQ', 'Zonas verdes', 'Vía principal pavimentada', 'A 5 min del mar', 'A 90 min de Montería', 'A 50 min de Tolú']
+      tags: [
+        'Portería 24 horas',
+        'Piscina & Club Social',
+        'Juegos infantiles',
+        'Zona BBQ',
+        'Zonas verdes',
+        'Vía principal pavimentada',
+        'A 150m del mar (5 min a pie)',
+        'Aeropuerto Los Garzones (Montería · 90 min)',
+        'Aeropuerto Golfo de Morrosquillo (Tolú · 50 min)',
+        'Conexión Barranquilla y Santa Marta',
+        'Cerca de Isla Fuerte, Coveñas y San Antero'
+      ]
     };
   }
 
@@ -98,7 +116,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   const whatsappUrl = buildWhatsAppUrl(`Hola! Estoy interesado en el proyecto ${project.name} ($260.000/m²). ¿Me podrían brindar asesoría para separar mi lote?`);
 
-  let finalMapUrl = project.mapUrl;
+  const officialMapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23158.58947186937!2d-76.01472060247147!3d9.349420335356847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e59bf0031585ccb%3A0x778be77018f3c7ec!2sCondominio%20campestre%20corales%20del%20viento!5e1!3m2!1ses!2sco!4v1793217623126!5m2!1ses!2sco';
+  let finalMapUrl = project.mapUrl || officialMapUrl;
   if (finalMapUrl && finalMapUrl.includes('<iframe') && finalMapUrl.includes('src="')) {
     const match = finalMapUrl.match(/src="([^"]+)"/);
     if (match) finalMapUrl = match[1];
@@ -110,7 +129,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     name: project.name,
     description: project.shortDescription || project.description || 'Condominio Campestre en el Caribe Colombiano',
     url: `https://grupoaaa.com.co/proyectos/${project.slug}`,
-    image: project.bannerImageUrl || project.mainImageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef',
+    image: project.bannerImageUrl || project.mainImageUrl || 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
     address: {
       '@type': 'PostalAddress',
       addressLocality: project.cityName || 'San Bernardo del Viento',
@@ -125,12 +144,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     }
   };
 
-  // Determinar imagen de fondo del Hero: NUNCA usar logo como fondo estirado
-  const heroBgImage = (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo'))
+  // Determinar imagen de fondo del Hero: usar la foto frontal nítida de portería
+  const officialFrontPorteria = 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg';
+  const heroBgImage = (project.bannerImageUrl && !project.bannerImageUrl.toLowerCase().includes('logo') && !project.bannerImageUrl.toLowerCase().includes('0536'))
     ? project.bannerImageUrl
-    : (project.mainImageUrl && !project.mainImageUrl.toLowerCase().includes('logo'))
-      ? project.mainImageUrl
-      : 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/72bd118c-ea71-4e02-9780-d98100681e0f-IMG_0533.JPG.webp';
+    : officialFrontPorteria;
 
   const logoDisplay = project.logoUrl || (project.bannerImageUrl?.toLowerCase().includes('logo') ? project.bannerImageUrl : null);
 
@@ -159,26 +177,25 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-black/25 to-black/30"></div>
         
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
-          <span className="inline-block backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-4 border bg-white/10 text-white border-white/20 shadow-xl">
-            {project.status?.replace('_', ' ') || 'PREVENTA'}
-          </span>
-
-          {/* Logotipo Oficial nítido y en proporción real (Nunca deformado) */}
-          {logoDisplay && (
-            <div className="relative w-48 h-20 md:w-64 md:h-24 mx-auto mb-4 drop-shadow-2xl">
-              <Image 
-                src={logoDisplay}
-                alt={`Logo ${project.name}`}
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+          {/* Si existe logotipo oficial, dejar EXCLUSIVAMENTE el logo (sin título duplicado y sin badge 'Preventa') */}
+          {logoDisplay ? (
+            <>
+              <div className="relative w-56 h-24 md:w-72 md:h-28 mx-auto mb-6 drop-shadow-2xl">
+                <Image 
+                  src={logoDisplay}
+                  alt={project.name}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <h1 className="sr-only">{project.name}</h1>
+            </>
+          ) : (
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold font-sans text-white mb-6 drop-shadow-2xl tracking-tight">
+              {project.name}
+            </h1>
           )}
-          
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold font-sans text-white mb-4 drop-shadow-2xl tracking-tight">
-            {project.name}
-          </h1>
           
           <div className="flex items-center justify-center gap-2 text-sm md:text-base font-light text-white/90 tracking-wide drop-shadow-md">
             <PiMapPinLight className="w-5 h-5 text-[var(--color-gold-accent)]" />
@@ -282,7 +299,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 Conoce el Entorno
               </h2>
               <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-                Explora el mapa interactivo y descubre las vías de acceso, puntos de interés y la ubicación exacta de {project.name}.
+                Explora el mapa interactivo y descubre las vías de acceso, la cercanía a solo 150 metros de la orilla del mar (a 5 minutos a pie por la vía de acceso conformada) y la ubicación exacta de {project.name}.
               </p>
             </div>
             <div className="w-full h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/5 border border-white">

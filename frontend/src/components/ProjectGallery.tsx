@@ -44,27 +44,27 @@ export default function ProjectGallery({ images }: { images?: string[] }) {
               aria-hidden="true"
               className="object-cover blur-2xl opacity-35 scale-110"
             />
-            {/* Imagen principal completa sin recortar ningún texto ni borde */}
+            {/* Imagen principal en alta definición */}
             <Image 
               src={displayImages[currentIndex]} 
-              alt={`Galería ${currentIndex + 1}`}
+              alt={`Fotografía del proyecto Corales del Viento ${currentIndex + 1}`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-              className="object-contain p-2 md:p-4 drop-shadow-md relative z-10"
+              className="object-cover relative z-10 transition-transform duration-700 group-hover:scale-105"
               priority={currentIndex === 0}
             />
           </div>
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none z-20"></div>
 
       {/* Navigation Controls */}
-      <div className="absolute inset-0 flex items-center justify-between p-4 md:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <button onClick={prev} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[var(--color-caribbean-dark)] transition-all">
+      <div className="absolute inset-0 flex items-center justify-between p-4 md:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
+        <button type="button" aria-label="Foto anterior" onClick={prev} className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[var(--color-caribbean-dark)] transition-all shadow-lg">
           <PiCaretLeftLight size={24} />
         </button>
-        <button onClick={next} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[var(--color-caribbean-dark)] transition-all">
+        <button type="button" aria-label="Siguiente foto" onClick={next} className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[var(--color-caribbean-dark)] transition-all shadow-lg">
           <PiCaretRightLight size={24} />
         </button>
       </div>
