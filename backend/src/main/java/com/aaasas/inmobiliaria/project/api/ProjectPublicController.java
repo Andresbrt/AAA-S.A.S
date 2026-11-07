@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,6 +69,11 @@ public class ProjectPublicController {
     @Operation(summary = "Descargar brochure en PDF del proyecto")
     public ResponseEntity<byte[]> downloadBrochure(@PathVariable String slug) {
         ProjectDetailResponse project = projectService.findBySlug(slug);
+        if (project.brochureUrl() != null && !project.brochureUrl().isBlank()) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(project.brochureUrl()))
+                    .build();
+        }
         byte[] pdfBytes = pdfGenerationService.generateProjectBrochure(project);
 
         HttpHeaders headers = new HttpHeaders();

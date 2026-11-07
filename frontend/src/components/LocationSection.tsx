@@ -74,8 +74,8 @@ export default function LocationSection() {
               transition={{ delay: 0.8 }}
               className="absolute top-4 left-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg p-2.5 sm:p-3 border border-white flex items-center gap-2.5 pointer-events-none z-10"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100">
-                <Sun className="w-5 h-5 animate-spin-slow" />
+              <div className="w-8 h-8 rounded-lg bg-gray-100 text-black flex items-center justify-center shrink-0 border border-gray-200">
+                <Sun className="w-5 h-5 text-black animate-spin-slow" />
               </div>
               <div>
                 <p className="text-xs font-bold text-[var(--color-caribbean-dark)]">28°C - Soleado</p>
@@ -103,18 +103,18 @@ export default function LocationSection() {
 
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3.5 group/item">
-                <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Waves className="w-4 h-4" />
+                <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shrink-0 border border-gray-200 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Waves className="w-4 h-4 text-black stroke-[2.2]" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">150 metros (5 min a pie)</p>
+                  <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">5 min del mar Caribe</p>
                   <p className="text-[11px] text-gray-500">Distancia exacta a la orilla del mar por la vía de acceso conformada</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3.5 group/item">
-                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Plane className="w-4 h-4" />
+                <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shrink-0 border border-gray-200 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Plane className="w-4 h-4 text-black stroke-[2.2]" />
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Aeropuerto Golfo de Morrosquillo (Tolú)</p>
@@ -123,8 +123,8 @@ export default function LocationSection() {
               </div>
 
               <div className="flex items-start gap-3.5 group/item">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Plane className="w-4 h-4" />
+                <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shrink-0 border border-gray-200 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Plane className="w-4 h-4 text-black stroke-[2.2]" />
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Aeropuerto Internacional Los Garzones (Montería)</p>
@@ -133,8 +133,8 @@ export default function LocationSection() {
               </div>
 
               <div className="flex items-start gap-3.5 group/item">
-                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100/80 shadow-sm group-hover/item:scale-110 transition-transform">
-                  <Compass className="w-4 h-4" />
+                <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shrink-0 border border-gray-200 shadow-sm group-hover/item:scale-110 transition-transform">
+                  <Compass className="w-4 h-4 text-black stroke-[2.2]" />
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-bold text-[var(--color-caribbean-dark)] group-hover/item:text-[var(--color-caribbean-blue)] transition-colors">Destinos Cercanos & Conectividad</p>

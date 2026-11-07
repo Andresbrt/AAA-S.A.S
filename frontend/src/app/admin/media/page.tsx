@@ -12,6 +12,9 @@ import {
   Copy,
   Check,
   Sparkles,
+  FileText,
+  ExternalLink,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getAdminProjects, getMedia, uploadMedia, deleteMedia, getCompanyInfo, updateCompanySettings, type MediaFile } from "@/lib/api";
@@ -23,6 +26,7 @@ const MEDIA_TYPES = [
   { value: "MAIN_IMAGE", label: "Imagen principal", multiple: false },
   { value: "BANNER_IMAGE", label: "Banner / Portada", multiple: false },
   { value: "LOGO", label: "Logo", multiple: false },
+  { value: "BROCHURE", label: "Brochure (PDF)", multiple: false },
 ] as const;
 
 const TYPE_LABELS: Record<string, string> = {
@@ -33,11 +37,12 @@ const TYPE_LABELS: Record<string, string> = {
   VIDEO: "Video",
   IMAGE: "Imagen",
   PLAN: "Plano",
-  BROCHURE: "Brochure",
+  BROCHURE: "Brochure PDF",
 };
 
-const ACCEPTED = "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm";
+const ACCEPTED = "image/jpeg,image/png,image/webp,image/gif,image/svg+xml,video/mp4,video/quicktime,video/webm,application/pdf";
 const MAX_IMAGE_MB = 10;
+const MAX_PDF_MB = 25;
 const MAX_VIDEO_MB = 50;
 
 type UploadItem = { name: string; status: "uploading" | "done" | "error"; error?: string };
@@ -108,6 +113,7 @@ export default function AdminMediaPage() {
     for (let i = 0; i < filesToUpload.length; i++) {
       const file = filesToUpload[i];
       const isVideo = file.type.startsWith("video/");
+      const isPdf = file.type === "application/pdf";
       const setStatus = (status: UploadItem["status"], error?: string) =>
         setUploads((prev) => prev.map((u, idx) => (idx === i ? { ...u, status, error } : u)));
 
@@ -118,12 +124,16 @@ export default function AdminMediaPage() {
         if (isVideo && file.size > MAX_VIDEO_MB * 1024 * 1024) {
           throw new Error(`El video supera ${MAX_VIDEO_MB} MB`);
         }
-        // Las imágenes que vienen del Framer ya están en formato óptimo; si viniera alguna cruda, se asegura compresión
-        const toUpload = isVideo ? file : (file.type === "image/webp" ? file : await compressImageToWebp(file, 0.9));
-        if (!isVideo && toUpload.size > MAX_IMAGE_MB * 1024 * 1024) {
+        if (isPdf && file.size > MAX_PDF_MB * 1024 * 1024) {
+          throw new Error(`El brochure PDF supera ${MAX_PDF_MB} MB`);
+        }
+        // Las imágenes se optimizan a WEBP; los PDFs se comprimen automáticamente en el backend antes de subirse a Supabase
+        const toUpload = isVideo || isPdf ? file : (file.type === "image/webp" ? file : await compressImageToWebp(file, 0.9));
+        if (!isVideo && !isPdf && toUpload.size > MAX_IMAGE_MB * 1024 * 1024) {
           throw new Error(`La imagen supera ${MAX_IMAGE_MB} MB`);
         }
-        await uploadMedia(token, toUpload, isVideo ? "VIDEO" : mediaType, "PROJECT", projectId);
+        const resolvedMediaType = isVideo ? "VIDEO" : isPdf ? "BROCHURE" : mediaType;
+        await uploadMedia(token, toUpload, resolvedMediaType, "PROJECT", projectId);
         setStatus("done");
         ok++;
       } catch (e: any) {
@@ -153,13 +163,13 @@ export default function AdminMediaPage() {
     }
 
     const images = selected.filter((f) => f.type.startsWith("image/"));
-    const videos = selected.filter((f) => f.type.startsWith("video/"));
+    const nonImages = selected.filter((f) => f.type.startsWith("video/") || f.type === "application/pdf");
 
     if (images.length > 0) {
-      setPendingVideos(videos);
+      setPendingVideos(nonImages);
       setStagingImages(images);
-    } else if (videos.length > 0) {
-      executeUpload(videos);
+    } else if (nonImages.length > 0) {
+      executeUpload(nonImages);
     }
   };
 
@@ -236,10 +246,10 @@ export default function AdminMediaPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <ImageIcon className="w-6 h-6 text-blue-600" />
-            Galería Multimedia
+            Galería Multimedia & Brochures
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Sube fotos y videos de tus proyectos directamente al Cloud (Supabase).
+            Sube fotos, videos y el Brochure PDF de tus proyectos directamente al Cloud (Supabase) con compresión automática.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -261,7 +271,7 @@ export default function AdminMediaPage() {
             className="px-4 py-2 border border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
           >
             {MEDIA_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>Fotos como: {t.label}</option>
+              <option key={t.value} value={t.value}>Subir como: {t.label}</option>
             ))}
           </select>
           <button
@@ -306,11 +316,70 @@ export default function AdminMediaPage() {
           }`}
         >
           <UploadCloud className={`w-12 h-12 mx-auto transition-colors ${dragging ? "text-blue-500" : "text-slate-300 group-hover:text-blue-500"}`} />
-          <p className="mt-4 text-sm font-medium text-slate-900">Arrastra tus fotos y videos aquí o haz clic para subir</p>
+          <p className="mt-4 text-sm font-medium text-slate-900">Arrastra tus fotos, videos o el Brochure (PDF) aquí o haz clic para subir</p>
           <p className="text-xs text-slate-500 mt-1">
-            Fotos JPG, PNG, WEBP (máx. {MAX_IMAGE_MB} MB, se optimizan a WEBP) · Videos MP4, MOV, WEBM (máx. {MAX_VIDEO_MB} MB)
+            Fotos JPG, PNG, WEBP (máx. {MAX_IMAGE_MB} MB, se optimizan a WEBP) · Brochure PDF (máx. {MAX_PDF_MB} MB, se comprime automáticamente en Supabase) · Videos MP4, MOV, WEBM (máx. {MAX_VIDEO_MB} MB)
           </p>
         </div>
+
+        {/* Dedicated Brochure Status Banner */}
+        {(() => {
+          const brochure = files.find((f) => f.mediaType === "BROCHURE" || f.contentType === "application/pdf");
+          const currentProjectName = projects.find((p) => p.id === projectId)?.name || "este proyecto";
+          return (
+            <div className="mt-6 rounded-2xl border border-sky-200/80 bg-gradient-to-r from-[#376F87]/5 via-sky-50/70 to-white p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#376F87] text-white flex items-center justify-center shrink-0 shadow-md">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900">
+                      Brochure Oficial · {currentProjectName}
+                    </h3>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <CheckCircle2 className="w-3 h-3" /> Compresión PDF Activa
+                    </span>
+                  </div>
+                  {brochure ? (
+                    <p className="text-xs text-slate-600 mt-1">
+                      Archivo actual: <strong className="text-slate-800">{brochure.originalName}</strong> ({(brochure.fileSize / (1024 * 1024)).toFixed(2)} MB comprimido en Supabase)
+                    </p>
+                  ) : (
+                    <p className="text-xs text-slate-500 mt-1">
+                      Aún no se ha subido un Brochure PDF personalizado. Sube un archivo PDF para reemplazar el catálogo automático y comprimirlo en Supabase.
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {brochure && (
+                  <a
+                    href={brochure.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-[#376F87] border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Ver PDF
+                  </a>
+                )}
+                <button
+                  type="button"
+                  disabled={!projectId || isUploading}
+                  onClick={() => {
+                    setMediaType("BROCHURE");
+                    inputRef.current?.click();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#376F87] text-white hover:bg-[#2A5669] disabled:opacity-50 transition-colors shadow-sm"
+                >
+                  <UploadCloud className="w-4 h-4" />
+                  {brochure ? "Reemplazar Brochure" : "Subir Brochure PDF"}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         {uploads.length > 0 && (
           <ul className="mt-6 space-y-2">
@@ -346,11 +415,27 @@ export default function AdminMediaPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {files.map((f) => {
               const isVideo = f.contentType?.startsWith("video/");
+              const isPdf = f.contentType === "application/pdf" || f.mediaType === "BROCHURE";
               return (
                 <div key={f.id} className="group relative aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
                   {isVideo ? (
                     <video src={f.url} className="w-full h-full object-cover" muted loop playsInline preload="metadata"
                       onMouseEnter={(e) => e.currentTarget.play()} onMouseLeave={(e) => e.currentTarget.pause()} />
+                  ) : isPdf ? (
+                    <a
+                      href={f.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#376F87] via-[#4E8EA9] to-sky-700 text-white text-center group-hover:scale-[1.02] transition-transform"
+                    >
+                      <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center mb-3 shadow-lg">
+                        <FileText className="w-8 h-8 text-white" />
+                      </div>
+                      <span className="text-xs font-bold uppercase tracking-widest text-sky-100">Brochure Oficial</span>
+                      <span className="text-[11px] text-white/80 mt-1 inline-flex items-center gap-1 underline">
+                        Abrir PDF <Download className="w-3 h-3" />
+                      </span>
+                    </a>
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={f.url} alt={f.altText || f.originalName} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
@@ -358,6 +443,7 @@ export default function AdminMediaPage() {
                   <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-white/90 text-slate-800 shadow-sm">
                       {isVideo && <Film className="w-3 h-3 text-blue-600" />}
+                      {isPdf && <FileText className="w-3 h-3 text-[#0284C7]" />}
                       {TYPE_LABELS[f.mediaType] ?? f.mediaType}
                     </span>
                     {isVideo && f.url === currentHeroVideoUrl && (

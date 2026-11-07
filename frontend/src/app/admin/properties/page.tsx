@@ -23,7 +23,7 @@ export default function AdminPropertiesPage() {
     privateArea: "",
     price: "",
     status: "DISPONIBLE",
-    floorOrTower: "150 - 300 metros", // Usado como "Ubicación o Distancia"
+    floorOrTower: "5 min del mar Caribe", // Usado como "Ubicación o Distancia"
   });
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function AdminPropertiesPage() {
       privateArea: "",
       price: "",
       status: "DISPONIBLE",
-      floorOrTower: "150 - 300 metros"
+      floorOrTower: "5 min del mar Caribe"
     });
     setEditingId(null);
     setIsModalOpen(true);
@@ -79,7 +79,7 @@ export default function AdminPropertiesPage() {
       privateArea: prop.privateArea ? String(prop.privateArea) : "",
       price: prop.price ? String(prop.price) : "",
       status: prop.status || "DISPONIBLE",
-      floorOrTower: prop.floorOrTower || "150 - 300 metros"
+      floorOrTower: prop.floorOrTower || "5 min del mar Caribe"
     });
     setEditingId(prop.id);
     setIsModalOpen(true);
@@ -248,7 +248,7 @@ export default function AdminPropertiesPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación / Distancia / Característica (Ej. 150m Playa, Lotes XL)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación / Distancia / Característica (Ej. 5 min del mar Caribe, Lotes XL)</label>
             <input type="text" value={formData.floorOrTower} onChange={(e) => setFormData({...formData, floorOrTower: e.target.value})} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">

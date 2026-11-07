@@ -83,11 +83,11 @@ export default async function HomePage() {
 
                 <div className="space-y-8">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[var(--color-gold-accent)] border border-white/20 shadow-inner" aria-hidden="true">
-                      <PhoneCall className="w-6 h-6" />
+                    <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-black border border-white/80 shadow-lg shrink-0" aria-hidden="true">
+                      <PhoneCall className="w-6 h-6 text-black stroke-[2.2]" />
                     </div>
                     <div>
-                      <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Llámanos o Escríbenos</p>
+                      <p className="text-sm text-white/70 font-bold uppercase tracking-wider mb-1">Llámanos o Escríbenos</p>
                       <a 
                         href={buildWhatsAppUrl('Hola! Me gustaría comunicarme telefónicamente o por WhatsApp con Grupo AAA.')} 
                         target="_blank" 
@@ -101,11 +101,11 @@ export default async function HomePage() {
                   </div>
                   {company?.contactEmail && (
                     <div className="flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[var(--color-gold-accent)] border border-white/20 shadow-inner" aria-hidden="true">
-                        <Mail className="w-6 h-6" />
+                      <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-black border border-white/80 shadow-lg shrink-0" aria-hidden="true">
+                        <Mail className="w-6 h-6 text-black stroke-[2.2]" />
                       </div>
                       <div>
-                        <p className="text-sm text-white/60 font-bold uppercase tracking-wider mb-1">Escríbenos</p>
+                        <p className="text-sm text-white/70 font-bold uppercase tracking-wider mb-1">Escríbenos</p>
                         <a 
                           href={`mailto:${company.contactEmail}`}
                           className="text-lg font-bold hover:text-[var(--color-gold-accent)] transition-colors focus:outline-none focus:underline"

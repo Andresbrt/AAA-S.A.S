@@ -13,7 +13,7 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
       name: 'Condominio Campestre Corales del Viento',
       location: 'San Bernardo del Viento, Córdoba',
       tag: 'Frente al Mar · Zona Turística',
-      description: 'En el caribe colombiano a 150 metros del mar (a 5 minutos a pie por vía de acceso conformada) en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
+      description: 'En el caribe colombiano a 5 min del mar Caribe (por vía de acceso conformada) en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
       area: 'Desde 180 m²',
       investment: '$260.000 / m²',
       financing: 'Financiación Directa',
@@ -77,10 +77,10 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                 {/* Header Tags */}
                 <div className="flex justify-between items-center px-6 py-4 border-b border-white/40 text-xs font-medium text-gray-700 bg-white/40 backdrop-blur-md">
                   <span className="flex items-center gap-1.5 text-[var(--color-caribbean-dark)] font-bold tracking-wider uppercase">
-                    <PiSparkleLight className="text-[var(--color-gold-accent)]" size={16} /> {project.tag || 'Proyecto Insignia'}
+                    <PiSparkleLight className="text-black" size={16} /> {project.tag || 'Proyecto Insignia'}
                   </span>
-                  <span className="flex items-center gap-1.5 opacity-70">
-                    <PiMapPinLight size={16} /> {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'San Bernardo del Viento, Córdoba')}
+                  <span className="flex items-center gap-1.5 text-gray-800">
+                    <PiMapPinLight className="text-black" size={16} /> {project.location || (project.cityName ? `${project.cityName}, ${project.departmentName}` : 'San Bernardo del Viento, Córdoba')}
                   </span>
                 </div>
                 
@@ -109,8 +109,8 @@ export default function ProjectsPortfolio({ projects }: { projects: any[] }) {
                     </div>
 
                     {(project.has3D || project.slug === 'corales-del-viento') && (
-                      <div className="text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1.5 bg-white/95 text-[var(--color-caribbean-dark)] border border-white">
-                        <PiCubeLight size={15} /> 3D Activo
+                      <div className="text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1.5 bg-white/95 text-black border border-white">
+                        <PiCubeLight size={15} className="text-black" /> 3D Activo
                       </div>
                     )}
                   </div>

@@ -90,14 +90,14 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-10 py-3 md:py-2.5 rounded-full border border-gray-200 text-base sm:text-xs focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 bg-gray-50 transition-all"
               />
-              <PiMagnifyingGlassLight className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <PiMagnifyingGlassLight className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-black" />
               {searchTerm && (
                 <button 
                   onClick={() => setSearchTerm('')} 
-                  className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-xs text-gray-400 hover:text-gray-600 rounded-full"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center text-xs text-black hover:text-gray-600 rounded-full"
                   aria-label="Limpiar búsqueda"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3.5 h-3.5 text-black" />
                 </button>
               )}
             </div>
@@ -129,8 +129,8 @@ export default function ProjectsCatalog({ initialProjects }: { initialProjects: 
 
           {filteredProjects.length === 0 ? (
             <div className="text-center py-24 bg-white rounded-3xl shadow-sm border border-gray-100 max-w-2xl mx-auto p-8">
-              <div className="w-16 h-16 rounded-full bg-blue-50 text-[var(--color-caribbean-blue)] flex items-center justify-center mx-auto mb-4 border border-blue-100">
-                <Compass className="w-8 h-8 text-[var(--color-caribbean-blue)]" />
+              <div className="w-16 h-16 rounded-full bg-white shadow-sm text-black flex items-center justify-center mx-auto mb-4 border border-gray-200">
+                <Compass className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-2xl font-sans font-bold text-[var(--color-caribbean-dark)] mb-3">
                 No encontramos proyectos con esos criterios

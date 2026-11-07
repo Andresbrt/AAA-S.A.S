@@ -34,7 +34,7 @@ export default function FAQSection() {
     },
     {
       question: '¿Qué tan accesible es el acceso a la playa desde mi lote?',
-      answer: 'Dependiendo del proyecto. En el caso de Corales del Viento, el mar Caribe está a tan solo 150 metros caminando (2-3 minutos a pie) con acceso directo por vía conformada.',
+      answer: 'Dependiendo del proyecto. En el caso de Corales del Viento, está a tan solo 5 min del mar Caribe con acceso directo por vía conformada.',
       category: 'Ubicación'
     }
   ];
@@ -71,14 +71,14 @@ export default function FAQSection() {
               placeholder="¿Qué quieres saber? (ej: escrituras, agua, cuotas, playa...)"
               className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-caribbean-blue)] focus:ring-2 focus:ring-[var(--color-caribbean-blue)]/20 text-base sm:text-sm shadow-sm transition-all"
             />
-            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-black" />
             {searchTerm && (
               <button 
-                onClick={() => setSearchTerm('')}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
+                onClick={() => setSearchTerm('')} 
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-black hover:text-gray-700 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
                 aria-label="Limpiar búsqueda"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3.5 h-3.5 text-black" />
               </button>
             )}
           </div>
@@ -113,7 +113,7 @@ export default function FAQSection() {
                     {faq.question}
                   </span>
                 </div>
-                <ChevronDown className={`w-5 h-5 transform transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-[var(--color-caribbean-blue)]' : 'text-gray-400'}`} />
+                <ChevronDown className={`w-5 h-5 transform transition-transform duration-300 text-black ${openIndex === idx ? 'rotate-180' : ''}`} />
               </button>
               
               <div 

@@ -34,22 +34,22 @@ export default function AboutUsSection({ company }: { company: any }) {
             whileInView="show"
             viewport={{ once: true, margin: "-100px" }}
           >
-            <motion.p variants={slideUp} title="Nuestros valores corporativos" className="text-[var(--color-caribbean-blue)] uppercase tracking-widest text-xs font-bold mb-4 bg-blue-50 inline-block px-4 py-1.5 rounded-full border border-blue-100">
+            <motion.p variants={slideUp} title="Nuestros valores corporativos" className="text-black uppercase tracking-widest text-xs font-bold mb-4 bg-gray-100 inline-block px-4 py-1.5 rounded-full border border-gray-200">
               TRAYECTORIA & CONFIANZA
             </motion.p>
             <motion.h2 variants={slideUp} title="Quiénes somos - Grupo AAA S.A.S Constructora" className="text-4xl lg:text-5xl font-bold text-[var(--color-caribbean-dark)] mb-6 leading-tight">
               Quiénes Somos · Grupo AAA S.A.S
             </motion.h2>
             <motion.div variants={slideUp} className="text-gray-600 text-sm md:text-base leading-relaxed space-y-6 mb-10">
-              <div className="relative pl-6 border-l-2 border-gray-100 hover:border-[var(--color-caribbean-blue)] transition-colors duration-300" title="Misión corporativa de Grupo AAA">
-                <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-[var(--color-gold-accent)]" />
+              <div className="relative pl-6 border-l-2 border-gray-100 hover:border-black transition-colors duration-300" title="Misión corporativa de Grupo AAA">
+                <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-black" />
                 <h3 className="font-bold text-[var(--color-caribbean-dark)] mb-2 uppercase tracking-wide text-sm">Misión</h3>
                 <p>
                   {company?.mission || "Desarrollar y comercializar proyectos inmobiliarios que generen valor y bienestar para nuestros clientes, ofreciendo inmuebles con potencial de crecimiento, calidad y ubicación estratégica. Trabajamos con compromiso, transparencia y responsabilidad, acompañando a nuestros clientes durante el proceso de adquisición y construyendo relaciones basadas en la confianza."}
                 </p>
               </div>
-              <div className="relative pl-6 border-l-2 border-gray-100 hover:border-[var(--color-caribbean-blue)] transition-colors duration-300" title="Visión corporativa de Grupo AAA">
-                <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-[var(--color-caribbean-blue)]" />
+              <div className="relative pl-6 border-l-2 border-gray-100 hover:border-black transition-colors duration-300" title="Visión corporativa de Grupo AAA">
+                <div className="absolute left-[-5px] top-1 w-2 h-2 rounded-full bg-black" />
                 <h3 className="font-bold text-[var(--color-caribbean-dark)] mb-2 uppercase tracking-wide text-sm">Visión</h3>
                 <p>
                   {company?.vision || "Consolidarnos como una empresa referente en el sector inmobiliario, reconocida por la calidad de nuestros proyectos, la confianza de nuestros clientes y nuestra capacidad para identificar y desarrollar oportunidades de inversión. Buscamos crecer de manera sostenible, ampliando nuestro portafolio y contribuyendo al desarrollo de espacios que mejoren la calidad de vida y generen valor a largo plazo."}

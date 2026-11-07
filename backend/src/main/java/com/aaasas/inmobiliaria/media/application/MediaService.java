@@ -6,6 +6,7 @@ import com.aaasas.inmobiliaria.media.api.PresignedUploadRequest;
 import com.aaasas.inmobiliaria.media.api.PresignedUploadResponse;
 import com.aaasas.inmobiliaria.media.domain.*;
 import com.aaasas.inmobiliaria.media.infrastructure.MediaFileRepository;
+import com.aaasas.inmobiliaria.project.application.PdfGenerationService;
 import com.aaasas.inmobiliaria.shared.exception.BusinessRuleException;
 import com.aaasas.inmobiliaria.shared.exception.FileStorageException;
 import com.aaasas.inmobiliaria.shared.exception.ResourceNotFoundException;
@@ -18,23 +19,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class MediaService {
 
     private static final Logger log = LoggerFactory.getLogger(MediaService.class);
 
-    // SVG eliminado para prevenir Stored XSS
+    // Formatos permitidos (SVG permitido con sanitización anti-XSS en subida)
     private static final Set<String> ALLOWED_MIME_TYPES = Set.of(
-        "image/jpeg", "image/png", "image/webp", "image/gif",
+        "image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml",
         "video/mp4", "video/quicktime", "video/webm", "application/pdf"
     );
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB (imágenes / PDF)
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB (imágenes)
+    private static final long MAX_PDF_SIZE = 25 * 1024 * 1024;  // 25 MB (brochures PDF antes de compresión)
     private static final long MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB (videos)
 
     /** Tipos que solo admiten un archivo por entidad (se reemplaza el anterior). */
@@ -48,6 +51,26 @@ public class MediaService {
     private final FileStoragePort fileStoragePort;
     private final MediaFileRepository mediaFileRepository;
     private final CacheManager cacheManager;
+    private final PdfGenerationService pdfGenerationService;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public MediaService(
+            FileStoragePort fileStoragePort,
+            MediaFileRepository mediaFileRepository,
+            CacheManager cacheManager,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) PdfGenerationService pdfGenerationService) {
+        this.fileStoragePort = fileStoragePort;
+        this.mediaFileRepository = mediaFileRepository;
+        this.cacheManager = cacheManager;
+        this.pdfGenerationService = pdfGenerationService;
+    }
+
+    public MediaService(
+            FileStoragePort fileStoragePort,
+            MediaFileRepository mediaFileRepository,
+            CacheManager cacheManager) {
+        this(fileStoragePort, mediaFileRepository, cacheManager, null);
+    }
 
     /**
      * Genera URL prefirmada para subida directa desde el navegador (cero consumo de RAM en servidor).
@@ -112,6 +135,7 @@ public class MediaService {
 
     /**
      * Subida tradicional vía API. El I/O de red ocurre FUERA de la transacción para no agotar el pool de Hikari.
+     * Si el archivo es un PDF (Brochure), se comprime automáticamente antes de subirlo a Supabase.
      */
     public MediaFileResponse upload(MultipartFile file, String mediaType, String entityType,
                                     UUID entityId, String altText, int displayOrder) {
@@ -122,14 +146,27 @@ public class MediaService {
             entityType.toLowerCase(), entityId, UUID.randomUUID(), sanitizedName);
 
         String url;
+        long finalSize = file.getSize();
         try {
-            url = fileStoragePort.upload(key, file.getInputStream(), file.getSize(), file.getContentType());
+            InputStream streamToUpload;
+            if ("application/pdf".equalsIgnoreCase(file.getContentType()) && pdfGenerationService != null) {
+                byte[] compressedBytes = pdfGenerationService.compressPdf(file.getBytes());
+                finalSize = compressedBytes.length;
+                streamToUpload = new ByteArrayInputStream(compressedBytes);
+            } else if ("image/svg+xml".equalsIgnoreCase(file.getContentType())) {
+                byte[] sanitizedSvg = sanitizeSvgContent(file.getBytes());
+                finalSize = sanitizedSvg.length;
+                streamToUpload = new ByteArrayInputStream(sanitizedSvg);
+            } else {
+                streamToUpload = file.getInputStream();
+            }
+            url = fileStoragePort.upload(key, streamToUpload, finalSize, file.getContentType());
         } catch (IOException e) {
             throw new FileStorageException("Error reading uploaded file", e);
         }
 
         try {
-            return saveUploadedMediaFile(key, url, sanitizedName, file.getContentType(), file.getSize(),
+            return saveUploadedMediaFile(key, url, sanitizedName, file.getContentType(), finalSize,
                 mediaType, entityType, entityId, altText, displayOrder);
         } catch (Exception e) {
             // Limpieza en almacenamiento si falló el guardado en base de datos
@@ -224,10 +261,14 @@ public class MediaService {
             throw new BusinessRuleException("Tipo de archivo no permitido: " + contentType);
         }
         boolean isVideo = contentType.startsWith("video/");
+        boolean isPdf = "application/pdf".equalsIgnoreCase(contentType);
         if (isVideo && fileSize != null && fileSize > MAX_VIDEO_SIZE) {
             throw new BusinessRuleException("El video excede el tamaño máximo de 50 MB.");
         }
-        if (!isVideo && fileSize != null && fileSize > MAX_FILE_SIZE) {
+        if (isPdf && fileSize != null && fileSize > MAX_PDF_SIZE) {
+            throw new BusinessRuleException("El brochure PDF excede el tamaño máximo de 25 MB.");
+        }
+        if (!isVideo && !isPdf && fileSize != null && fileSize > MAX_FILE_SIZE) {
             throw new BusinessRuleException("El archivo excede el tamaño máximo de 10 MB.");
         }
     }
@@ -242,6 +283,17 @@ public class MediaService {
     private String sanitizeFileName(String fileName) {
         if (fileName == null) return "unnamed";
         return fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
+
+    private byte[] sanitizeSvgContent(byte[] rawBytes) {
+        String svg = new String(rawBytes, java.nio.charset.StandardCharsets.UTF_8);
+        String sanitized = svg
+            .replaceAll("(?is)<script[^>]*>.*?</script>", "")
+            .replaceAll("(?is)<foreignObject[^>]*>.*?</foreignObject>", "")
+            .replaceAll("(?i)\\son[a-z]+\\s*=\\s*\"[^\"]*\"", "")
+            .replaceAll("(?i)\\son[a-z]+\\s*=\\s*'[^']*'", "")
+            .replaceAll("(?i)javascript\\s*:", "");
+        return sanitized.getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 
     private MediaFileResponse toResponse(MediaFile m) {

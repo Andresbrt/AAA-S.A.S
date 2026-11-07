@@ -24,33 +24,33 @@ export default function PublicFooter({ company }: { company: any }) {
               href={company?.instagramUrl || "https://www.instagram.com/grupoaaa_inversiones?stkn=M204eDJoaWJuZXRs"} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
+              className="w-14 h-14 rounded-full bg-white text-black shadow-lg border border-white/80 flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Síguenos en Instagram"
               title="Instagram"
             >
-              <PiInstagramLogoLight className="w-7 h-7" />
+              <PiInstagramLogoLight className="w-7 h-7 text-black group-hover:text-white" />
             </a>
             
             <a 
               href={company?.tiktokUrl || "https://www.tiktok.com/@grupo.aaa?_r=1&_t=ZS-9A6rSjywCjl"} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
+              className="w-14 h-14 rounded-full bg-white text-black shadow-lg border border-white/80 flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Síguenos en TikTok"
               title="TikTok"
             >
-              <PiTiktokLogoLight className="w-7 h-7" />
+              <PiTiktokLogoLight className="w-7 h-7 text-black group-hover:text-white" />
             </a>
             
             <a 
               href={company?.facebookUrl || "https://www.facebook.com/share/1CYRi2nCtT/?mibextid=wwXIfr"} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--color-gold-accent)] focus:ring-offset-2 focus:ring-offset-[var(--color-caribbean-dark)]"
+              className="w-14 h-14 rounded-full bg-white text-black shadow-lg border border-white/80 flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Síguenos en Facebook"
               title="Facebook"
             >
-              <PiFacebookLogoLight className="w-7 h-7" />
+              <PiFacebookLogoLight className="w-7 h-7 text-black group-hover:text-white" />
             </a>
           </div>
         </div>
@@ -65,18 +65,18 @@ export default function PublicFooter({ company }: { company: any }) {
               {company?.aboutUs || 'Especialistas en parcelaciones campestres premium en Colombia. Conectamos la naturaleza con un estilo de vida de lujo y tranquilidad.'}
             </p>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-white/80 text-sm">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--color-gold-accent)] border border-white/15 shrink-0">
-                  <PhoneCall className="w-4 h-4" />
+              <div className="flex items-center gap-3 text-white/90 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-black border border-white/80 shrink-0">
+                  <PhoneCall className="w-4 h-4 text-black stroke-[2.2]" />
                 </div>
                 <a href={buildWhatsAppUrl('Hola! Me gustaría comunicarme con el equipo de Grupo AAA.')} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-gold-accent)] transition-colors font-medium">
                   {getCompanyPhoneDisplay(company?.contactPhone)}
                 </a>
               </div>
               {company?.contactEmail && (
-                <div className="flex items-center gap-3 text-white/80 text-sm">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--color-gold-accent)] border border-white/15 shrink-0">
-                    <Mail className="w-4 h-4" />
+                <div className="flex items-center gap-3 text-white/90 text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-black border border-white/80 shrink-0">
+                    <Mail className="w-4 h-4 text-black stroke-[2.2]" />
                   </div>
                   <a href={`mailto:${company.contactEmail}`} className="hover:text-[var(--color-gold-accent)] transition-colors font-medium">
                     {company.contactEmail}

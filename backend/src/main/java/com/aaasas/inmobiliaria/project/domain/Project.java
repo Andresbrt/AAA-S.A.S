@@ -78,6 +78,34 @@ public class Project extends AuditableEntity {
     @Column(name = "meta_description", length = 500)
     private String metaDescription;
 
+    @Column(name = "has_financing_calculator", nullable = false)
+    @Builder.Default
+    private boolean hasFinancingCalculator = false;
+
+    @Column(name = "reservation_amount", precision = 15, scale = 2, nullable = false)
+    @Builder.Default
+    private BigDecimal reservationAmount = new BigDecimal("1000000.00");
+
+    @Column(name = "down_payment_percentage", precision = 5, scale = 2, nullable = false)
+    @Builder.Default
+    private BigDecimal downPaymentPercentage = new BigDecimal("20.00");
+
+    @Column(name = "interest_free_months", nullable = false)
+    @Builder.Default
+    private Integer interestFreeMonths = 12;
+
+    @Column(name = "interest_months", nullable = false)
+    @Builder.Default
+    private Integer interestMonths = 24;
+
+    @Column(name = "monthly_interest_rate", precision = 5, scale = 2, nullable = false)
+    @Builder.Default
+    private BigDecimal monthlyInterestRate = new BigDecimal("1.00");
+
+    public boolean hasFinancingCalculator() {
+        return this.hasFinancingCalculator;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     @org.hibernate.envers.Audited(targetAuditMode = org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED)

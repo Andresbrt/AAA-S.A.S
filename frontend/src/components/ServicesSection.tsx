@@ -10,25 +10,25 @@ export default function ServicesSection() {
       title: 'Estructuración & urbanismo',
       description: 'Selección y desarrollo de tierras con estudios topográficos, red vial afirmada, tendido eléctrico certificado y redes de agua garantizadas.',
       badge: '✓ Obras garantizadas',
-      icon: <PiMapTrifoldLight size={28} className="text-blue-600" />
+      icon: <PiMapTrifoldLight size={28} className="text-black" />
     },
     {
       title: 'Seguridad jurídica / acompañamiento',
       description: 'Ofrecemos servicios jurídicos como sucesiones, defensa jurídica, trámites notariales, divorcio y demás ámbitos del derecho.',
       badge: '✓ Respaldo notarial',
-      icon: <PiScalesLight size={28} className="text-blue-600" />
+      icon: <PiScalesLight size={28} className="text-black" />
     },
     {
       title: 'Arquitectura y diseño',
       description: 'Ofrecemos diseños y documentación de casas campestres modernas y que se adapten a tu estilo de vida.',
       badge: '✓ Arquitectura y diseño',
-      icon: <PiHouseLineLight size={28} className="text-blue-600" />
+      icon: <PiHouseLineLight size={28} className="text-black" />
     },
     {
       title: 'Gerencia Inmobiliaria',
       description: 'Compramos y vendemos propiedades, hipotecas y todo lo relacionado con el área inmobiliaria garantizando una alta valoración.',
       badge: '✓ Plusvalía',
-      icon: <PiChartLineUpLight size={28} className="text-blue-600" />
+      icon: <PiChartLineUpLight size={28} className="text-black" />
     }
   ];
 
@@ -90,7 +90,7 @@ export default function ServicesSection() {
               {/* Hover Glow Effect */}
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-caribbean-blue)] to-[var(--color-gold-accent)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
-              <div className="text-3xl mb-4 lg:mb-6 bg-gradient-to-br from-blue-50 to-emerald-50 w-12 h-12 lg:w-14 lg:h-14 rounded-xl flex items-center justify-center border border-blue-100/50 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-3xl mb-4 lg:mb-6 bg-white shadow-sm w-12 h-12 lg:w-14 lg:h-14 rounded-xl flex items-center justify-center border border-gray-200 text-black group-hover:scale-110 transition-transform duration-300">
                 {service.icon}
               </div>
               <h3 className="text-lg font-bold text-[var(--color-caribbean-dark)] mb-4 group-hover:text-[var(--color-caribbean-blue)] transition-colors">

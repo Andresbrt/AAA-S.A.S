@@ -61,9 +61,9 @@ export default function SocialPopup() {
         {/* Close Button */}
         <button 
           onClick={closePopup}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/40 text-white rounded-full transition-colors z-20 backdrop-blur-md"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 text-black rounded-full transition-colors z-20 shadow-md"
         >
-          <PiX className="w-5 h-5" />
+          <PiX className="w-5 h-5 text-black" />
         </button>
 
         {/* Content */}
@@ -71,7 +71,6 @@ export default function SocialPopup() {
           <p className="text-gray-600 mb-8 font-light leading-relaxed">
             Descubre los mejores proyectos campestres y síguenos para estar al tanto de 
             nuevos lanzamientos, avances de obra y <strong className="text-[var(--color-gold-accent)] font-medium">ofertas exclusivas</strong>.
-
           </p>
 
           <div className="flex justify-center gap-4 mb-6">
@@ -80,9 +79,9 @@ export default function SocialPopup() {
               target="_blank" 
               rel="noopener noreferrer"
               onClick={closePopup}
-              className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[var(--color-caribbean-dark)] hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="w-14 h-14 rounded-2xl bg-white border border-gray-200 shadow-sm flex items-center justify-center text-black hover:bg-black hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
-              <PiInstagramLogoLight className="w-8 h-8" />
+              <PiInstagramLogoLight className="w-8 h-8 text-black" />
             </a>
             
             <a 
@@ -90,9 +89,9 @@ export default function SocialPopup() {
               target="_blank" 
               rel="noopener noreferrer"
               onClick={closePopup}
-              className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[var(--color-caribbean-dark)] hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="w-14 h-14 rounded-2xl bg-white border border-gray-200 shadow-sm flex items-center justify-center text-black hover:bg-black hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
-              <PiTiktokLogoLight className="w-8 h-8" />
+              <PiTiktokLogoLight className="w-8 h-8 text-black" />
             </a>
             
             <a 
@@ -100,9 +99,9 @@ export default function SocialPopup() {
               target="_blank" 
               rel="noopener noreferrer"
               onClick={closePopup}
-              className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-[var(--color-caribbean-dark)] hover:bg-[var(--color-gold-accent)] hover:text-white hover:border-[var(--color-gold-accent)] transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="w-14 h-14 rounded-2xl bg-white border border-gray-200 shadow-sm flex items-center justify-center text-black hover:bg-black hover:text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
-              <PiFacebookLogoLight className="w-8 h-8" />
+              <PiFacebookLogoLight className="w-8 h-8 text-black" />
             </a>
           </div>
 

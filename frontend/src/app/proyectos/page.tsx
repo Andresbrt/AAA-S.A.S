@@ -26,7 +26,7 @@ export default async function ProyectosPage() {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       slug: 'corales-del-viento',
       name: 'Condominio Campestre Corales del Viento',
-      shortDescription: 'En el caribe colombiano a solo 150 metros del mar (5 min a pie) en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
+      shortDescription: 'En el caribe colombiano a solo 5 min del mar Caribe en zona turística de alta valorización. Lotes 100% planos con defensa jurídica y escritura individual.',
       location: 'San Bernardo del Viento, Córdoba',
       mainImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',
       bannerImageUrl: 'https://xvderakdvfvmnuczamla.supabase.co/storage/v1/object/public/media/project/8b6c778a-7393-415d-9bb2-ba01dcdf6a41/porteria-frontal.jpg',

@@ -7,6 +7,8 @@ import com.aaasas.inmobiliaria.media.api.PresignedUploadResponse;
 import com.aaasas.inmobiliaria.media.application.MediaService;
 import com.aaasas.inmobiliaria.media.domain.*;
 import com.aaasas.inmobiliaria.media.infrastructure.MediaFileRepository;
+import com.aaasas.inmobiliaria.project.api.ProjectDetailResponse;
+import com.aaasas.inmobiliaria.project.application.PdfGenerationService;
 import com.aaasas.inmobiliaria.shared.exception.BusinessRuleException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -82,11 +85,11 @@ class MediaServiceTest {
     }
 
     @Test
-    @DisplayName("createPresignedUpload rechaza archivos SVG para prevenir Stored XSS")
-    void shouldRejectSvgUploadToPreventXss() {
+    @DisplayName("createPresignedUpload rechaza formatos ejecutables o HTML para prevenir Stored XSS")
+    void shouldRejectUnsupportedMimeTypeToPreventXss() {
         PresignedUploadRequest request = new PresignedUploadRequest(
-            "vector.svg",
-            "image/svg+xml",
+            "malicious.html",
+            "text/html",
             "GALLERY_IMAGE",
             "PROJECT",
             UUID.randomUUID(),
@@ -203,5 +206,42 @@ class MediaServiceTest {
 
         verify(fileStoragePort).delete("project/123/img.webp");
         verify(mediaFileRepository).delete(file);
+    }
+
+    @Test
+    @DisplayName("upload de BROCHURE PDF comprime el documento antes de subirlo a Supabase")
+    void shouldCompressBrochurePdfBeforeUploadingToSupabase() {
+        PdfGenerationService realPdfService = new PdfGenerationService();
+        MediaService serviceWithPdf = new MediaService(fileStoragePort, mediaFileRepository, cacheManager, realPdfService);
+
+        ProjectDetailResponse sampleProject = new ProjectDetailResponse(
+            UUID.randomUUID(), "Corales del Viento", "corales-del-viento",
+            "Resumen", "Descripción extensa ".repeat(80), "EN_PLANOS",
+            null, null, null, "San Bernardo del Viento", null, null, null,
+            true, true, null, null, "San Bernardo", "Córdoba",
+            null, null, null, null, List.of(), List.of(), List.of()
+        );
+        byte[] rawPdf = realPdfService.generateProjectBrochure(sampleProject);
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "file", "brochure-corales.pdf", "application/pdf", rawPdf
+        );
+
+        UUID projectId = UUID.randomUUID();
+        when(fileStoragePort.upload(anyString(), any(), anyLong(), eq("application/pdf")))
+            .thenReturn("https://supabase.co/storage/v1/object/public/media/project/brochure-corales.pdf");
+        when(mediaFileRepository.findByEntityTypeAndEntityIdOrderByDisplayOrderAsc(EntityType.PROJECT, projectId))
+            .thenReturn(List.of());
+        when(mediaFileRepository.save(any(MediaFile.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(cacheManager.getCache(anyString())).thenReturn(cache);
+
+        MediaFileResponse response = serviceWithPdf.upload(
+            multipartFile, "BROCHURE", "PROJECT", projectId, "Brochure Oficial", 0
+        );
+
+        assertThat(response).isNotNull();
+        assertThat(response.mediaType()).isEqualTo("BROCHURE");
+        assertThat(response.fileSize()).isLessThanOrEqualTo(rawPdf.length);
+        verify(fileStoragePort).upload(anyString(), any(), eq(response.fileSize()), eq("application/pdf"));
     }
 }

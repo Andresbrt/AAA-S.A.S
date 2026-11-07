@@ -173,6 +173,12 @@ public class ProjectService {
             .tags(request.tags() != null ? new ArrayList<>(request.tags()) : new ArrayList<>())
             .featured(request.featured() != null ? request.featured() : false)
             .published(request.published() != null ? request.published() : true) // Set true by default to be immediately visible
+            .hasFinancingCalculator(request.hasFinancingCalculator() != null ? request.hasFinancingCalculator() : false)
+            .reservationAmount(request.reservationAmount() != null ? request.reservationAmount() : new BigDecimal("1000000.00"))
+            .downPaymentPercentage(request.downPaymentPercentage() != null ? request.downPaymentPercentage() : new BigDecimal("20.00"))
+            .interestFreeMonths(request.interestFreeMonths() != null ? request.interestFreeMonths() : 12)
+            .interestMonths(request.interestMonths() != null ? request.interestMonths() : 24)
+            .monthlyInterestRate(request.monthlyInterestRate() != null ? request.monthlyInterestRate() : new BigDecimal("1.00"))
             .build();
 
         if (request.cityId() != null) {
@@ -222,6 +228,12 @@ public class ProjectService {
         if (request.mapUrl() != null) project.setMapUrl(request.mapUrl());
         if (request.metaTitle() != null) project.setMetaTitle(request.metaTitle());
         if (request.metaDescription() != null) project.setMetaDescription(request.metaDescription());
+        if (request.hasFinancingCalculator() != null) project.setHasFinancingCalculator(request.hasFinancingCalculator());
+        if (request.reservationAmount() != null) project.setReservationAmount(request.reservationAmount());
+        if (request.downPaymentPercentage() != null) project.setDownPaymentPercentage(request.downPaymentPercentage());
+        if (request.interestFreeMonths() != null) project.setInterestFreeMonths(request.interestFreeMonths());
+        if (request.interestMonths() != null) project.setInterestMonths(request.interestMonths());
+        if (request.monthlyInterestRate() != null) project.setMonthlyInterestRate(request.monthlyInterestRate());
 
         if (request.cityId() != null) {
             City city = cityRepository.findById(request.cityId())
@@ -305,8 +317,15 @@ public class ProjectService {
             extractMainImage(p),
             extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BANNER_IMAGE),
             extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.LOGO),
+            extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BROCHURE),
             extractGalleryUrls(p),
-            p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>()
+            p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>(),
+            p.isHasFinancingCalculator(),
+            p.getReservationAmount(),
+            p.getDownPaymentPercentage(),
+            p.getInterestFreeMonths(),
+            p.getInterestMonths(),
+            p.getMonthlyInterestRate()
         );
     }
 
@@ -331,7 +350,13 @@ public class ProjectService {
             extractMediaUrl(p, com.aaasas.inmobiliaria.media.domain.MediaType.BROCHURE),
             extractGalleryUrls(p),
             amenityDtos,
-            p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>()
+            p.getTags() != null ? new ArrayList<>(p.getTags()) : new ArrayList<>(),
+            p.isHasFinancingCalculator(),
+            p.getReservationAmount(),
+            p.getDownPaymentPercentage(),
+            p.getInterestFreeMonths(),
+            p.getInterestMonths(),
+            p.getMonthlyInterestRate()
         );
     }
 

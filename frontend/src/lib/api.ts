@@ -22,6 +22,53 @@ export interface ProjectRequest {
   tags?: string[];
   featured?: boolean;
   published?: boolean;
+  // Parámetros de la Calculadora de Financiamiento (R1 / R2 / R3)
+  hasFinancingCalculator?: boolean;
+  reservationAmount?: number;
+  downPaymentPercentage?: number;
+  interestFreeMonths?: number;
+  interestMonths?: number;
+  monthlyInterestRate?: number;
+}
+
+export interface ProjectSummary {
+  id: string;
+  name: string;
+  slug: string;
+  shortDescription?: string;
+  status?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  address?: string;
+  cityId?: string;
+  cityName?: string;
+  mainImageUrl?: string;
+  bannerImageUrl?: string;
+  featured?: boolean;
+  published?: boolean;
+  hasFinancingCalculator?: boolean;
+  reservationAmount?: number;
+  downPaymentPercentage?: number;
+  interestFreeMonths?: number;
+  interestMonths?: number;
+  monthlyInterestRate?: number;
+}
+
+export interface ProjectDetail extends ProjectSummary {
+  longDescription?: string;
+  estimatedDelivery?: string;
+  latitude?: number;
+  longitude?: number;
+  mapUrl?: string;
+  neighborhoodId?: string;
+  neighborhoodName?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  amenityIds?: string[];
+  tags?: string[];
+  logoUrl?: string;
+  brochureUrl?: string;
+  galleryImages?: string[];
 }
 
 export interface PropertyRequest {
@@ -90,9 +137,37 @@ export const DEFAULT_COMPANY_INFO = {
   team: []
 };
 
+function normalizeDistanceText(text?: string): string | undefined {
+  if (!text) return text;
+  return text
+    .replace(/a solo 150 metros de la orilla del mar\s*\(a 5 minutos a pie/gi, 'a solo 5 min del mar Caribe (')
+    .replace(/a solo 150 metros del mar\s*\(5 min a pie\)/gi, 'a solo 5 min del mar Caribe')
+    .replace(/a 150\s*m(?:etros)?\s*del mar\s*\(?5 min(?:utos)? a pie\)?/gi, 'A 5 min del mar Caribe')
+    .replace(/150\s*metros\s*(?:de la orilla\s*)?del mar/gi, '5 min del mar Caribe')
+    .replace(/150m\s*Playa/gi, 'Frente al Mar');
+}
+
+function normalizeProjectPayload<T extends Record<string, any> | null>(project: T): T {
+  if (!project || typeof project !== 'object') return project;
+  const copy: Record<string, any> = { ...project };
+  if (typeof copy.shortDescription === 'string') {
+    copy.shortDescription = normalizeDistanceText(copy.shortDescription);
+  }
+  if (typeof copy.longDescription === 'string') {
+    copy.longDescription = normalizeDistanceText(copy.longDescription);
+  }
+  if (typeof copy.description === 'string') {
+    copy.description = normalizeDistanceText(copy.description);
+  }
+  if (Array.isArray(copy.tags)) {
+    copy.tags = copy.tags.map((t: string) => normalizeDistanceText(t) || t);
+  }
+  return copy as T;
+}
+
 export const getCompanyInfo = cache(async () => {
   try {
-    const res = await fetchWithTimeout(`${API_URL}/public/company`, { next: { revalidate: 60 } }, 3500);
+    const res = await fetchWithTimeout(`${API_URL}/public/company`, { cache: 'no-store' }, 3500);
     if (!res.ok) return DEFAULT_COMPANY_INFO;
     return await res.json();
   } catch (error) {
@@ -102,9 +177,10 @@ export const getCompanyInfo = cache(async () => {
 
 export const getFeaturedProjects = cache(async () => {
   try {
-    const res = await fetchWithTimeout(`${API_URL}/public/projects/featured`, { next: { revalidate: 60 } }, 3500);
+    const res = await fetchWithTimeout(`${API_URL}/public/projects/featured`, { cache: 'no-store' }, 3500);
     if (!res.ok) return [];
-    return await res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data.map(normalizeProjectPayload) : [];
   } catch (error) {
     return [];
   }
@@ -112,9 +188,13 @@ export const getFeaturedProjects = cache(async () => {
 
 export const getAllPublicProjects = cache(async (page = 0, size = 12) => {
   try {
-    const res = await fetchWithTimeout(`${API_URL}/public/projects?page=${page}&size=${size}`, { next: { revalidate: 60 } }, 3500);
+    const res = await fetchWithTimeout(`${API_URL}/public/projects?page=${page}&size=${size}`, { cache: 'no-store' }, 3500);
     if (!res.ok) return { content: [] };
-    return await res.json();
+    const data = await res.json();
+    if (data && Array.isArray(data.content)) {
+      data.content = data.content.map(normalizeProjectPayload);
+    }
+    return data;
   } catch (error) {
     return { content: [] };
   }
@@ -122,16 +202,16 @@ export const getAllPublicProjects = cache(async (page = 0, size = 12) => {
 
 export const getProjectBySlug = cache(async (slug: string) => {
   try {
-    const res = await fetchWithTimeout(`${API_URL}/public/projects/${slug}`, { next: { revalidate: 60 } }, 3500);
-    if (res.ok) return await res.json();
+    const res = await fetchWithTimeout(`${API_URL}/public/projects/${slug}`, { cache: 'no-store' }, 3500);
+    if (res.ok) return normalizeProjectPayload(await res.json());
 
     // Soporte transparente para slugs alternativos de Corales del Viento
     if (slug === 'corales-del-viento') {
-      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/condominio-campestre-corales-del-viento`, { next: { revalidate: 60 } }, 3500);
-      if (altRes.ok) return await altRes.json();
+      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/condominio-campestre-corales-del-viento`, { cache: 'no-store' }, 3500);
+      if (altRes.ok) return normalizeProjectPayload(await altRes.json());
     } else if (slug === 'condominio-campestre-corales-del-viento') {
-      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/corales-del-viento`, { next: { revalidate: 60 } }, 3500);
-      if (altRes.ok) return await altRes.json();
+      const altRes = await fetchWithTimeout(`${API_URL}/public/projects/corales-del-viento`, { cache: 'no-store' }, 3500);
+      if (altRes.ok) return normalizeProjectPayload(await altRes.json());
     }
     return null;
   } catch (error) {
@@ -320,69 +400,73 @@ export async function uploadMedia(
   displayOrder: number = 0
 ): Promise<MediaFile> {
   // 1. Intento de subida directa con Presigned URL (cero consumo de CPU/RAM en el backend de Render)
-  try {
-    const presignRes = await fetch(`${API_URL}/admin/media/presign`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        fileName: file.name,
-        contentType: file.type || 'application/octet-stream',
-        mediaType,
-        entityType,
-        entityId,
-        fileSize: file.size
-      })
-    });
-
-    if (presignRes.ok) {
-      const presignData: PresignedUploadResponse = await presignRes.json();
-      
-      const uploadHeaders: Record<string, string> = {
-        'Content-Type': file.type || 'application/octet-stream',
-        ...(presignData.headers || {})
-      };
-
-      const directRes = await fetch(presignData.uploadUrl, {
-        method: presignData.httpMethod || 'PUT',
-        headers: uploadHeaders,
-        body: file
+  // Nota: Los archivos PDF (Brochures) pasan por el endpoint multipart del backend para aplicar compresión automática antes de guardarse en Supabase.
+  const isPdf = file.type === 'application/pdf' || mediaType === 'BROCHURE';
+  if (!isPdf) {
+    try {
+      const presignRes = await fetch(`${API_URL}/admin/media/presign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type || 'application/octet-stream',
+          mediaType,
+          entityType,
+          entityId,
+          fileSize: file.size
+        })
       });
 
-      if (directRes.ok) {
-        // Confirmar en el backend y persistir metadatos
-        const confirmRes = await fetch(`${API_URL}/admin/media/complete-direct-upload`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            fileKey: presignData.fileKey,
-            url: presignData.publicUrl,
-            originalName: file.name,
-            contentType: file.type || 'application/octet-stream',
-            fileSize: file.size,
-            mediaType,
-            entityType,
-            entityId,
-            altText,
-            displayOrder
-          })
+      if (presignRes.ok) {
+        const presignData: PresignedUploadResponse = await presignRes.json();
+        
+        const uploadHeaders: Record<string, string> = {
+          'Content-Type': file.type || 'application/octet-stream',
+          ...(presignData.headers || {})
+        };
+
+        const directRes = await fetch(presignData.uploadUrl, {
+          method: presignData.httpMethod || 'PUT',
+          headers: uploadHeaders,
+          body: file
         });
 
-        if (confirmRes.ok) {
-          return await confirmRes.json();
+        if (directRes.ok) {
+          // Confirmar en el backend y persistir metadatos
+          const confirmRes = await fetch(`${API_URL}/admin/media/complete-direct-upload`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              fileKey: presignData.fileKey,
+              url: presignData.publicUrl,
+              originalName: file.name,
+              contentType: file.type || 'application/octet-stream',
+              fileSize: file.size,
+              mediaType,
+              entityType,
+              entityId,
+              altText,
+              displayOrder
+            })
+          });
+
+          if (confirmRes.ok) {
+            return await confirmRes.json();
+          }
         }
       }
+    } catch (err) {
+      console.warn('Subida directa con URL prefirmada no disponible, usando fallback multipart:', err);
     }
-  } catch (err) {
-    console.warn('Subida directa con URL prefirmada no disponible, usando fallback multipart:', err);
   }
 
-  // 2. Fallback estándar multipart/form-data
+  // 2. Subida multipart/form-data (con compresión de PDF en servidor para Brochures)
   const formData = new FormData();
   formData.append('file', file);
   formData.append('mediaType', mediaType);

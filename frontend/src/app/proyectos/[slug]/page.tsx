@@ -15,15 +15,15 @@ import { buildWhatsAppUrl } from '@/lib/contact';
 
 function getAmenityIcon(tag: string) {
   const t = tag.toLowerCase();
-  if (t.includes('portería') || t.includes('seguridad')) return <ShieldCheck className="w-5 h-5 text-sky-600" />;
-  if (t.includes('piscina') || t.includes('playa') || t.includes('mar')) return <Waves className="w-5 h-5 text-sky-600" />;
-  if (t.includes('juegos') || t.includes('parque')) return <Sparkles className="w-5 h-5 text-sky-600" />;
-  if (t.includes('bbq') || t.includes('asador')) return <Flame className="w-5 h-5 text-sky-600" />;
-  if (t.includes('verde') || t.includes('ecol')) return <Trees className="w-5 h-5 text-sky-600" />;
-  if (t.includes('vía') || t.includes('pavimentada')) return <Car className="w-5 h-5 text-sky-600" />;
-  if (t.includes('montería') || t.includes('tolú') || t.includes('aeropuerto') || t.includes('garzones') || t.includes('morrosquillo')) return <Plane className="w-5 h-5 text-sky-600" />;
-  if (t.includes('barranquilla') || t.includes('santa marta') || t.includes('isla fuerte') || t.includes('coveñas') || t.includes('conexión') || t.includes('cerca')) return <MapPin className="w-5 h-5 text-sky-600" />;
-  return <CheckCircle2 className="w-5 h-5 text-sky-600" />;
+  if (t.includes('portería') || t.includes('seguridad')) return <ShieldCheck className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('piscina') || t.includes('playa') || t.includes('mar')) return <Waves className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('juegos') || t.includes('parque')) return <Sparkles className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('bbq') || t.includes('asador')) return <Flame className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('verde') || t.includes('ecol')) return <Trees className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('vía') || t.includes('pavimentada')) return <Car className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('montería') || t.includes('tolú') || t.includes('aeropuerto') || t.includes('garzones') || t.includes('morrosquillo')) return <Plane className="w-5 h-5 text-black stroke-[2.2]" />;
+  if (t.includes('barranquilla') || t.includes('santa marta') || t.includes('isla fuerte') || t.includes('coveñas') || t.includes('conexión') || t.includes('cerca')) return <MapPin className="w-5 h-5 text-black stroke-[2.2]" />;
+  return <CheckCircle2 className="w-5 h-5 text-black stroke-[2.2]" />;
 }
 
 interface PageProps {
@@ -72,8 +72,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       id: '8b6c778a-7393-415d-9bb2-ba01dcdf6a41',
       name: 'Condominio Campestre Corales del Viento',
       slug: 'corales-del-viento',
-      shortDescription: 'En el caribe colombiano a solo 150 metros del mar (5 min a pie) en zona turística de alta valorización.',
-      longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo de defensa jurídica y escritura individual registrada. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 150 metros de la orilla del mar (a 5 minutos a pie por la vía de acceso conformada) en zona turística de alta valorización. Cuenta con una conectividad aérea y terrestre privilegiada: a 90 minutos del Aeropuerto Internacional Los Garzones de Montería y a 50 minutos del Aeropuerto Golfo de Morrosquillo en Tolú, con rápida conexión hacia Barranquilla, Santa Marta y Cartagena de Indias, y a minutos de destinos paradisíacos como Isla Fuerte, San Antero y Coveñas. Ofrece portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
+      shortDescription: 'En el caribe colombiano a solo 5 min del mar Caribe en zona turística de alta valorización.',
+      longDescription: 'Condominio Campestre Corales del Viento te ofrece la oportunidad de construir el hogar de tus sueños en terreno 100% plano, con respaldo de defensa jurídica y escritura individual registrada. Ubicado estratégicamente en San Bernardo del Viento (Córdoba), en el caribe colombiano a solo 5 min del mar Caribe (por la vía de acceso conformada) en zona turística de alta valorización. Cuenta con una conectividad aérea y terrestre privilegiada: a 90 minutos del Aeropuerto Internacional Los Garzones de Montería y a 50 minutos del Aeropuerto Golfo de Morrosquillo en Tolú, con rápida conexión hacia Barranquilla, Santa Marta y Cartagena de Indias, y a minutos de destinos paradisíacos como Isla Fuerte, San Antero y Coveñas. Ofrece portería 24 horas, piscina, juegos infantiles, zona BBQ, amplias zonas verdes y vía principal pavimentada.',
       status: 'EN_VENTAS',
       minPrice: 260000,
       maxPrice: 260000,
@@ -98,12 +98,18 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         'Zona BBQ',
         'Zonas verdes',
         'Vía principal pavimentada',
-        'A 150m del mar (5 min a pie)',
+        'A 5 min del mar Caribe',
         'Aeropuerto Los Garzones (Montería · 90 min)',
         'Aeropuerto Golfo de Morrosquillo (Tolú · 50 min)',
         'Conexión Barranquilla y Santa Marta',
         'Cerca de Isla Fuerte, Coveñas y San Antero'
-      ]
+      ],
+      hasFinancingCalculator: true,
+      reservationAmount: 1000000,
+      downPaymentPercentage: 20,
+      interestFreeMonths: 12,
+      interestMonths: 24,
+      monthlyInterestRate: 1.0
     };
   }
 
@@ -227,8 +233,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {project.tags && project.tags.length > 0 ? (
                     project.tags.map((tag: string, index: number) => (
-                      <div key={index} className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 hover:border-sky-200 shadow-sm hover:shadow-md transition-all text-center group">
-                        <div className="w-10 h-10 rounded-xl bg-sky-50 group-hover:bg-sky-100/80 text-sky-600 flex items-center justify-center mb-3 transition-colors border border-sky-100/60 shadow-sm">
+                      <div key={index} className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 hover:border-gray-300 shadow-sm hover:shadow-md transition-all text-center group">
+                        <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center mb-3 transition-colors border border-gray-200 shadow-sm group-hover:scale-105">
                           {getAmenityIcon(tag)}
                         </div>
                         <span className="text-xs md:text-sm font-bold text-gray-700 leading-snug">{tag}</span>
@@ -237,20 +243,20 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   ) : (
                     <>
                       <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
-                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
-                          <Waves className="w-5 h-5" />
+                        <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center mb-3 border border-gray-200 shadow-sm">
+                          <Waves className="w-5 h-5 text-black stroke-[2.2]" />
                         </div>
                         <span className="text-xs md:text-sm font-bold text-gray-700">Club Social</span>
                       </div>
                       <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
-                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
-                          <Ruler className="w-5 h-5" />
+                        <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center mb-3 border border-gray-200 shadow-sm">
+                          <Ruler className="w-5 h-5 text-black stroke-[2.2]" />
                         </div>
                         <span className="text-xs md:text-sm font-bold text-gray-700">Lotes XL</span>
                       </div>
                       <div className="flex flex-col items-center p-4 bg-gradient-to-b from-gray-50/80 to-white rounded-2xl border border-gray-100 text-center">
-                        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 border border-sky-100/60">
-                          <Car className="w-5 h-5" />
+                        <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center mb-3 border border-gray-200 shadow-sm">
+                          <Car className="w-5 h-5 text-black stroke-[2.2]" />
                         </div>
                         <span className="text-xs md:text-sm font-bold text-gray-700">Vías Pavimentadas</span>
                       </div>
@@ -274,7 +280,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                       <PiWhatsappLogoLight className="w-5 h-5" />
                       SEPARAR TU LOTE
                     </a>
-                    <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/public/projects/${project.slug}/brochure`} className="w-full bg-white border border-gray-200 hover:border-gray-300 text-[var(--color-caribbean-dark)] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all tracking-wider text-sm uppercase">
+                    <a
+                      href={project.brochureUrl || `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/public/projects/${project.slug}/brochure`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-white border border-gray-200 hover:border-[var(--color-caribbean-blue)] text-[var(--color-caribbean-dark)] hover:text-[var(--color-caribbean-blue)] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all tracking-wider text-sm uppercase shadow-xs hover:shadow-md"
+                    >
                       Descargar Brochure
                     </a>
                   </div>
@@ -291,15 +302,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <section className="py-16 md:py-24 bg-white relative border-t border-slate-100">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-medium mb-6">
-                <PiMapPinLight className="text-xl" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-sm border border-gray-200 text-black font-semibold mb-6">
+                <PiMapPinLight className="text-xl text-black" />
                 <span>Ubicación</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-[var(--color-caribbean-dark)] mb-6">
                 Conoce el Entorno
               </h2>
               <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-                Explora el mapa interactivo y descubre las vías de acceso, la cercanía a solo 150 metros de la orilla del mar (a 5 minutos a pie por la vía de acceso conformada) y la ubicación exacta de {project.name}.
+                Explora el mapa interactivo y descubre las vías de acceso, la cercanía a solo 5 min del mar Caribe (por la vía de acceso conformada) y la ubicación exacta de {project.name}.
               </p>
             </div>
             <div className="w-full h-[500px] md:h-[650px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/5 border border-white">
@@ -318,7 +329,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       )}
 
       {/* Interactive Master Plan */}
-      <InteractiveMasterPlan projectSlug={project.slug} properties={properties} />
+      <InteractiveMasterPlan projectSlug={project.slug} properties={properties} project={project} />
 
       <PublicFooter company={company} />
     </main>
